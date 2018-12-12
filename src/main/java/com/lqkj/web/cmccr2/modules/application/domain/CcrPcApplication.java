@@ -18,7 +18,7 @@ import java.util.Objects;
 @TypeDef(name = "string-array", typeClass = StringArrayType.class)
 @Entity
 @Table(name = "ccr_application")
-public class CcrApplication implements Serializable {
+public class CcrPcApplication implements Serializable {
 
     @Id
     @Column(name = "app_id")
@@ -184,7 +184,7 @@ public class CcrApplication implements Serializable {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        CcrApplication that = (CcrApplication) o;
+        CcrPcApplication that = (CcrPcApplication) o;
         return Objects.equals(appId, that.appId) &&
                 Objects.equals(icon, that.icon) &&
                 Objects.equals(name, that.name) &&

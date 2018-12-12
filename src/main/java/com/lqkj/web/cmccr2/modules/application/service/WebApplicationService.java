@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 @Service
+@Transactional
 public class WebApplicationService {
 
     @Autowired
@@ -34,7 +35,6 @@ public class WebApplicationService {
      *
      * @param id 应用id
      */
-    @Transactional
     public void deleteApplication(Long[] id) {
         for (Long i : id) {
             webApplicationDao.deleteById(i);
