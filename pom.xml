@@ -180,6 +180,12 @@
 			<artifactId>disruptor</artifactId>
 			<version>3.4.2</version>
 		</dependency>
+		<!--IP定位-->
+		<dependency>
+			<groupId>org.lionsoul</groupId>
+			<artifactId>ip2region</artifactId>
+			<version>1.7.2</version>
+		</dependency>
 
 	</dependencies>
 
