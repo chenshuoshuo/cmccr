@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.hibernate5.Hibernate5Module;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.google.common.collect.Lists;
+import com.lqkj.web.cmccr2.GlobalAsyncExceptionHandler;
 import org.springframework.boot.autoconfigure.security.SecurityProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -39,6 +40,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
         executor.initialize();
         //10秒超时时间
         configurer.setDefaultTimeout(1000 * 10);
+        configurer.registerCallableInterceptors(new GlobalAsyncExceptionHandler());
         configurer.setTaskExecutor(executor);
     }
 
