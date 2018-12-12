@@ -1,0 +1,111 @@
+admin:
+  #授权码
+  code: 6992005
+cas:
+  base: http://192.168.4.240:8884/cas
+  login: ${cas.base}/login/
+server:
+  port: 8100
+  servlet:
+    context-path: /cmccr
+  error:
+    include-exception: true
+  compression:
+    enabled: false
+  tomcat:
+    max-connections: 1000
+    max-threads: 100
+    min-spare-threads: 10
+  address: 192.168.4.105
+logging:
+  register-shutdown-hook: true
+  file: ./log/ccr.log
+  level:
+    org.springframework.boot: info
+    org.ehcache.impl.internal.store.heap.OnHeapStore: error
+    org.apache.coyote.http11.Http11InputBuffer: debug
+    org.hibernate.SQL: debug
+    io.swagger.models.parameters.AbstractSerializableParameter: error
+  path: classpath:log4j2.xml
+spring:
+  application:
+    name: cmccr2
+  servlet:
+    multipart:
+      max-file-size: 1000MB
+      max-request-size: 1000MB
+      file-size-threshold: 10MB
+  h2:
+    console:
+      enabled: true
+      settings:
+        trace: true
+        web-allow-others: true
+      path: /h2
+  jdbc:
+    template:
+      query-timeout: 20s
+  jpa:
+    hibernate:
+      ddl-auto: update
+      use-new-id-generator-mappings: true
+    generate-ddl: true
+    show-sql: false
+    open-in-view: true
+    properties:
+      hibernate:
+        temp:
+          use_jdbc_metadata_defaults: false
+  datasource:
+    hikari:
+      driver-class-name: org.postgresql.Driver
+      username: postgres
+      password: postgres
+      auto-commit: true
+      pool-name: ips
+      minimum-idle: 5
+      maximum-pool-size: 20
+      idle-timeout: 60000
+      max-lifetime: 1800000
+      connection-timeout: 30000
+      read-only: false
+    url: jdbc:postgresql://192.168.4.240:5432/cmccr
+  mvc:
+    favicon:
+      enabled: true
+  flyway:
+    baseline-on-migrate: true
+    enabled: false
+  boot:
+    admin:
+      client:
+        url: "http://192.168.4.240:7070/admin"
+        instance:
+          name: cmccr2
+  resources:
+    cache:
+      cachecontrol:
+        cache-public: true
+        max-age: 0s
+    chain:
+      enabled: true
+      cache: true
+  cloud:
+    consul:
+      enabled: false
+      host: 192.168.4.240
+      port: 8500
+      discovery:
+        enabled: false
+        tags: version=v2,author=free
+        healthCheckPath: ${server.servlet.context-path}/actuator/health
+        healthCheckInterval: 60s
+        instanceId: ${spring.application.name}-${server.address}:${server.port}
+        ip-address: ${server.address}
+        port: ${server.port}
+        prefer-ip-address: true
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"

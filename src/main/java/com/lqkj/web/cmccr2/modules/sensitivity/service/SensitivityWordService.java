@@ -1,0 +1,166 @@
+package com.lqkj.web.cmccr2.modules.sensitivity.service;
+
+import com.lqkj.web.cmccr2.index.WordTree;
+import com.lqkj.web.cmccr2.modules.log.service.CcrSystemLogService;
+import com.lqkj.web.cmccr2.modules.sensitivity.dao.CcrSensitivityWordRepository;
+import com.lqkj.web.cmccr2.modules.sensitivity.domain.CcrSensitivityWord;
+import com.lqkj.web.cmccr2.modules.sensitivity.domain.CheckResult;
+import org.apache.commons.io.IOUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import javax.annotation.PostConstruct;
+import java.io.IOException;
+import java.nio.charset.Charset;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+/**
+ * 违禁字服务
+ */
+@Service
+@Transactional
+public class SensitivityWordService {
+
+    private Logger logger = LoggerFactory.getLogger(this.getClass());
+
+    @Autowired
+    CcrSensitivityWordRepository sensitivityWordDao;
+
+    @Autowired
+    CcrSystemLogService systemLogService;
+
+    private WordTree wordTree;
+
+    public CcrSensitivityWord add(String word) throws IOException {
+        systemLogService.addLog("违禁词服务","add",
+                "增加一个违禁词");
+
+        CcrSensitivityWord sensitivityWord = this.sensitivityWordDao.save(new CcrSensitivityWord(word));
+
+        this.initSensitivityWords();
+
+        return sensitivityWord;
+    }
+
+    public void delete(Long id) throws IOException {
+        systemLogService.addLog("违禁词服务","delete",
+                "删除一个违禁词");
+
+        this.sensitivityWordDao.deleteById(id);
+
+        this.initSensitivityWords();
+    }
+
+    public CcrSensitivityWord update(Long id, String word) throws IOException {
+        systemLogService.addLog("违禁词服务","update",
+                "更新一个违禁词");
+
+        CcrSensitivityWord sensitivityWord = sensitivityWordDao.getOne(id);
+
+        sensitivityWord.setWord(word);
+
+        CcrSensitivityWord savedWord = this.sensitivityWordDao.save(sensitivityWord);
+
+        this.initSensitivityWords();
+
+        return savedWord;
+    }
+
+    public CcrSensitivityWord info(Long id) {
+        systemLogService.addLog("违禁词服务","info",
+                "查询一个违禁词");
+
+        return this.sensitivityWordDao.getOne(id);
+    }
+
+    public Page<CcrSensitivityWord> page(Integer page, Integer pageSize) {
+        systemLogService.addLog("违禁词服务","page",
+                "分页一个违禁词");
+
+        return this.sensitivityWordDao.findAll(PageRequest.of(page, pageSize));
+    }
+
+    public List<CheckResult> checkWords(String[] words) {
+        systemLogService.addLog("违禁词服务","checkWords",
+                "违禁词检查");
+
+        List<CheckResult> results = new ArrayList<>(words.length);
+
+        Arrays.stream(words).forEach(v -> {
+            results.add(checkWord(v));
+        });
+
+        return results;
+    }
+
+    private CheckResult checkWord(String word) {
+        CheckResult result = new CheckResult();
+
+        List<String> checkWords = wordTree.check(word);
+
+        result.setContent(checkWords);
+        result.setSensitivity(!checkWords.isEmpty());
+
+        return result;
+    }
+
+    /**
+     * 初始化敏感词数据库数据
+     */
+    @PostConstruct
+    @Async
+    public void initSensitivityWords() throws IOException {
+        List<CcrSensitivityWord> words = sensitivityWordDao.findAll();
+
+        if (!words.isEmpty()) {
+            logger.info("已有敏感词数据,跳过数据库录入");
+            initTree(words);
+            return;
+        }
+
+        String csv = IOUtils.resourceToString("csv/sensitivity.csv", Charset.forName("utf-8"),
+                this.getClass().getClassLoader());
+
+        try {
+            logger.info("开始导入敏感词数据");
+
+            List<CcrSensitivityWord> ws = new ArrayList<>(2000);
+
+            Arrays.stream(csv.split("\r\n")).forEach(v -> {
+                CcrSensitivityWord word = new CcrSensitivityWord(v);
+                ws.add(word);
+            });
+
+            sensitivityWordDao.saveAll(ws);
+
+            logger.info("导入敏感词数据完成");
+
+            initTree(ws);
+        } catch (Exception e) {
+            throw e;
+        }
+    }
+
+    /**
+     * 初始化搜索树
+     */
+    private void initTree(List<CcrSensitivityWord> words) {
+        logger.info("开始构建分词树");
+
+        wordTree = new WordTree();
+
+        words.forEach(w -> {
+            wordTree.insertText(w.getWord());
+        });
+
+        logger.info("分词树构建完成");
+    }
+}

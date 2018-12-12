@@ -1,0 +1,87 @@
+package com.lqkj.web.cmccr2.modules.menu.service;
+
+import com.lqkj.web.cmccr2.modules.log.service.CcrSystemLogService;
+import com.lqkj.web.cmccr2.modules.menu.domain.CcrMenu;
+import com.lqkj.web.cmccr2.modules.application.dao.CcrVersionApplicationRepository;
+import com.lqkj.web.cmccr2.modules.menu.dao.CcrMenuRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Example;
+import org.springframework.data.domain.ExampleMatcher;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+/**
+ * 菜单管理服务
+ */
+@Service
+@Transactional
+public class MenuService {
+
+    @Autowired
+    CcrMenuRepository menuDao;
+
+    @Autowired
+    CcrVersionApplicationRepository managerApplicationDao;
+
+    @Autowired
+    CcrSystemLogService systemLogService;
+
+    /**
+     * 装机菜单
+     */
+    public Long createMenu(CcrMenu menu) {
+        systemLogService.addLog("菜单管理服务","createMenu"
+                ,"创建菜单");
+
+        return menuDao.save(menu).getMenuId();
+    }
+
+    /**
+     * 删除应用
+     */
+    public void deleteMenu(Long id) {
+        systemLogService.addLog("菜单管理服务","deleteMenu"
+                ,"删除菜单");
+
+        menuDao.deleteById(id);
+    }
+
+    /**
+     * 得到根节点
+     */
+    public CcrMenu info(Long id) {
+        systemLogService.addLog("菜单管理服务","info"
+                ,"查询菜单信息");
+
+        return menuDao.findById(id).get();
+    }
+
+    /**
+     * 更新节点
+     */
+    public CcrMenu update(Long id, CcrMenu menu) {
+        systemLogService.addLog("菜单管理服务","update"
+                ,"更新菜单信息");
+
+        return menuDao.save(menu);
+    }
+
+    public Page<CcrMenu> page(String keyword, Integer page, Integer pageSize) {
+        systemLogService.addLog("菜单管理服务","page"
+                ,"分页查询菜单信息");
+
+        CcrMenu menu = new CcrMenu();
+        menu.setName(keyword);
+
+        ExampleMatcher matcher = ExampleMatcher.matching()
+                .withMatcher("name", ExampleMatcher.GenericPropertyMatchers.contains())
+                .withIgnorePaths("id");
+
+        return menuDao.findAll(Example.of(menu, matcher),
+                PageRequest.of(page, pageSize));
+    }
+
+
+}
