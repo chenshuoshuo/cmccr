@@ -5,7 +5,10 @@ import com.lqkj.web.cmccr2.modules.user.dao.CcrUserAuthorityRepository;
 import com.lqkj.web.cmccr2.modules.user.dao.CcrUserRuleRepository;
 import com.lqkj.web.cmccr2.modules.user.domain.CcrUserAuthority;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Example;
+import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -62,6 +65,21 @@ public class CcrUserAuthorityService {
                 "查询一个用户权限");
 
         return userAuthorityRepository.findById(id).get();
+    }
+
+    public Page<CcrUserAuthority> page(String keyword, Integer page, Integer pageSize) {
+        systemLogService.addLog("用户权限服务", "page",
+                "分页查询用户权限");
+
+        CcrUserAuthority authority = new CcrUserAuthority();
+        authority.setName(keyword);
+
+        ExampleMatcher matcher = ExampleMatcher.matching()
+                .withMatcher("name", ExampleMatcher.GenericPropertyMatchers.contains())
+                .withIgnorePaths("authorityId");
+
+        return userAuthorityRepository.findAll(Example.of(authority, matcher),
+                PageRequest.of(page, pageSize));
     }
 
     public List<CcrUserAuthority> findByRuleId(Long ruleId) {

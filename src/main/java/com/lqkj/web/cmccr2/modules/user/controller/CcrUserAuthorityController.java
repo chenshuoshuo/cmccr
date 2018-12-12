@@ -7,6 +7,7 @@ import com.lqkj.web.cmccr2.modules.user.service.CcrUserAuthorityService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -44,6 +45,12 @@ public class CcrUserAuthorityController {
         return MessageBean.ok(authorityService.info(id));
     }
 
+    @ApiOperation("分页查询用户权限")
+    @GetMapping("/center/user/authority/page")
+    public MessageBean<Page<CcrUserAuthority>> page(String keyword, Integer page, Integer pageSize) {
+        return MessageBean.ok(authorityService.page(keyword, page, pageSize));
+    }
+
     @ApiOperation("根据角色id查询权限")
     @GetMapping("/center/user/authority")
     public MessageListBean<CcrUserAuthority> queryByRule(@RequestParam Long ruleId) {
@@ -53,6 +60,6 @@ public class CcrUserAuthorityController {
     @ApiOperation("根据类型查询权限")
     @GetMapping("/center/user/authority/type/{type}")
     public MessageListBean<CcrUserAuthority> queryByType(@PathVariable CcrUserAuthority.UserAuthorityType type) {
-       return MessageListBean.ok(authorityService.findByType(type));
+        return MessageListBean.ok(authorityService.findByType(type));
     }
 }
