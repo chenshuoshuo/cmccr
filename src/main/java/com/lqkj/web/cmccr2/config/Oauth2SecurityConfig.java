@@ -101,7 +101,14 @@ public class Oauth2SecurityConfig implements AuthorizationServerConfigurer, Reso
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.ALWAYS)
                 .and()
                 .authorizeRequests()
-                .antMatchers("/center/application/**")
+                .antMatchers("/center/user/register")
+                .permitAll()
+                .antMatchers("/center/application/**",
+                        "/center/menu/**",
+                        "/center/request/**",
+                        "/center/sensitivity/**",
+                        "/center/store/**",
+                        "/center/user/**")
                 .authenticated()
         ;
     }
