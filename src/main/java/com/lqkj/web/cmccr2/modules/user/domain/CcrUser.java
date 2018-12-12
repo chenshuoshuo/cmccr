@@ -42,6 +42,9 @@ public class CcrUser implements Serializable, UserDetails {
 
     @ApiModelProperty(value = "用户角色")
     @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(name = "ccr_user_to_rule", joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "rule_id", referencedColumnName = "rule_id")
+    )
     private List<CcrUserRule> rules;
 
     public List<CcrUserRule> getRules() {

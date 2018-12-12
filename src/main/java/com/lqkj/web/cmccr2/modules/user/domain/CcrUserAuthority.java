@@ -20,6 +20,7 @@ public class CcrUserAuthority implements Serializable, GrantedAuthority {
 
     @ApiModelProperty(value = "权限id")
     @Id
+    @Column(name = "authority_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long authorityId;
 
