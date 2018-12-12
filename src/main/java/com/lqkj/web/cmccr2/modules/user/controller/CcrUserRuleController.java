@@ -28,7 +28,7 @@ public class CcrUserRuleController {
 
     @ApiOperation("删除角色")
     @DeleteMapping("/center/user/rule/{id}")
-    public MessageBean<Long> delete(@PathVariable Long id) {
+    public MessageBean<Long[]> delete(@PathVariable Long[] id) {
         ruleService.delete(id);
         return MessageBean.ok(id);
     }

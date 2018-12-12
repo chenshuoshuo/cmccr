@@ -7,6 +7,7 @@ import com.lqkj.web.cmccr2.modules.user.domain.CcrUserAuthority;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -14,6 +15,7 @@ import java.util.List;
  * 用户权限服务
  */
 @Service
+@Transactional
 public class CcrUserAuthorityService {
 
     @Autowired
@@ -26,21 +28,23 @@ public class CcrUserAuthorityService {
     CcrSystemLogService systemLogService;
 
     public CcrUserAuthority add(CcrUserAuthority authority) {
-        systemLogService.addLog("用户权限服务","add",
+        systemLogService.addLog("用户权限服务", "add",
                 "增加一个用户权限");
 
         return userAuthorityRepository.save(authority);
     }
 
-    public void delete(Long id) {
-        systemLogService.addLog("用户权限服务","delete",
+    public void delete(Long[] id) {
+        systemLogService.addLog("用户权限服务", "delete",
                 "删除一个用户权限");
 
-        userAuthorityRepository.deleteById(id);
+        for (Long i : id) {
+            userAuthorityRepository.deleteById(i);
+        }
     }
 
     public CcrUserAuthority update(Long id, CcrUserAuthority authority) {
-        systemLogService.addLog("用户权限服务","update",
+        systemLogService.addLog("用户权限服务", "update",
                 "更新一个用户权限");
 
         CcrUserAuthority savedAuthority = userAuthorityRepository.getOne(id);
@@ -54,21 +58,21 @@ public class CcrUserAuthorityService {
     }
 
     public CcrUserAuthority info(Long id) {
-        systemLogService.addLog("用户权限服务","info",
+        systemLogService.addLog("用户权限服务", "info",
                 "查询一个用户权限");
 
         return userAuthorityRepository.findById(id).get();
     }
 
     public List<CcrUserAuthority> findByRuleId(Long ruleId) {
-        systemLogService.addLog("用户权限服务","findByRuleId",
+        systemLogService.addLog("用户权限服务", "findByRuleId",
                 "根据角色查询权限");
 
         return userRuleRepository.getOne(ruleId).getAuthorities();
     }
 
     public List<CcrUserAuthority> findByType(CcrUserAuthority.UserAuthorityType type) {
-        systemLogService.addLog("用户权限服务","findByType",
+        systemLogService.addLog("用户权限服务", "findByType",
                 "根据类型查询权限");
 
         return userAuthorityRepository.findByType(type);

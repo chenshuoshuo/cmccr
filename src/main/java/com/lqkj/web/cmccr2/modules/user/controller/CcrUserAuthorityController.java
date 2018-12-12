@@ -26,7 +26,7 @@ public class CcrUserAuthorityController {
 
     @ApiOperation("删除用户权限")
     @DeleteMapping("/center/user/authority/{id}")
-    public MessageBean<Long> delete(Long id) {
+    public MessageBean<Long[]> delete(Long[] id) {
         authorityService.delete(id);
         return MessageBean.ok(id);
     }

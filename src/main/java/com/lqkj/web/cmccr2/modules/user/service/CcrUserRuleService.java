@@ -31,7 +31,6 @@ public class CcrUserRuleService {
     @Autowired
     CcrSystemLogService systemLogService;
 
-
     public CcrUserRule add(String name, String enName, Long[] authorities) {
         systemLogService.addLog("用户角色服务", "add",
                 "增加用户角色");
@@ -49,11 +48,13 @@ public class CcrUserRuleService {
         return userRuleRepository.save(rule);
     }
 
-    public void delete(Long id) {
+    public void delete(Long[] id) {
         systemLogService.addLog("用户角色服务", "delete",
                 "删除用户角色");
 
-        userRuleRepository.deleteById(id);
+        for (Long i : id) {
+            userRuleRepository.deleteById(i);
+        }
     }
 
     public CcrUserRule update(Long id, String name, String enName, Long[] authorities) {
