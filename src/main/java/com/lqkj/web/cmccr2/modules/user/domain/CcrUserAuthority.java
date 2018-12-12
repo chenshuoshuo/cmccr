@@ -38,6 +38,10 @@ public class CcrUserAuthority implements Serializable, GrantedAuthority {
     @Column
     private String route;
 
+    @ApiModelProperty(value = "图标")
+    @Column(columnDefinition = " text")
+    private String icon;
+
     @ApiModelProperty(value = "父节点")
     @Column(name = "parent_id")
     private Long parentId;
@@ -52,6 +56,14 @@ public class CcrUserAuthority implements Serializable, GrantedAuthority {
     public CcrUserAuthority(String name, String content) {
         this.name = name;
         this.content = content;
+    }
+
+    public String getIcon() {
+        return icon;
+    }
+
+    public void setIcon(String icon) {
+        this.icon = icon;
     }
 
     public Long getAuthorityId() {
@@ -111,13 +123,14 @@ public class CcrUserAuthority implements Serializable, GrantedAuthority {
                 Objects.equals(name, authority.name) &&
                 Objects.equals(content, authority.content) &&
                 Objects.equals(route, authority.route) &&
+                Objects.equals(icon, authority.icon) &&
                 Objects.equals(parentId, authority.parentId) &&
                 type == authority.type;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(authorityId, name, content, route, parentId, type);
+        return Objects.hash(authorityId, name, content, route, icon, parentId, type);
     }
 
     @Override
@@ -126,6 +139,6 @@ public class CcrUserAuthority implements Serializable, GrantedAuthority {
     }
 
     public enum UserAuthorityType {
-        menu, normal
+        menu, home_menu, normal
     }
 }
