@@ -22,7 +22,7 @@ public class CcrMenu implements Serializable {
     @Column(name = "name")
     private String name;
 
-    @Column(name = "icon")
+    @Column(name = "icon", columnDefinition = " text")
     private String icon;
 
     @Column(name = "type")

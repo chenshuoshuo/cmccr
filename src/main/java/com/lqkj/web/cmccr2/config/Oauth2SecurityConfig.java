@@ -70,7 +70,7 @@ public class Oauth2SecurityConfig implements AuthorizationServerConfigurer, Reso
     public void configure(ClientDetailsServiceConfigurer clients) throws Exception {
         clients.inMemory()
                 .withClient("cmccr-h5")
-                .scopes("js", "java")
+                .scopes("js")
                 .resourceIds("cmccr-server")
                 .authorizedGrantTypes("password", "refresh_token")
                 .secret(passwordEncoder.encode("cmccr-h5"))
