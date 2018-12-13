@@ -41,6 +41,10 @@ public class CcrSensitivityRecord implements Serializable {
     @CreationTimestamp
     private Timestamp createTime;
 
+    public CcrSensitivityRecord() {
+        this.recordId = UUID.randomUUID();
+    }
+
     public UUID getRecordId() {
         return recordId;
     }

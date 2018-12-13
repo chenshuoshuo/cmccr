@@ -2,6 +2,7 @@ package com.lqkj.web.cmccr2.modules.log.domain;
 
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.Type;
+import org.springframework.cache.annotation.Cacheable;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -38,9 +39,11 @@ public class CcrSystemLog implements Serializable {
     private Timestamp createTime;
 
     public CcrSystemLog() {
+        this.logId = UUID.randomUUID();
     }
 
     public CcrSystemLog(String source, String method, String description) {
+        this.logId = UUID.randomUUID();
         this.source = source;
         this.method = method;
         this.description = description;

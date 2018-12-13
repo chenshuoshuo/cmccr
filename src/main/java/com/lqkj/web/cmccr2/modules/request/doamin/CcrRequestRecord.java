@@ -43,6 +43,10 @@ public class CcrRequestRecord implements Serializable {
     @Column
     private String exception;
 
+    public CcrRequestRecord() {
+        this.recordId = UUID.randomUUID();
+    }
+
     public UUID getRecordId() {
         return recordId;
     }
