@@ -1,5 +1,8 @@
 package com.lqkj.web.cmccr2.modules.user.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -28,6 +31,7 @@ public class CcrUser implements Serializable, UserDetails {
     @Column(name = "user_code")
     private String userCode;
 
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     @ApiModelProperty(value = "密码")
     @Column(name = "pass_word")
     private String passWord;
@@ -36,6 +40,7 @@ public class CcrUser implements Serializable, UserDetails {
     @Column(name = "open_id")
     private String openId;
 
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     @ApiModelProperty(value = "cas登录凭证")
     @Column(name = "cas_ticket")
     private String casTicket;
@@ -114,10 +119,13 @@ public class CcrUser implements Serializable, UserDetails {
     }
 
 
-
     @Override
     public Collection getAuthorities() {
         List<CcrUserAuthority> authorities = new ArrayList<>();
+
+        if (rules == null) {
+            return authorities;
+        }
 
         for (CcrUserRule rule : this.rules) {
             authorities.addAll(rule.getAuthorities());

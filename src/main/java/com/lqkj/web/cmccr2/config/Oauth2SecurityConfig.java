@@ -80,7 +80,7 @@ public class Oauth2SecurityConfig implements AuthorizationServerConfigurer, Reso
                 .authorizedGrantTypes("password", "refresh_token")
                 .secret(passwordEncoder.encode("cmccr-h5"))
                 .accessTokenValiditySeconds((int) TimeUnit.MINUTES.toSeconds(10))
-                .refreshTokenValiditySeconds((int) TimeUnit.MINUTES.toSeconds(10))
+                .refreshTokenValiditySeconds((int) TimeUnit.DAYS.toSeconds(7))
         ;
     }
 

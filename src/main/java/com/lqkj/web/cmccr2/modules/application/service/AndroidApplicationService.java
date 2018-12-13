@@ -34,7 +34,7 @@ public class AndroidApplicationService {
      * 创建android应用
      */
     public Long createAndroidApplication(CcrAndroidApplication application) {
-        systemLogService.addLog("android应用管理","createAndroidApplication",
+        systemLogService.addLog("android应用管理", "createAndroidApplication",
                 "创建android应用");
         return androidApplicationDao.save(application).getId();
     }
@@ -59,7 +59,7 @@ public class AndroidApplicationService {
 
         androidApplicationDao.saveAndFlush(application);
 
-        systemLogService.addLog("android应用管理","updateAndroidApplication",
+        systemLogService.addLog("android应用管理", "updateAndroidApplication",
                 "更新android应用");
     }
 
@@ -78,7 +78,7 @@ public class AndroidApplicationService {
             androidApplicationDao.delete(application);
         }
 
-        systemLogService.addLog("android应用管理","deleteAndroidApplication",
+        systemLogService.addLog("android应用管理", "deleteAndroidApplication",
                 "批量删除android应用");
     }
 
@@ -89,7 +89,7 @@ public class AndroidApplicationService {
      * @return 信息
      */
     public CcrAndroidApplication getApplicationById(Long id) {
-        systemLogService.addLog("android应用管理","getApplicationById",
+        systemLogService.addLog("android应用管理", "getApplicationById",
                 "查询android应用信息");
         return (CcrAndroidApplication) applicationCommonService.setIconURL(androidApplicationDao.findById(id).get());
     }
@@ -98,7 +98,7 @@ public class AndroidApplicationService {
      * 查询应用列表
      */
     public Page<CcrAndroidApplication> page(Integer page, Integer pageSize) {
-        systemLogService.addLog("android应用管理","page",
+        systemLogService.addLog("android应用管理", "page",
                 "android应用分页查询");
 
         Page<CcrAndroidApplication> result = androidApplicationDao.findAll(PageRequest.of(page, pageSize));
@@ -113,10 +113,12 @@ public class AndroidApplicationService {
      * @param os 输出流
      */
     public void readAndroidStream(Long id, OutputStream os) throws IOException {
-        systemLogService.addLog("android应用管理","readAndroidStream",
+        systemLogService.addLog("android应用管理", "readAndroidStream",
                 "输出apk文件到输出流");
 
         CcrAndroidApplication application = androidApplicationDao.getOne(id);
+
+        application.setDownloadCount(application.getDownloadCount() + 1);
 
         File apkFile = new File(application.getApkPath());
 
@@ -130,7 +132,7 @@ public class AndroidApplicationService {
      * @return apk文件名称
      */
     public String getApkFileName(Long id) {
-        systemLogService.addLog("android应用管理","getApkFileName",
+        systemLogService.addLog("android应用管理", "getApkFileName",
                 "获取apk文件名称");
 
         CcrAndroidApplication application = androidApplicationDao.getOne(id);

@@ -93,7 +93,12 @@ public class CcrUserService implements AuthenticationUserDetailsService<CasAsser
         systemLogService.addLog("用户管理服务", "info",
                 "用户信息查询");
 
-        return userRepository.findById(id).get();
+        CcrUser user = userRepository.findById(id).get();
+
+        user.setPassWord(null);
+        user.setCasTicket(null);
+
+        return user;
     }
 
     /**
@@ -137,7 +142,13 @@ public class CcrUserService implements AuthenticationUserDetailsService<CasAsser
                 .withIgnorePaths("userId");
 
         return userRepository.findAll(Example.of(ccrUser, exampleMatcher),
-                PageRequest.of(page, pageSize));
+                PageRequest.of(page, pageSize))
+                .map(v -> {
+                    v.setPassWord(null);
+                    v.setCasTicket(null);
+                    return v;
+                })
+                ;
     }
 
     public List<CcrUserRule> findRulesByUserId(Long id) {
