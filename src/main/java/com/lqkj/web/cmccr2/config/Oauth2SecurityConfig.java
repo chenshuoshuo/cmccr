@@ -19,6 +19,7 @@ import org.springframework.security.oauth2.config.annotation.web.configurers.Aut
 import org.springframework.security.oauth2.config.annotation.web.configurers.AuthorizationServerSecurityConfigurer;
 import org.springframework.security.oauth2.config.annotation.web.configurers.ResourceServerSecurityConfigurer;
 import org.springframework.security.oauth2.provider.token.store.InMemoryTokenStore;
+import org.springframework.security.oauth2.provider.token.store.JdbcTokenStore;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.context.request.WebRequestInterceptor;
@@ -28,6 +29,7 @@ import org.springframework.web.servlet.ModelAndView;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.sql.DataSource;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -59,6 +61,9 @@ public class Oauth2SecurityConfig implements AuthorizationServerConfigurer, Reso
     @Autowired
     CcrUserService userService;
 
+    @Autowired
+    DataSource dataSource;
+
     @Override
     public void configure(AuthorizationServerSecurityConfigurer security) throws Exception {
         security.tokenKeyAccess("permitAll()")
@@ -83,7 +88,7 @@ public class Oauth2SecurityConfig implements AuthorizationServerConfigurer, Reso
     public void configure(AuthorizationServerEndpointsConfigurer endpoints) throws Exception {
         endpoints
                 .allowedTokenEndpointRequestMethods(HttpMethod.GET, HttpMethod.POST, HttpMethod.OPTIONS)
-                .tokenStore(new InMemoryTokenStore())
+                .tokenStore(new JdbcTokenStore(dataSource))
                 .userDetailsService(userService)
                 .authenticationManager(authenticationManager)
         ;
