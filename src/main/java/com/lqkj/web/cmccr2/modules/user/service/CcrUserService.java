@@ -51,7 +51,14 @@ public class CcrUserService implements AuthenticationUserDetailsService<CasAsser
         systemLogService.addLog("用户管理服务", "loadUserDetails",
                 "cas用户查询");
 
-        return userRepository.findByUserName(casAssertionAuthenticationToken.getName());
+        CcrUser ccrUser = userRepository.findByUserName(casAssertionAuthenticationToken.getName());
+
+        if (ccrUser.getPassword() == null) {
+            //注入ticket当做密码
+            ccrUser.setPassWord(passwordEncoder.encode(ccrUser.getCasTicket()));
+        }
+
+        return ccrUser;
     }
 
     /**
