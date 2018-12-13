@@ -18,7 +18,9 @@ import java.util.Objects;
  */
 @Inheritance(strategy = InheritanceType.JOINED)
 @Entity
-@Table(name = "ccr_version_application")
+@Table(name = "ccr_version_application", indexes = {
+        @Index(name = "name_index", columnList = "name", unique = true)
+})
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "type", visible = true)
 @JsonSubTypes(value = {
         @JsonSubTypes.Type(name = "ios", value = CcrIosApplication.class),

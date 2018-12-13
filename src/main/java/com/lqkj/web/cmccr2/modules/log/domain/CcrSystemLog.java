@@ -1,11 +1,13 @@
 package com.lqkj.web.cmccr2.modules.log.domain;
 
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
 import java.io.Serializable;
 import java.sql.Timestamp;
 import java.util.Objects;
+import java.util.UUID;
 
 /**
  * 系统日志
@@ -16,8 +18,8 @@ public class CcrSystemLog implements Serializable {
 
     @Id
     @Column(name = "log_id")
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long logId;
+    @Type(type = "org.hibernate.type.PostgresUUIDType")
+    private UUID logId;
 
     @Column(name = "user_id")
     private Long userId;
@@ -52,11 +54,11 @@ public class CcrSystemLog implements Serializable {
         this.userId = userId;
     }
 
-    public Long getLogId() {
+    public UUID getLogId() {
         return logId;
     }
 
-    public void setLogId(Long logId) {
+    public void setLogId(UUID logId) {
         this.logId = logId;
     }
 

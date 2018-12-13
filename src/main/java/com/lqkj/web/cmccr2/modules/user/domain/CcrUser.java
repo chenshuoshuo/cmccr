@@ -17,7 +17,11 @@ import java.util.*;
  */
 @ApiModel(value = "用户")
 @Entity
-@Table(name = "ccr_user")
+@Table(name = "ccr_user", indexes = {
+        @Index(name = "user_code_index", unique = true, columnList = "user_code"),
+        @Index(name = "open_id_index", unique = true, columnList = "open_id"),
+        @Index(name = "cas_ticket_index", unique = true, columnList = "cas_ticket")
+})
 public class CcrUser implements Serializable, UserDetails {
 
     @ApiModelProperty(value = "账号id")
@@ -31,7 +35,6 @@ public class CcrUser implements Serializable, UserDetails {
     @Column(name = "user_code")
     private String userCode;
 
-    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     @ApiModelProperty(value = "密码")
     @Column(name = "pass_word")
     private String passWord;
@@ -40,7 +43,6 @@ public class CcrUser implements Serializable, UserDetails {
     @Column(name = "open_id")
     private String openId;
 
-    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     @ApiModelProperty(value = "cas登录凭证")
     @Column(name = "cas_ticket")
     private String casTicket;

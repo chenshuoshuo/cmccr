@@ -17,7 +17,10 @@ import java.util.Objects;
  */
 @TypeDef(name = "string-array", typeClass = StringArrayType.class)
 @Entity
-@Table(name = "ccr_application")
+@Table(name = "ccr_application", indexes = {
+        @Index(name = "name_index", columnList = "name", unique = true),
+        @Index(name = "name_en_index", columnList = "name_en", unique = true)
+})
 public class CcrPcApplication implements Serializable {
 
     @Id

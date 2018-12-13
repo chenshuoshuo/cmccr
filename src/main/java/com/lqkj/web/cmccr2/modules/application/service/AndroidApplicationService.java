@@ -120,9 +120,21 @@ public class AndroidApplicationService {
 
         application.setDownloadCount(application.getDownloadCount() + 1);
 
+        androidApplicationDao.save(application);
+
         File apkFile = new File(application.getApkPath());
 
         IOUtils.copy(FileUtils.openInputStream(apkFile), os);
+    }
+
+    /**
+     * 检查应用是否有更新
+     */
+    public Boolean checkUpdate(Long id, Integer versionCode) {
+        CcrAndroidApplication androidApplication = androidApplicationDao.findById(id).get();
+
+        return androidApplication.getVersionCode() > versionCode ? Boolean.TRUE : Boolean.FALSE;
+
     }
 
     /**

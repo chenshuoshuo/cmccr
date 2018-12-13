@@ -10,7 +10,9 @@ import java.util.Objects;
  * 联合应用信息
  */
 @Entity
-@Table(name = "ccr_multi_application")
+@Table(name = "ccr_multi_application", indexes = {
+        @Index(name = "name_index", columnList = "name", unique = true)
+})
 public class CcrMultiApplication implements Serializable {
 
     @Id

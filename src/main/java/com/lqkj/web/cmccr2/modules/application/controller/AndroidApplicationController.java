@@ -90,4 +90,10 @@ public class AndroidApplicationController {
                         + androidApplicationService.getApkFileName(id))
                 .body(body);
     }
+
+    @GetMapping("/center/application/android/" + APIVersion.V1 + "/check/{id}")
+    public MessageBean<Boolean> checkUpdate(@PathVariable("id") Long id,
+                                            @RequestParam("versionCode") Integer versionCode) {
+        return null;
+    }
 }

@@ -11,7 +11,10 @@ import java.util.List;
  * 用户角色
  */
 @Entity
-@Table(name = "ccr_user_rule")
+@Table(name = "ccr_user_rule", indexes = {
+        @Index(name = "name_index", columnList = "name", unique = true),
+        @Index(name = "content_index", columnList = "content", unique = true)
+})
 public class CcrUserRule implements Serializable {
 
     @Id

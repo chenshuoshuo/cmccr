@@ -15,7 +15,10 @@ import java.util.Objects;
  */
 @ApiModel(description = "用户权限")
 @Entity
-@Table(name = "ccr_user_authority")
+@Table(name = "ccr_user_authority", indexes = {
+        @Index(name = "name_index", columnList = "name", unique = true),
+        @Index(name = "content_index", columnList = "content", unique = true)
+})
 public class CcrUserAuthority implements Serializable, GrantedAuthority {
 
     @ApiModelProperty(value = "权限id")

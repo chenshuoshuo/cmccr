@@ -11,7 +11,9 @@ import java.util.Objects;
  * 菜单
  */
 @Entity
-@Table(name = "ccr_menu")
+@Table(name = "ccr_menu", indexes = {
+        @Index(name = "name_index", columnList = "name", unique = true)
+})
 public class CcrMenu implements Serializable {
 
     @Id

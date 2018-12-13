@@ -15,8 +15,7 @@ import java.util.Objects;
  */
 @ApiModel(description = "违禁字")
 @Entity
-@Table(name = "ccr_sensitivity_word", indexes = {@Index(name = "word_index", columnList = "word")})
-@org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
+@Table(name = "ccr_sensitivity_word", indexes = {@Index(name = "word_index", columnList = "word", unique = true)})
 public class CcrSensitivityWord implements Serializable {
 
     @ApiModelProperty(value = "违禁字id", accessMode = ApiModelProperty.AccessMode.READ_ONLY)
