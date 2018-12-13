@@ -10,6 +10,7 @@ import org.springframework.core.io.ClassPathResource;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 
 /**
  * ip地址转换器配置
@@ -21,7 +22,13 @@ public class Ip2RegionConfig {
     public DbSearcher searcher() throws DbMakerConfigException, IOException {
         ClassPathResource classPathResource = new ClassPathResource("location/ip2region.db");
 
-        return new DbSearcher(dbConfig(),IOUtils.toByteArray(classPathResource.getInputStream()));
+        InputStream is = classPathResource.getInputStream();
+
+        try {
+            return new DbSearcher(dbConfig(), IOUtils.toByteArray(classPathResource.getInputStream()));
+        } finally {
+            IOUtils.closeQuietly(is);
+        }
     }
 
     private DbConfig dbConfig() throws DbMakerConfigException {
