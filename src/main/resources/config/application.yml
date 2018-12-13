@@ -104,6 +104,10 @@ spring:
         ip-address: ${server.address}
         port: ${server.port}
         prefer-ip-address: true
+  session:
+    store-type: jdbc
+    jdbc:
+      initialize-schema: always
 management:
   endpoints:
     web:
