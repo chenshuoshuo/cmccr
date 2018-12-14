@@ -28,7 +28,7 @@ public class CcrPcApplication implements Serializable {
     @Column(name = "app_id")
     private Long appId;
 
-    @Column(name = "icon")
+    @Column(name = "icon",columnDefinition = " text")
     private String icon;
 
     @Column(name = "name")

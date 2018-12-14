@@ -37,6 +37,9 @@ public class CcrMenu implements Serializable {
     @Column(name = "status")
     private Boolean status;
 
+    @Column(name = "url", length = 1024)
+    private String url;
+
     @UpdateTimestamp
     @Column(name = "update_time")
     private Timestamp updateTime;
@@ -97,6 +100,14 @@ public class CcrMenu implements Serializable {
         this.updateTime = updateTime;
     }
 
+    public String getUrl() {
+        return url;
+    }
+
+    public void setUrl(String url) {
+        this.url = url;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -108,15 +119,16 @@ public class CcrMenu implements Serializable {
                 type == ccrMenu.type &&
                 Objects.equals(sort, ccrMenu.sort) &&
                 Objects.equals(status, ccrMenu.status) &&
+                Objects.equals(url, ccrMenu.url) &&
                 Objects.equals(updateTime, ccrMenu.updateTime);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(menuId, name, icon, type, sort, status, updateTime);
+        return Objects.hash(menuId, name, icon, type, sort, status, url, updateTime);
     }
 
     public enum IpsMenuType {
-        embed, url, extend
+        embed, url, extend, application
     }
 }

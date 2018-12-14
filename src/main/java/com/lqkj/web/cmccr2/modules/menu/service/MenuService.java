@@ -68,6 +68,9 @@ public class MenuService {
         return menuDao.save(menu);
     }
 
+    /**
+     * 分页查询
+     */
     public Page<CcrMenu> page(String keyword, Integer page, Integer pageSize) {
         systemLogService.addLog("菜单管理服务","page"
                 ,"分页查询菜单信息");
@@ -83,5 +86,21 @@ public class MenuService {
                 PageRequest.of(page, pageSize));
     }
 
+    /**
+     * 按照类型分页查询
+     */
+    public Page<CcrMenu> typePage(CcrMenu.IpsMenuType type, Integer page, Integer pageSize) {
+        systemLogService.addLog("菜单管理服务","typePage"
+                ,"按照类型分页查询菜单信息");
 
+        CcrMenu menu = new CcrMenu();
+        menu.setType(type);
+
+        ExampleMatcher matcher = ExampleMatcher.matching()
+                .withMatcher("type", ExampleMatcher.GenericPropertyMatchers.exact())
+                .withIgnorePaths("id");
+
+        return menuDao.findAll(Example.of(menu, matcher),
+                PageRequest.of(page, pageSize));
+    }
 }

@@ -19,7 +19,7 @@ public class WeiXinOAuthService {
      * 创建授权请求地址
      */
     public String createAuthorizeURL(String baseURL, Long userId) {
-        String url = new StringBuilder()
+        return new StringBuilder()
                 .append("https://open.weixin.qq.com/connect/oauth2/authorize?appid=")
                 .append(clientId)
                 .append("&redirect_uri=")
@@ -29,7 +29,5 @@ public class WeiXinOAuthService {
                 .append(userId)
                 .append("&response_type=code&scope=snsapi_base&state=STATE#wechat_redirect")
                 .toString();
-
-        return url;
     }
 }

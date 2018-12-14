@@ -65,5 +65,11 @@ public class MenuController {
         return MessageBean.ok(menuService.page(keyword, page, pageSize));
     }
 
-
+    @ApiOperation("按照类型分页查询菜单列表")
+    @GetMapping("/center/menu/" + VERSION + "/page/{type}")
+    public MessageBean<Page<CcrMenu>> typePage(@RequestParam Integer page,
+                                           @RequestParam Integer pageSize,
+                                           @PathVariable CcrMenu.IpsMenuType type) {
+        return MessageBean.ok(menuService.typePage(type, page, pageSize));
+    }
 }

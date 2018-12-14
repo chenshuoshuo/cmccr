@@ -92,6 +92,14 @@ public class Oauth2SecurityConfig implements AuthorizationServerConfigurer, Reso
                 .secret(passwordEncoder.encode("cmccr-h5"))
                 .accessTokenValiditySeconds((int) TimeUnit.MINUTES.toSeconds(10))
                 .refreshTokenValiditySeconds((int) TimeUnit.DAYS.toSeconds(7))
+                    .and()
+                .withClient("cmips-h5")
+                .scopes("js")
+                .resourceIds("cmccr-server")
+                .authorizedGrantTypes("password", "refresh_token")
+                .secret(passwordEncoder.encode("cmips-h5"))
+                .accessTokenValiditySeconds((int) TimeUnit.MINUTES.toSeconds(10))
+                .refreshTokenValiditySeconds((int) TimeUnit.DAYS.toSeconds(7))
         ;
     }
 
