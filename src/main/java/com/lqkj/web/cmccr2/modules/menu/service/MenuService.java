@@ -35,6 +35,8 @@ public class MenuService {
         systemLogService.addLog("菜单管理服务", "createMenu"
                 , "创建菜单");
 
+        menu.setStatus(Boolean.TRUE);
+
         return menuDao.save(menu).getMenuId();
     }
 
