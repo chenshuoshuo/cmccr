@@ -32,8 +32,8 @@ public class MenuService {
      * 装机菜单
      */
     public Long createMenu(CcrMenu menu) {
-        systemLogService.addLog("菜单管理服务","createMenu"
-                ,"创建菜单");
+        systemLogService.addLog("菜单管理服务", "createMenu"
+                , "创建菜单");
 
         return menuDao.save(menu).getMenuId();
     }
@@ -41,19 +41,25 @@ public class MenuService {
     /**
      * 删除应用
      */
-    public void deleteMenu(Long id) {
-        systemLogService.addLog("菜单管理服务","deleteMenu"
-                ,"删除菜单");
+    public void deleteMenu(Long[] id) {
+        systemLogService.addLog("菜单管理服务", "deleteMenu"
+                , "删除菜单");
 
-        menuDao.deleteById(id);
+        for (Long i : id) {
+            CcrMenu menu = menuDao.getOne(i);
+
+            if (!menu.getType().equals(CcrMenu.IpsMenuType.embed)) {
+                menuDao.delete(menu);
+            }
+        }
     }
 
     /**
      * 得到根节点
      */
     public CcrMenu info(Long id) {
-        systemLogService.addLog("菜单管理服务","info"
-                ,"查询菜单信息");
+        systemLogService.addLog("菜单管理服务", "info"
+                , "查询菜单信息");
 
         return menuDao.findById(id).get();
     }
@@ -62,8 +68,8 @@ public class MenuService {
      * 更新节点
      */
     public CcrMenu update(Long id, CcrMenu menu) {
-        systemLogService.addLog("菜单管理服务","update"
-                ,"更新菜单信息");
+        systemLogService.addLog("菜单管理服务", "update"
+                , "更新菜单信息");
 
         return menuDao.save(menu);
     }
@@ -72,8 +78,8 @@ public class MenuService {
      * 分页查询
      */
     public Page<CcrMenu> page(String keyword, Integer page, Integer pageSize) {
-        systemLogService.addLog("菜单管理服务","page"
-                ,"分页查询菜单信息");
+        systemLogService.addLog("菜单管理服务", "page"
+                , "分页查询菜单信息");
 
         CcrMenu menu = new CcrMenu();
         menu.setName(keyword);
@@ -90,8 +96,8 @@ public class MenuService {
      * 按照类型分页查询
      */
     public Page<CcrMenu> typePage(CcrMenu.IpsMenuType type, Integer page, Integer pageSize) {
-        systemLogService.addLog("菜单管理服务","typePage"
-                ,"按照类型分页查询菜单信息");
+        systemLogService.addLog("菜单管理服务", "typePage"
+                , "按照类型分页查询菜单信息");
 
         CcrMenu menu = new CcrMenu();
         menu.setType(type);

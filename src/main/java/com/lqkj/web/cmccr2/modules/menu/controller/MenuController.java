@@ -29,7 +29,7 @@ public class MenuController {
     @ApiOperation("删除菜单")
     @ApiImplicitParam(name = "id", value = "菜单id")
     @DeleteMapping("/center/menu/" + VERSION + "/delete/{id}")
-    public MessageBean<Object> delete(@PathVariable("id") Long id) throws Exception {
+    public MessageBean<Object> delete(@PathVariable("id") Long[] id) throws Exception {
         menuService.deleteMenu(id);
         return MessageBean.ok();
     }
