@@ -60,7 +60,6 @@ import java.util.concurrent.TimeUnit;
 @Configuration
 @EnableAuthorizationServer
 @EnableResourceServer
-@EnableOAuth2Client
 public class Oauth2SecurityConfig implements AuthorizationServerConfigurer, ResourceServerConfigurer {
 
     @Autowired
