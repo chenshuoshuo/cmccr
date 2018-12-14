@@ -92,7 +92,7 @@ public class MultiApplicationController {
                                                         HttpServletRequest request) {
         StreamingResponseBody body = outputStream -> {
             try {
-                multiApplicationService.createQRCode(id, ServletUtils.createBaseUrl(request), outputStream);
+                multiApplicationService.createAppQRCode(id, ServletUtils.createBaseUrl(request), outputStream);
             } catch (Exception e) {
                 e.printStackTrace();
             }

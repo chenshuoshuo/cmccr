@@ -28,8 +28,8 @@ public class CcrCasController {
         return ticket;
     }
 
-    @ApiOperation("获取cas用户信息")
-    @PostMapping("/center/cas/user/")
+    @ApiOperation("绑定cas ticket")
+    @PostMapping("/center/cas/bind")
     public MessageBean<String> user(@ApiIgnore Authentication authentication,
                             @RequestParam String ticket) {
         casService.updateTicket(authentication.getName(), ticket);

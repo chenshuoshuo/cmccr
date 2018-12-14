@@ -21,7 +21,7 @@ public class PcApplicationController {
 
     @ApiOperation("增加pc端应用")
     @PutMapping("/center/application/pc/" + APIVersion.V1 + "/create")
-    public MessageBean<CcrPcApplication> add(CcrPcApplication application) {
+    public MessageBean<CcrPcApplication> add(@RequestBody CcrPcApplication application) {
         return MessageBean.ok(pcApplicationService.add(application));
     }
 

@@ -4,6 +4,9 @@ admin:
 cas:
   base: http://192.168.4.240:8884/cas
   login: ${cas.base}/login/
+weixin:
+  client_id: wxe157e9dc1e7cc817
+  client_secret: 273ddb2fda8c03a95e31d151bff966b4
 server:
   port: 8100
   servlet:
@@ -108,6 +111,8 @@ spring:
     store-type: jdbc
     jdbc:
       initialize-schema: always
+  main:
+    allow-bean-definition-overriding: true
 management:
   endpoints:
     web:

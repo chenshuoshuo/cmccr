@@ -1,16 +1,32 @@
 package com.lqkj.web.cmccr2.modules.user.controller;
 
+import com.google.zxing.WriterException;
 import com.lqkj.web.cmccr2.message.MessageBean;
 import com.lqkj.web.cmccr2.message.MessageListBean;
+import com.lqkj.web.cmccr2.modules.application.service.MultiApplicationService;
 import com.lqkj.web.cmccr2.modules.user.domain.CcrUser;
 import com.lqkj.web.cmccr2.modules.user.domain.CcrUserRule;
 import com.lqkj.web.cmccr2.modules.user.service.CcrUserService;
+import com.lqkj.web.cmccr2.modules.user.service.WeiXinOAuthService;
+import com.lqkj.web.cmccr2.utils.ServletUtils;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
+import springfox.documentation.annotations.ApiIgnore;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.io.OutputStream;
 
 @Api(tags = "用户管理")
 @RestController
@@ -19,6 +35,12 @@ public class CcrUserController {
 
     @Autowired
     CcrUserService ccrUserService;
+
+    @Autowired
+    WeiXinOAuthService weiXinOAuthService;
+
+    @Autowired
+    MultiApplicationService multiApplicationService;
 
     @ApiOperation("注册用户")
     @PutMapping("/center/user/register")
@@ -55,5 +77,43 @@ public class CcrUserController {
     @GetMapping("/center/user/{id}/rules")
     public MessageListBean<CcrUserRule> ruleByUserId(@PathVariable Long id) {
         return MessageListBean.ok(ccrUserService.findRulesByUserId(id));
+    }
+
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "platform", allowableValues = "weixin")
+    })
+    @ApiOperation("oauth用户绑定")
+    @GetMapping("/center/user/{platform}/auth")
+    public ResponseEntity<StreamingResponseBody> auth(@ApiIgnore Authentication authentication,
+                                                      @ApiIgnore HttpServletRequest request,
+                                                      @PathVariable String platform) throws IOException {
+        StreamingResponseBody body = outputStream -> {
+            String baseURL = ServletUtils.createBaseUrl(request);
+
+            CcrUser user = (CcrUser) authentication.getPrincipal();
+
+            try {
+                multiApplicationService.createQRCode(outputStream, null,
+                        weiXinOAuthService.createAuthorizeURL(baseURL, user.getUserId()));
+            } catch (WriterException e) {
+                e.printStackTrace();
+            }
+        };
+
+        return ResponseEntity
+                .ok()
+                .contentType(MediaType.IMAGE_PNG)
+                .body(body);
+    }
+
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "platform", allowableValues = "weixin")
+    })
+    @ApiOperation("oauth2回调")
+    @GetMapping("/center/user/{platform}/callback")
+    public void callback(@RequestParam(name = "user_id") Long userId,
+                         @RequestParam(name = "code") String code,
+                         @RequestParam(name = "state") String state) {
+
     }
 }

@@ -4,6 +4,8 @@ import com.lqkj.web.cmccr2.modules.log.service.CcrSystemLogService;
 import com.lqkj.web.cmccr2.modules.user.dao.CcrUserRepository;
 import com.lqkj.web.cmccr2.modules.user.domain.CcrUser;
 import com.lqkj.web.cmccr2.modules.user.domain.CcrUserRule;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Example;
@@ -16,6 +18,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.oauth2.client.OAuth2RestTemplate;
+import org.springframework.security.oauth2.common.OAuth2AccessToken;
 import org.springframework.security.oauth2.provider.ClientDetails;
 import org.springframework.security.oauth2.provider.ClientDetailsService;
 import org.springframework.security.oauth2.provider.ClientRegistrationException;
@@ -151,6 +155,9 @@ public class CcrUserService implements AuthenticationUserDetailsService<CasAsser
                 ;
     }
 
+    /**
+     * 查询用户角色
+     */
     public List<CcrUserRule> findRulesByUserId(Long id) {
         systemLogService.addLog("用户管理服务", "findRulesByUserId",
                 "查询用户角色");

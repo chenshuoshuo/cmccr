@@ -122,15 +122,21 @@ public class MultiApplicationService {
      * @param applicationId 组合应用id
      * @param os            输出流
      */
-    public void createQRCode(Long applicationId, String requestURL, OutputStream os) throws Exception {
-        systemLogService.addLog("组合应用服务","createQRCode"
+    public void createAppQRCode(Long applicationId, String requestURL, OutputStream os) throws Exception {
+        systemLogService.addLog("组合应用服务","createAppQRCode"
                 ,"创建二维码");
 
         CcrMultiApplication application = multiApplicationDao.getOne(applicationId);
 
-        String content = requestURL + "/center/application/multi/" + APIVersion.V2 + "/jump/"
+        String iconPath = application.getIconPath();
+
+        String url = requestURL + "/center/application/multi/" + APIVersion.V2 + "/jump/"
                 + applicationId;
 
+        createQRCode(os, iconPath, url);
+    }
+
+    public void createQRCode(OutputStream os, String iconPath, String url) throws WriterException, IOException {
         HashMap<EncodeHintType, Object> hints = new HashMap<>();
         hints.put(EncodeHintType.CHARACTER_SET, "utf-8");    //指定字符编码为“utf-8”
         hints.put(EncodeHintType.ERROR_CORRECTION, ErrorCorrectionLevel.H);  //指定二维码的纠错等级
@@ -138,15 +144,15 @@ public class MultiApplicationService {
 
         QRCodeWriter writer = new QRCodeWriter();
 
-        BitMatrix m = writer.encode(content, BarcodeFormat.QR_CODE, QR_CODE_WIDTH, QR_CODE_HEIGHT);
+        BitMatrix m = writer.encode(url, BarcodeFormat.QR_CODE, QR_CODE_WIDTH, QR_CODE_HEIGHT);
 
         BufferedImage bufferedImage = MatrixToImageWriter.toBufferedImage(m,
                 new MatrixToImageConfig(0xFF000001, 0xFFFFFFF1));
 
-        if (application.getIconPath() != null) {
+        if (iconPath != null) {
             Graphics2D graphics = bufferedImage.createGraphics();
 
-            BufferedImage logoImage = ImageIO.read(new File(application.getIconPath()));
+            BufferedImage logoImage = ImageIO.read(new File(iconPath));
 
             graphics.drawImage(
                     logoImage.getScaledInstance(QR_CODE_WIDTH / QR_CODE_SCALE,

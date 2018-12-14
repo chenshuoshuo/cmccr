@@ -3,8 +3,10 @@ package com.lqkj.web.cmccr2.config;
 import com.google.common.collect.Lists;
 import com.lqkj.web.cmccr2.modules.user.service.CcrUserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
+import org.springframework.core.env.Environment;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.cas.web.CasAuthenticationFilter;
@@ -12,6 +14,13 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.oauth2.client.DefaultOAuth2ClientContext;
+import org.springframework.security.oauth2.client.OAuth2ClientContext;
+import org.springframework.security.oauth2.client.OAuth2RestOperations;
+import org.springframework.security.oauth2.client.OAuth2RestTemplate;
+import org.springframework.security.oauth2.client.resource.OAuth2ProtectedResourceDetails;
+import org.springframework.security.oauth2.client.token.grant.code.AuthorizationCodeResourceDetails;
+import org.springframework.security.oauth2.common.AuthenticationScheme;
 import org.springframework.security.oauth2.config.annotation.builders.InMemoryClientDetailsServiceBuilder;
 import org.springframework.security.oauth2.config.annotation.configurers.ClientDetailsServiceConfigurer;
 import org.springframework.security.oauth2.config.annotation.web.configuration.*;
@@ -30,6 +39,7 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.sql.DataSource;
+import java.util.Arrays;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -50,6 +60,7 @@ import java.util.concurrent.TimeUnit;
 @Configuration
 @EnableAuthorizationServer
 @EnableResourceServer
+@EnableOAuth2Client
 public class Oauth2SecurityConfig implements AuthorizationServerConfigurer, ResourceServerConfigurer {
 
     @Autowired
