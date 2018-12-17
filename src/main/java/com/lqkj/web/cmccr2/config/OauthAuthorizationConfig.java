@@ -1,45 +1,28 @@
 package com.lqkj.web.cmccr2.config;
 
-import com.google.common.collect.Lists;
 import com.lqkj.web.cmccr2.modules.user.service.CcrUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.annotation.Order;
-import org.springframework.core.env.Environment;
+import org.springframework.context.annotation.Primary;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.cas.web.CasAuthenticationFilter;
-import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.crypto.password.NoOpPasswordEncoder;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.oauth2.client.DefaultOAuth2ClientContext;
-import org.springframework.security.oauth2.client.OAuth2ClientContext;
-import org.springframework.security.oauth2.client.OAuth2RestOperations;
-import org.springframework.security.oauth2.client.OAuth2RestTemplate;
-import org.springframework.security.oauth2.client.resource.OAuth2ProtectedResourceDetails;
-import org.springframework.security.oauth2.client.token.grant.code.AuthorizationCodeResourceDetails;
-import org.springframework.security.oauth2.common.AuthenticationScheme;
-import org.springframework.security.oauth2.config.annotation.builders.InMemoryClientDetailsServiceBuilder;
 import org.springframework.security.oauth2.config.annotation.configurers.ClientDetailsServiceConfigurer;
-import org.springframework.security.oauth2.config.annotation.web.configuration.*;
+import org.springframework.security.oauth2.config.annotation.web.configuration.AuthorizationServerConfigurer;
+import org.springframework.security.oauth2.config.annotation.web.configuration.EnableAuthorizationServer;
 import org.springframework.security.oauth2.config.annotation.web.configurers.AuthorizationServerEndpointsConfigurer;
 import org.springframework.security.oauth2.config.annotation.web.configurers.AuthorizationServerSecurityConfigurer;
-import org.springframework.security.oauth2.config.annotation.web.configurers.ResourceServerSecurityConfigurer;
-import org.springframework.security.oauth2.provider.token.store.InMemoryTokenStore;
-import org.springframework.security.oauth2.provider.token.store.JdbcTokenStore;
-import org.springframework.ui.ModelMap;
-import org.springframework.web.context.request.WebRequest;
-import org.springframework.web.context.request.WebRequestInterceptor;
-import org.springframework.web.servlet.HandlerInterceptor;
-import org.springframework.web.servlet.ModelAndView;
+import org.springframework.security.oauth2.provider.token.TokenStore;
+import org.springframework.security.oauth2.provider.token.store.JwtAccessTokenConverter;
+import org.springframework.security.oauth2.provider.token.store.JwtTokenStore;
+import org.springframework.security.oauth2.provider.token.store.KeyStoreKeyFactory;
 
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import javax.sql.DataSource;
-import java.util.Arrays;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -59,14 +42,11 @@ import java.util.concurrent.TimeUnit;
  */
 @Configuration
 @EnableAuthorizationServer
-@EnableResourceServer
-public class Oauth2SecurityConfig implements AuthorizationServerConfigurer, ResourceServerConfigurer {
+@EnableWebSecurity
+public class OauthAuthorizationConfig extends WebSecurityConfigurerAdapter implements AuthorizationServerConfigurer {
 
     @Autowired
     PasswordEncoder passwordEncoder;
-
-    @Autowired
-    AuthenticationManager authenticationManager;
 
     @Autowired
     CcrUserService userService;
@@ -74,8 +54,11 @@ public class Oauth2SecurityConfig implements AuthorizationServerConfigurer, Reso
     @Autowired
     DataSource dataSource;
 
+    @Autowired
+    AuthenticationManager authenticationManager;
+
     @Override
-    public void configure(AuthorizationServerSecurityConfigurer security) throws Exception {
+    public void configure(AuthorizationServerSecurityConfigurer security) {
         security.tokenKeyAccess("permitAll()")
                 .checkTokenAccess("isAuthenticated()")
                 .allowFormAuthenticationForClients();
@@ -106,33 +89,43 @@ public class Oauth2SecurityConfig implements AuthorizationServerConfigurer, Reso
     public void configure(AuthorizationServerEndpointsConfigurer endpoints) throws Exception {
         endpoints
                 .allowedTokenEndpointRequestMethods(HttpMethod.GET, HttpMethod.POST, HttpMethod.OPTIONS)
-                .tokenStore(new JdbcTokenStore(dataSource))
+                .tokenStore(tokenStore())
                 .userDetailsService(userService)
                 .authenticationManager(authenticationManager)
         ;
     }
 
-    @Override
-    public void configure(ResourceServerSecurityConfigurer resources) throws Exception {
-        resources.resourceId("cmccr-server")
-                .stateless(false);
+    @Bean
+    @Primary
+    public TokenStore tokenStore() {
+        return new JwtTokenStore(accessTokenConverter());
     }
 
+    /**
+     * keytool -genkeypair -alias oauth -keyalg RSA -keypass lqkj007 -keystore jwt.jks -storepass lqkj007
+     * keytool -list -rfc --keystore jwt.jks | openssl x509 -inform pem -pubkey
+     */
+    @Bean
+    @Primary
+    public JwtAccessTokenConverter accessTokenConverter() {
+        JwtAccessTokenConverter converter = new JwtAccessTokenConverter();
+
+        KeyStoreKeyFactory keyStoreKeyFactory =
+                new KeyStoreKeyFactory(new ClassPathResource("key/jwt.jks"), "lqkj007".toCharArray());
+
+        converter.setKeyPair(keyStoreKeyFactory.getKeyPair("oauth"));
+
+        return converter;
+    }
+
+    @Bean
     @Override
-    public void configure(HttpSecurity http) throws Exception {
-        http.cors().and()
-                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.ALWAYS)
-                .and()
-                .authorizeRequests()
-                .antMatchers("/center/user/register")
-                .permitAll()
-                .antMatchers("/center/application/**",
-                        "/center/menu/**",
-                        "/center/request/**",
-                        "/center/sensitivity/**",
-                        "/center/store/**",
-                        "/center/user/**")
-                .authenticated()
-        ;
+    public AuthenticationManager authenticationManagerBean() throws Exception {
+        return super.authenticationManagerBean();
+    }
+
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
     }
 }

@@ -1,9 +1,11 @@
 package com.lqkj.web.cmccr2.modules.user.controller;
 
 import com.lqkj.web.cmccr2.message.MessageBean;
+import com.lqkj.web.cmccr2.modules.user.domain.CcrUser;
 import com.lqkj.web.cmccr2.modules.user.service.CcrCasService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.dom4j.DocumentException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,10 +31,9 @@ public class CcrCasController {
     }
 
     @ApiOperation("绑定cas ticket")
-    @PostMapping("/center/cas/bind")
-    public MessageBean<String> user(@ApiIgnore Authentication authentication,
-                            @RequestParam String ticket) {
-        casService.updateTicket(authentication.getName(), ticket);
-        return MessageBean.ok(ticket);
+    @RequestMapping(value = "/center/cas/bind", method = {RequestMethod.GET, RequestMethod.POST})
+    public MessageBean<CcrUser> user(@RequestParam String service,
+                                     @RequestParam String ticket) throws DocumentException {
+        return MessageBean.ok(casService.updateTicket(service, ticket));
     }
 }

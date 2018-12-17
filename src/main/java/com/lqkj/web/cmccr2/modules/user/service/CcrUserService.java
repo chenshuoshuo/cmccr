@@ -4,25 +4,16 @@ import com.lqkj.web.cmccr2.modules.log.service.CcrSystemLogService;
 import com.lqkj.web.cmccr2.modules.user.dao.CcrUserRepository;
 import com.lqkj.web.cmccr2.modules.user.domain.CcrUser;
 import com.lqkj.web.cmccr2.modules.user.domain.CcrUserRule;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.security.cas.authentication.CasAssertionAuthenticationToken;
-import org.springframework.security.core.userdetails.AuthenticationUserDetailsService;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.oauth2.client.OAuth2RestTemplate;
-import org.springframework.security.oauth2.common.OAuth2AccessToken;
-import org.springframework.security.oauth2.provider.ClientDetails;
-import org.springframework.security.oauth2.provider.ClientDetailsService;
-import org.springframework.security.oauth2.provider.ClientRegistrationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -33,7 +24,7 @@ import java.util.List;
  */
 @Service
 @Transactional
-public class CcrUserService implements AuthenticationUserDetailsService<CasAssertionAuthenticationToken>, UserDetailsService {
+public class CcrUserService implements UserDetailsService {
 
     @Autowired
     CcrUserRepository userRepository;
@@ -46,24 +37,6 @@ public class CcrUserService implements AuthenticationUserDetailsService<CasAsser
 
     @Value("${admin.code}")
     Integer adminCode;
-
-    /**
-     * cas登录
-     */
-    @Override
-    public UserDetails loadUserDetails(CasAssertionAuthenticationToken casAssertionAuthenticationToken) throws UsernameNotFoundException {
-        systemLogService.addLog("用户管理服务", "loadUserDetails",
-                "cas用户查询");
-
-        CcrUser ccrUser = userRepository.findByUserName(casAssertionAuthenticationToken.getName());
-
-        if (ccrUser.getPassword() == null) {
-            //注入ticket当做密码
-            ccrUser.setPassWord(passwordEncoder.encode(ccrUser.getCasTicket()));
-        }
-
-        return ccrUser;
-    }
 
     /**
      * 密码登录
