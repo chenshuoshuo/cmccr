@@ -88,9 +88,4 @@ public class WebMvcConfig implements WebMvcConfigurer {
 
         return jsonConverter;
     }
-
-    @Bean
-    public RestTemplate restTemplate() {
-        return new RestTemplate();
-    }
 }

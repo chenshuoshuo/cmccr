@@ -46,6 +46,12 @@ public class CcrUserService implements UserDetailsService {
         systemLogService.addLog("用户管理服务", "loadClientByClientId",
                 "普通用户查询");
 
+        CcrUser user = userRepository.findByUserName(username);
+
+        if (user.getPassword() == null && user.getCasTicket() != null) {
+            user.setPassWord(passwordEncoder.encode(user.getCasTicket()));
+        }
+
         return userRepository.findByUserName(username);
     }
 
@@ -60,6 +66,7 @@ public class CcrUserService implements UserDetailsService {
                 "用户注册");
 
         ccrUser.setPassWord(passwordEncoder.encode(ccrUser.getPassword()));
+
         return userRepository.save(ccrUser);
     }
 

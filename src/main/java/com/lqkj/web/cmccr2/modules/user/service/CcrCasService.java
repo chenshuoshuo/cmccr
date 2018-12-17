@@ -26,38 +26,20 @@ public class CcrCasService {
     @Autowired
     CcrSystemLogService systemLogService;
 
-    @Autowired
-    RestTemplate restTemplate;
-
     @Value("${cas.base}")
     String casBaseURL;
-
-    SAXReader reader = new SAXReader();
 
     /**
      * 更新用户ticket
      */
-    public CcrUser updateTicket(String service, String ticket) throws DocumentException {
+    public CcrUser updateTicket(String username, String ticket) throws DocumentException {
         systemLogService.addLog("cas ticket处理服务", "updateTicket",
                 "更新用户ticket");
 
-        CcrUser ccrUser = userRepository.findByUserName(proxyValidate(ticket, service));
+        CcrUser ccrUser = userRepository.findByUserName(username);
 
         ccrUser.setCasTicket(ticket);
 
         return userRepository.save(ccrUser);
-    }
-
-    private String proxyValidate(String ticket, String service) throws DocumentException {
-        String url = casBaseURL + "/proxyValidate?ticket=" +
-                ticket + "&service=" + service;
-
-        ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
-
-        String body = response.getBody();
-
-        Document document = reader.read(body);
-
-        return document.selectSingleNode("//*[name()='user']").getText();
     }
 }

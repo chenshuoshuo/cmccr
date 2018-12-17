@@ -32,8 +32,8 @@ public class CcrCasController {
 
     @ApiOperation("绑定cas ticket")
     @RequestMapping(value = "/center/cas/bind", method = {RequestMethod.GET, RequestMethod.POST})
-    public MessageBean<CcrUser> user(@RequestParam String service,
+    public MessageBean<CcrUser> user(@RequestParam String username,
                                      @RequestParam String ticket) throws DocumentException {
-        return MessageBean.ok(casService.updateTicket(service, ticket));
+        return MessageBean.ok(casService.updateTicket(username, ticket));
     }
 }
