@@ -80,7 +80,7 @@ public class ApplicationCommonService {
     public CcrVersionApplication setIconURL(CcrVersionApplication application) {
         if (application.getIconPath() != null) {
             String url = application.getIconPath()
-                    .replace("./upload/", "/static/");
+                    .replace("./upload/", "/upload/");
 
             application.setIconURL(url);
         }

@@ -50,7 +50,7 @@ public class MenuService {
         for (Long i : id) {
             CcrMenu menu = menuDao.getOne(i);
 
-            if (!menu.getType().equals(CcrMenu.IpsMenuType.embed)) {
+            if (menu.getType()!= null && !menu.getType().equals(CcrMenu.IpsMenuType.embed)) {
                 menuDao.delete(menu);
             }
         }

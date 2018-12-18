@@ -28,6 +28,14 @@ public class CcrIosApplication extends CcrVersionApplication {
     @Column(name = "download_count")
     private Long downloadCount;
 
+    @ApiModelProperty(value = "版本名称", required = true)
+    @Column(name = "version_name", nullable = false, length = 128)
+    private String versionName;
+
+    @ApiModelProperty(value = "版本编号", required = true)
+    @Column(name = "version_code", nullable = false, length = 32)
+    private Integer versionCode;
+
     public Long getDownloadCount() {
         return downloadCount;
     }
@@ -50,5 +58,21 @@ public class CcrIosApplication extends CcrVersionApplication {
 
     public void setAppStoreId(Long appStoreId) {
         this.appStoreId = appStoreId;
+    }
+
+    public String getVersionName() {
+        return versionName;
+    }
+
+    public void setVersionName(String versionName) {
+        this.versionName = versionName;
+    }
+
+    public Integer getVersionCode() {
+        return versionCode;
+    }
+
+    public void setVersionCode(Integer versionCode) {
+        this.versionCode = versionCode;
     }
 }

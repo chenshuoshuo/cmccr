@@ -1,9 +1,11 @@
 package com.lqkj.web.cmccr2.modules.application.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.sql.Timestamp;
 import java.util.Objects;
 
 /**
@@ -34,6 +36,10 @@ public class CcrMultiApplication implements Serializable {
 
     @Column(name = "web_url")
     private String webURL;
+
+    @UpdateTimestamp
+    @Column(name = "update_time")
+    private Timestamp updateTime;
 
     public String getIconPath() {
         return iconPath;
@@ -83,6 +89,14 @@ public class CcrMultiApplication implements Serializable {
         this.webURL = webURL;
     }
 
+    public Timestamp getUpdateTime() {
+        return updateTime;
+    }
+
+    public void setUpdateTime(Timestamp updateTime) {
+        this.updateTime = updateTime;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -93,11 +107,12 @@ public class CcrMultiApplication implements Serializable {
                 Objects.equals(iconPath, that.iconPath) &&
                 Objects.equals(androidURL, that.androidURL) &&
                 Objects.equals(iosURL, that.iosURL) &&
-                Objects.equals(webURL, that.webURL);
+                Objects.equals(webURL, that.webURL) &&
+                Objects.equals(updateTime, that.updateTime);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, iconPath, androidURL, iosURL, webURL);
+        return Objects.hash(id, name, iconPath, androidURL, iosURL, webURL, updateTime);
     }
 }
