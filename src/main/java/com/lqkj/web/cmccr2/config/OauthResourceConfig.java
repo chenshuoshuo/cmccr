@@ -55,13 +55,13 @@ public class OauthResourceConfig implements ResourceServerConfigurer {
         resources.resourceId("cmccr-server")
                 .tokenStore(tokenStore())
                 .tokenServices(tokenServices())
-                .stateless(false);
+                .stateless(true);
     }
 
     @Override
     public void configure(HttpSecurity http) throws Exception {
         http.cors().and()
-                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.ALWAYS)
+                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .authorizeRequests()
                 .antMatchers("/center/user/register")
@@ -91,10 +91,10 @@ public class OauthResourceConfig implements ResourceServerConfigurer {
     public JwtAccessTokenConverter accessTokenConverter() throws IOException {
         JwtAccessTokenConverter converter = new JwtAccessTokenConverter();
 
-        String publicKey = IOUtils.resourceToString("key/public.pem", Charset.defaultCharset(),
-                this.getClass().getClassLoader());
+        KeyStoreKeyFactory keyStoreKeyFactory =
+                new KeyStoreKeyFactory(new ClassPathResource("key/jwt.jks"), "lqkj007".toCharArray());
 
-        converter.setVerifierKey(publicKey);
+        converter.setKeyPair(keyStoreKeyFactory.getKeyPair("oauth"));
 
         return converter;
     }
@@ -104,6 +104,7 @@ public class OauthResourceConfig implements ResourceServerConfigurer {
     public DefaultTokenServices tokenServices() throws IOException {
         DefaultTokenServices defaultTokenServices = new DefaultTokenServices();
         defaultTokenServices.setTokenStore(tokenStore());
+        defaultTokenServices.setTokenEnhancer(accessTokenConverter());
         defaultTokenServices.setSupportRefreshToken(true);
         return defaultTokenServices;
     }

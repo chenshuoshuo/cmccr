@@ -8,21 +8,25 @@ import org.springframework.context.annotation.Primary;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.jwt.crypto.sign.RsaVerifier;
 import org.springframework.security.oauth2.config.annotation.configurers.ClientDetailsServiceConfigurer;
 import org.springframework.security.oauth2.config.annotation.web.configuration.AuthorizationServerConfigurer;
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableAuthorizationServer;
 import org.springframework.security.oauth2.config.annotation.web.configurers.AuthorizationServerEndpointsConfigurer;
 import org.springframework.security.oauth2.config.annotation.web.configurers.AuthorizationServerSecurityConfigurer;
+import org.springframework.security.oauth2.provider.token.DefaultTokenServices;
 import org.springframework.security.oauth2.provider.token.TokenStore;
 import org.springframework.security.oauth2.provider.token.store.JwtAccessTokenConverter;
 import org.springframework.security.oauth2.provider.token.store.JwtTokenStore;
 import org.springframework.security.oauth2.provider.token.store.KeyStoreKeyFactory;
 
 import javax.sql.DataSource;
+import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -90,6 +94,7 @@ public class OauthAuthorizationConfig extends WebSecurityConfigurerAdapter imple
         endpoints
                 .allowedTokenEndpointRequestMethods(HttpMethod.GET, HttpMethod.POST, HttpMethod.OPTIONS)
                 .tokenStore(tokenStore())
+                .tokenServices(tokenServices())
                 .userDetailsService(userService)
                 .authenticationManager(authenticationManager)
         ;
@@ -101,10 +106,6 @@ public class OauthAuthorizationConfig extends WebSecurityConfigurerAdapter imple
         return new JwtTokenStore(accessTokenConverter());
     }
 
-    /**
-     * keytool -genkeypair -alias oauth -keyalg RSA -keypass lqkj007 -keystore jwt.jks -storepass lqkj007
-     * keytool -list -rfc --keystore jwt.jks | openssl x509 -inform pem -pubkey
-     */
     @Bean
     @Primary
     public JwtAccessTokenConverter accessTokenConverter() {
@@ -116,6 +117,16 @@ public class OauthAuthorizationConfig extends WebSecurityConfigurerAdapter imple
         converter.setKeyPair(keyStoreKeyFactory.getKeyPair("oauth"));
 
         return converter;
+    }
+
+    @Bean
+    @Primary
+    public DefaultTokenServices tokenServices() {
+        DefaultTokenServices defaultTokenServices = new DefaultTokenServices();
+        defaultTokenServices.setTokenStore(tokenStore());
+        defaultTokenServices.setTokenEnhancer(accessTokenConverter());
+        defaultTokenServices.setSupportRefreshToken(true);
+        return defaultTokenServices;
     }
 
     @Bean
