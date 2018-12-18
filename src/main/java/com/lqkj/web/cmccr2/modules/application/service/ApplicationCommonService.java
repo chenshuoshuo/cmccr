@@ -78,12 +78,13 @@ public class ApplicationCommonService {
      * 设置应用图片访问地址
      */
     public CcrVersionApplication setIconURL(CcrVersionApplication application) {
-       String url = application.getIconPath()
-               .replace("./upload/","/static/");
+        if (application.getIconPath() != null) {
+            String url = application.getIconPath()
+                    .replace("./upload/", "/static/");
 
-       application.setIconURL(url);
-
-       return application;
+            application.setIconURL(url);
+        }
+        return application;
     }
 
     /**
