@@ -1,5 +1,6 @@
 package com.lqkj.web.cmccr2.modules.request.dao;
 
+import com.google.common.collect.Lists;
 import com.lqkj.web.cmccr2.modules.request.doamin.CcrRequestRecord;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -13,11 +14,11 @@ import java.util.UUID;
 @Repository
 public interface CcrRequestRecordRepository extends JpaRepository<CcrRequestRecord, UUID> {
 
-//    @Query("select ((r.createTime - :startTime) / :frequency) as p,count(r) from CcrRequestRecord r " +
-//            "where r.createTime>:startTime and r.createTime<:endTime and r.successed=:successed " +
-//            "group by p")
-//    Object[] selectByTimeRegion(@Param("startTime") Timestamp startTime,
-//                                              @Param("endTime") Timestamp endTime,
-//                                              @Param("frequency") long frequency,
-//                                              @Param("successed") boolean successed);
+    @Query(nativeQuery = true, value = "select to_char(r.create_time,:frequency) as t,count(r) from ccr_request_record r " +
+            "where r.create_time>:startTime and r.create_time<:endTime and r.successed=:successed " +
+            "group by t order by t")
+    List<Object[]> dataRecord(@Param("startTime") Timestamp startTime,
+                              @Param("endTime") Timestamp endTime,
+                              @Param("frequency") String frequency,
+                              @Param("successed") Boolean successed);
 }

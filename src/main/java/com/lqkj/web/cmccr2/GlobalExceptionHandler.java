@@ -1,6 +1,8 @@
 package com.lqkj.web.cmccr2;
 
 import com.lqkj.web.cmccr2.message.MessageBean;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -10,10 +12,13 @@ import org.springframework.web.bind.annotation.ResponseBody;
  */
 @ControllerAdvice
 public class GlobalExceptionHandler {
+
+    private final Logger logger = LoggerFactory.getLogger(this.getClass());
+
     @ExceptionHandler
     @ResponseBody
     public MessageBean<String> resolveException(Exception e) {
-        e.printStackTrace();
+        logger.error("收到异常", e);
 
         return MessageBean.error(e.toString());
     }

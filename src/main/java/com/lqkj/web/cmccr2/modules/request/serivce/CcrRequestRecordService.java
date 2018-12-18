@@ -1,21 +1,21 @@
 package com.lqkj.web.cmccr2.modules.request.serivce;
 
 import com.lqkj.web.cmccr2.modules.request.dao.CcrRequestRecordRepository;
-import com.lqkj.web.cmccr2.modules.request.doamin.CcrDateResult;
 import com.lqkj.web.cmccr2.modules.request.doamin.CcrRequestRecord;
 import com.lqkj.web.cmccr2.modules.request.doamin.CcrStatisticsFrequency;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.Timestamp;
-import java.time.Instant;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 @Service
 public class CcrRequestRecordService {
+
+    private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @Autowired
     CcrRequestRecordRepository requestRecordRepository;
@@ -28,21 +28,25 @@ public class CcrRequestRecordService {
      * 数据统计
      */
     @Transactional
-    public void dataStatistics(Timestamp startTime, Timestamp endTime, CcrStatisticsFrequency frequencyEnum) {
-        List<CcrDateResult> results = new ArrayList<>(10);
+    public List<Object[]> dataStatistics(Timestamp startTime, Timestamp endTime, CcrStatisticsFrequency frequencyEnum,
+                                         Boolean successed) {
+        String frequency = enumToFrequency(frequencyEnum);
 
-        long frequency = frequencyToSeconds(frequencyEnum);
+        List<Object[]> result = requestRecordRepository.dataRecord(startTime,
+                endTime, frequency, successed);
 
-        //requestRecordRepository.selectByTimeRegion(startTime, endTime, frequency, true);
+        logger.info("数据统计结果:{}", result);
+
+        return result;
     }
 
-    public long frequencyToSeconds(CcrStatisticsFrequency frequencyEnum) {
+    public String enumToFrequency(CcrStatisticsFrequency frequencyEnum) {
         if (frequencyEnum.equals(CcrStatisticsFrequency.one_day)) {
-            return TimeUnit.DAYS.toSeconds(1);
+            return "YYYY-MM-DD";
         } else if (frequencyEnum.equals(CcrStatisticsFrequency.one_hour)) {
-            return TimeUnit.HOURS.toSeconds(1);
+            return "YYYY-MM-DD HH24";
         } else {
-            return TimeUnit.DAYS.toSeconds(30);
+            return "YYYY-MM";
         }
     }
 }

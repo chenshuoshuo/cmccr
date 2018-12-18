@@ -61,10 +61,7 @@ public class MultiApplicationController {
     }
 
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "id", value = "组合应用id", required = true, paramType = "path"),
-            @ApiImplicitParam(name = "androidId", value = "android应用id", paramType = "query"),
-            @ApiImplicitParam(name = "iosId", value = "ios应用id", paramType = "query"),
-            @ApiImplicitParam(name = "webId", value = "web应用id", paramType = "query")
+            @ApiImplicitParam(name = "id", value = "组合应用id", required = true, paramType = "path")
     })
     @ApiOperation("更新组合应用")
     @PostMapping("/center/application/multi/" + APIVersion.V1 + "/update/{id}")
