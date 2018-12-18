@@ -88,19 +88,10 @@ public class MultiApplicationController {
 
     @ApiOperation("根据应用id获取二维码")
     @GetMapping("/center/application/multi/" + APIVersion.V1 + "/qrcode/{id}")
-    public ResponseEntity<StreamingResponseBody> qrcode(@PathVariable Long id,
-                                                        HttpServletRequest request) {
-        StreamingResponseBody body = outputStream -> {
-            try {
-                multiApplicationService.createAppQRCode(id, ServletUtils.createBaseUrl(request), outputStream);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        };
+    public MessageBean<String> qrcode(@PathVariable Long id,
+                                                        HttpServletRequest request) throws Exception {
 
-        return ResponseEntity.ok()
-                .contentType(MediaType.IMAGE_PNG)
-                .body(body);
+        return MessageBean.ok(multiApplicationService.createAppQRCode(id, ServletUtils.createBaseUrl(request)));
     }
 
     @ApiOperation("根据系统类型在线下载应用")

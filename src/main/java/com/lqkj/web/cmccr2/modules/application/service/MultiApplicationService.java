@@ -12,6 +12,7 @@ import com.lqkj.web.cmccr2.APIVersion;
 import com.lqkj.web.cmccr2.modules.application.domain.CcrMultiApplication;
 import com.lqkj.web.cmccr2.modules.application.dao.CcrMultiApplicationRepository;
 import com.lqkj.web.cmccr2.modules.log.service.CcrSystemLogService;
+import org.apache.commons.codec.binary.Base64;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -22,6 +23,7 @@ import javax.imageio.ImageIO;
 import javax.validation.constraints.NotNull;
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -120,9 +122,8 @@ public class MultiApplicationService {
      * 创建二维码
      *
      * @param applicationId 组合应用id
-     * @param os            输出流
      */
-    public void createAppQRCode(Long applicationId, String requestURL, OutputStream os) throws Exception {
+    public String createAppQRCode(Long applicationId, String requestURL) throws Exception {
         systemLogService.addLog("组合应用服务","createAppQRCode"
                 ,"创建二维码");
 
@@ -133,10 +134,10 @@ public class MultiApplicationService {
         String url = requestURL + "/center/application/multi/" + APIVersion.V2 + "/jump/"
                 + applicationId;
 
-        createQRCode(os, iconPath, url);
+        return createQRCode(iconPath, url);
     }
 
-    public void createQRCode(OutputStream os, String iconPath, String url) throws WriterException, IOException {
+    public String createQRCode(String iconPath, String url) throws WriterException, IOException {
         HashMap<EncodeHintType, Object> hints = new HashMap<>();
         hints.put(EncodeHintType.CHARACTER_SET, "utf-8");    //指定字符编码为“utf-8”
         hints.put(EncodeHintType.ERROR_CORRECTION, ErrorCorrectionLevel.H);  //指定二维码的纠错等级
@@ -165,7 +166,11 @@ public class MultiApplicationService {
             bufferedImage.flush();
         }
 
+        ByteArrayOutputStream os = new ByteArrayOutputStream();
+
         ImageIO.write(bufferedImage, "png", os);
+
+        return Base64.encodeBase64String(os.toByteArray());
     }
 
     /**

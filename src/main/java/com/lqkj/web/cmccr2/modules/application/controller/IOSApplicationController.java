@@ -51,7 +51,8 @@ public class IOSApplicationController {
 
     @ApiOperation("分页查询ios应用列表")
     @GetMapping("/center/application/ios/" + APIVersion.V1 + "/list")
-    public Page<CcrIosApplication> list(Integer page, Integer pageSize) {
+    public Page<CcrIosApplication> list(Integer page,
+                                        Integer pageSize) {
         return iosApplicationService.page(page, pageSize);
     }
 }

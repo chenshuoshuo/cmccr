@@ -84,26 +84,15 @@ public class CcrUserController {
     })
     @ApiOperation("oauth用户绑定")
     @GetMapping("/center/user/{platform}/auth")
-    public ResponseEntity<StreamingResponseBody> auth(@ApiIgnore Authentication authentication,
-                                                      @ApiIgnore HttpServletRequest request,
-                                                      @PathVariable String platform) throws IOException {
-        StreamingResponseBody body = outputStream -> {
-            String baseURL = ServletUtils.createBaseUrl(request);
+    public MessageBean<String> auth(@ApiIgnore Authentication authentication,
+                                    @ApiIgnore HttpServletRequest request,
+                                    @PathVariable String platform) throws IOException, WriterException {
+        String baseURL = ServletUtils.createBaseUrl(request);
 
-            CcrUser user = (CcrUser) authentication.getPrincipal();
+        CcrUser user = (CcrUser) authentication.getPrincipal();
 
-            try {
-                multiApplicationService.createQRCode(outputStream, null,
-                        weiXinOAuthService.createAuthorizeURL(baseURL, user.getUserId()));
-            } catch (WriterException e) {
-                e.printStackTrace();
-            }
-        };
-
-        return ResponseEntity
-                .ok()
-                .contentType(MediaType.IMAGE_PNG)
-                .body(body);
+        return MessageBean.ok(multiApplicationService.createQRCode(null,
+                weiXinOAuthService.createAuthorizeURL(baseURL, user.getUserId())));
     }
 
     @ApiImplicitParams({
