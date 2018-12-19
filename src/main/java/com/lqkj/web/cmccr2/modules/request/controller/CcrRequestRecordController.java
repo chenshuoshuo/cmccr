@@ -11,6 +11,7 @@ import com.lqkj.web.cmccr2.utils.ServletUtils;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -18,7 +19,6 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.context.request.async.WebAsyncTask;
 
 import javax.servlet.http.HttpServletRequest;
-import java.io.IOException;
 import java.sql.Timestamp;
 import java.util.List;
 
@@ -52,15 +52,24 @@ public class CcrRequestRecordController {
     @ApiOperation("查询流量统计结果")
     @GetMapping("/center/record/" + APIVersion.V1 + "/url")
     public MessageBean<List<Object[]>> urlRecord(@RequestParam Timestamp startTime,
-                                                  @RequestParam Timestamp endTime,
-                                                  @RequestParam CcrStatisticsFrequency frequencyEnum) {
-        return MessageBean.ok(requestRecordService.urlStatistics(startTime, endTime, frequencyEnum));
+                                                 @RequestParam Timestamp endTime) {
+        return MessageBean.ok(requestRecordService.urlStatistics(startTime, endTime));
     }
 
     @ApiOperation("查询流量统计结果")
     @GetMapping("/center/record/" + APIVersion.V1 + "/location")
     public MessageListBean<CcrLocationRecord> locationRecord(@RequestParam Timestamp startTime,
-                                                             @RequestParam Timestamp endTime) throws IOException {
+                                                             @RequestParam Timestamp endTime) {
         return MessageListBean.ok(requestRecordService.locationStatistics(startTime, endTime));
+    }
+
+    @ApiOperation("查询流量统计结果")
+    @GetMapping("/center/record/" + APIVersion.V1 + "/error")
+    public MessageBean<Page<CcrRequestRecord>> errorRecord(@RequestParam Timestamp startTime,
+                                                           @RequestParam Timestamp endTime,
+                                                           @RequestParam Integer page,
+                                                           @RequestParam Integer pageSize) {
+        return MessageBean.ok(requestRecordService.errorRecord(startTime, endTime,
+                page, pageSize));
     }
 }

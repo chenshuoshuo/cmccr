@@ -9,6 +9,8 @@ import org.lionsoul.ip2region.DbSearcher;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -52,9 +54,7 @@ public class CcrRequestRecordService {
     /**
      * 网关流量统计
      */
-    public List<Object[]> urlStatistics(Timestamp startTime, Timestamp endTime, CcrStatisticsFrequency frequencyEnum) {
-        //String frequency = enumToFrequency(frequencyEnum);
-
+    public List<Object[]> urlStatistics(Timestamp startTime, Timestamp endTime) {
         List<Object[]> result = requestRecordRepository.urlRecord(startTime, endTime);
 
         logger.info("流量统计结果:{}", result);
@@ -85,6 +85,15 @@ public class CcrRequestRecordService {
         logger.info("流量统计结果:{}", locationRecords);
 
         return locationRecords;
+    }
+
+    /**
+     * 异常列表
+     */
+    public Page<CcrRequestRecord> errorRecord(Timestamp startTime, Timestamp endTime,
+                                              Integer page, Integer pageSize) {
+        return this.requestRecordRepository.errorRecord(startTime, endTime,
+                PageRequest.of(page, pageSize));
     }
 
     private String enumToFrequency(CcrStatisticsFrequency frequencyEnum) {

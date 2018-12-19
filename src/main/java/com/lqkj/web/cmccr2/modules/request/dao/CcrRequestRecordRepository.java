@@ -2,6 +2,9 @@ package com.lqkj.web.cmccr2.modules.request.dao;
 
 import com.google.common.collect.Lists;
 import com.lqkj.web.cmccr2.modules.request.doamin.CcrRequestRecord;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -30,5 +33,11 @@ public interface CcrRequestRecordRepository extends JpaRepository<CcrRequestReco
     @Query(nativeQuery = true, value = "select ip,count(r) " +
             "from ccr_request_record r where r.create_time>:startTime and r.create_time<:endTime group by ip;")
     List<Object[]> locationRecord(@Param("startTime") Timestamp startTime,
-                             @Param("endTime") Timestamp endTime);
+                                  @Param("endTime") Timestamp endTime);
+
+    @Query("select r from CcrRequestRecord r where r.createTime>:startTime and r.createTime<:endTime " +
+            "and r.successed=false")
+    Page<CcrRequestRecord> errorRecord(@Param("startTime") Timestamp startTime,
+                                       @Param("endTime") Timestamp endTime,
+                                       Pageable pageable);
 }
