@@ -9,6 +9,7 @@ import org.dom4j.io.SAXReader;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
@@ -26,6 +27,9 @@ public class CcrCasService {
     @Autowired
     CcrSystemLogService systemLogService;
 
+    @Autowired
+    PasswordEncoder passwordEncoder;
+
     @Value("${cas.base}")
     String casBaseURL;
 
@@ -38,7 +42,7 @@ public class CcrCasService {
 
         CcrUser ccrUser = userRepository.findByUserName(username);
 
-        ccrUser.setCasTicket(ticket);
+        ccrUser.setCasTicket(passwordEncoder.encode(ticket));
 
         return userRepository.save(ccrUser);
     }

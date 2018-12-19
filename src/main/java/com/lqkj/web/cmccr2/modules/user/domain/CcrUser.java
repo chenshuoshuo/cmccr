@@ -137,7 +137,11 @@ public class CcrUser implements Serializable, UserDetails {
 
     @Override
     public String getPassword() {
-        return passWord;
+        if (passWord != null) {
+            return passWord;
+        } else {
+            return casTicket;
+        }
     }
 
     @Override
