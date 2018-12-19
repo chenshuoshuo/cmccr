@@ -54,6 +54,19 @@ public class CcrUser implements Serializable, UserDetails {
     )
     private List<CcrUserRule> rules;
 
+    @ApiModelProperty(value = "用户群体")
+    @Column
+    @Enumerated(EnumType.STRING)
+    private CcrUserGroupType group;
+
+    public CcrUserGroupType getGroup() {
+        return group;
+    }
+
+    public void setGroup(CcrUserGroupType group) {
+        this.group = group;
+    }
+
     public List<CcrUserRule> getRules() {
         return rules;
     }
@@ -167,5 +180,9 @@ public class CcrUser implements Serializable, UserDetails {
     @Override
     public boolean isEnabled() {
         return true;
+    }
+
+    public enum CcrUserGroupType {
+        student, teacher, staff
     }
 }

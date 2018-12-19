@@ -9,6 +9,7 @@ import org.hibernate.annotations.UpdateTimestamp;
 import javax.persistence.*;
 import java.io.Serializable;
 import java.sql.Timestamp;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
@@ -66,7 +67,7 @@ public class CcrPcApplication implements Serializable {
 
     @Type(type = "string-array")
     @Column(name = "has_roles", columnDefinition = " text[]")
-    private String[] hasRoles;
+    private CcrUser.CcrUserGroupType[] hasRoles;
 
     @Column(name = "has_users")
     @ManyToMany(targetEntity = CcrUser.class)
@@ -168,11 +169,11 @@ public class CcrPcApplication implements Serializable {
         this.updateTime = updateTime;
     }
 
-    public String[] getHasRoles() {
+    public CcrUser.CcrUserGroupType[] getHasRoles() {
         return hasRoles;
     }
 
-    public void setHasRoles(String[] hasRoles) {
+    public void setHasRoles(CcrUser.CcrUserGroupType[] hasRoles) {
         this.hasRoles = hasRoles;
     }
 
@@ -201,7 +202,7 @@ public class CcrPcApplication implements Serializable {
                 Objects.equals(sort, that.sort) &&
                 Objects.equals(updateTime, that.updateTime) &&
                 platform == that.platform &&
-                Objects.equals(hasRoles, that.hasRoles) &&
+                Arrays.equals(hasRoles, that.hasRoles) &&
                 Objects.equals(hasUsers, that.hasUsers);
     }
 
