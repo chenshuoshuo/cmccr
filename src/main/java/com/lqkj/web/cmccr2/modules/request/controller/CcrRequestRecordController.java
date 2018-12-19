@@ -2,6 +2,8 @@ package com.lqkj.web.cmccr2.modules.request.controller;
 
 import com.lqkj.web.cmccr2.APIVersion;
 import com.lqkj.web.cmccr2.message.MessageBean;
+import com.lqkj.web.cmccr2.message.MessageListBean;
+import com.lqkj.web.cmccr2.modules.request.doamin.CcrLocationRecord;
 import com.lqkj.web.cmccr2.modules.request.doamin.CcrRequestRecord;
 import com.lqkj.web.cmccr2.modules.request.doamin.CcrStatisticsFrequency;
 import com.lqkj.web.cmccr2.modules.request.serivce.CcrRequestRecordService;
@@ -16,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.context.request.async.WebAsyncTask;
 
 import javax.servlet.http.HttpServletRequest;
+import java.io.IOException;
 import java.sql.Timestamp;
 import java.util.List;
 
@@ -52,5 +55,12 @@ public class CcrRequestRecordController {
                                                   @RequestParam Timestamp endTime,
                                                   @RequestParam CcrStatisticsFrequency frequencyEnum) {
         return MessageBean.ok(requestRecordService.urlStatistics(startTime, endTime, frequencyEnum));
+    }
+
+    @ApiOperation("查询流量统计结果")
+    @GetMapping("/center/record/" + APIVersion.V1 + "/location")
+    public MessageListBean<CcrLocationRecord> locationRecord(@RequestParam Timestamp startTime,
+                                                             @RequestParam Timestamp endTime) throws IOException {
+        return MessageListBean.ok(requestRecordService.locationStatistics(startTime, endTime));
     }
 }

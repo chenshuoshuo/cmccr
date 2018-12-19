@@ -26,4 +26,9 @@ public interface CcrRequestRecordRepository extends JpaRepository<CcrRequestReco
             "from ccr_request_record r where r.create_time>:startTime and r.create_time<:endTime group by ar;")
     List<Object[]> urlRecord(@Param("startTime") Timestamp startTime,
                              @Param("endTime") Timestamp endTime);
+
+    @Query(nativeQuery = true, value = "select ip,count(r) " +
+            "from ccr_request_record r where r.create_time>:startTime and r.create_time<:endTime group by ip;")
+    List<Object[]> locationRecord(@Param("startTime") Timestamp startTime,
+                             @Param("endTime") Timestamp endTime);
 }
