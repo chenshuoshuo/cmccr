@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
+import java.math.BigInteger;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
@@ -64,15 +65,21 @@ public class CcrRequestRecordService {
     /**
      * 网关地理统计
      */
-    public List<CcrLocationRecord> locationStatistics(Timestamp startTime, Timestamp endTime) throws IOException {
+    public List<CcrLocationRecord> locationStatistics(Timestamp startTime, Timestamp endTime) {
         List<Object[]> results = requestRecordRepository.locationRecord(startTime, endTime);
 
         List<CcrLocationRecord> locationRecords = new ArrayList<>(results.size() + 1);
 
         for (Object[] r : results) {
-            DataBlock block = dbSearcher.binarySearch((String) r[0]);
-
-            locationRecords.add(new CcrLocationRecord(block.getRegion(), block.getCityId(), (int) r[1]));
+            try {
+                DataBlock block = dbSearcher.memorySearch((String) r[0]);
+                locationRecords.add(new CcrLocationRecord(block.getRegion(), block.getCityId(),
+                        ((BigInteger) r[1]).intValue()));
+            } catch (Exception e) {
+                logger.error("ip查询错误", e);
+                locationRecords.add(new CcrLocationRecord((String) r[0], -1,
+                        ((BigInteger) r[1]).intValue()));
+            }
         }
 
         logger.info("流量统计结果:{}", locationRecords);
