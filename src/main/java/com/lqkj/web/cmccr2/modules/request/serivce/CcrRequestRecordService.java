@@ -40,7 +40,7 @@ public class CcrRequestRecordService {
         return result;
     }
 
-    public String enumToFrequency(CcrStatisticsFrequency frequencyEnum) {
+    private String enumToFrequency(CcrStatisticsFrequency frequencyEnum) {
         if (frequencyEnum.equals(CcrStatisticsFrequency.one_day)) {
             return "YYYY-MM-DD";
         } else if (frequencyEnum.equals(CcrStatisticsFrequency.one_hour)) {
@@ -48,5 +48,15 @@ public class CcrRequestRecordService {
         } else {
             return "YYYY-MM";
         }
+    }
+
+    public List<Object[]> urlStatistics(Timestamp startTime, Timestamp endTime, CcrStatisticsFrequency frequencyEnum) {
+        //String frequency = enumToFrequency(frequencyEnum);
+
+        List<Object[]> result = requestRecordRepository.urlRecord(startTime, endTime);
+
+        logger.info("流量统计结果:{}", result);
+
+        return null;
     }
 }

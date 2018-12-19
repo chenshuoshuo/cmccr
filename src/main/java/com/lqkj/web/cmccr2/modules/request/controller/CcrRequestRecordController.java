@@ -31,7 +31,7 @@ public class CcrRequestRecordController {
     public WebAsyncTask<Void> addRecord(CcrRequestRecord requestRecord,
                                         HttpServletRequest request) {
         return new WebAsyncTask<>(() -> {
-            requestRecord.setIp(ServletUtils.createBaseUrl(request));
+            requestRecord.setIp(ServletUtils.getIpAddress(request));
             requestRecordService.add(requestRecord);
             return null;
         });
@@ -44,5 +44,13 @@ public class CcrRequestRecordController {
                                                   @RequestParam CcrStatisticsFrequency frequencyEnum,
                                                   @RequestParam Boolean successed) {
         return MessageBean.ok(requestRecordService.dataStatistics(startTime, endTime, frequencyEnum, successed));
+    }
+
+    @ApiOperation("查询流量统计结果")
+    @GetMapping("/center/record/" + APIVersion.V1 + "/url")
+    public MessageBean<List<Object[]>> urlRecord(@RequestParam Timestamp startTime,
+                                                  @RequestParam Timestamp endTime,
+                                                  @RequestParam CcrStatisticsFrequency frequencyEnum) {
+        return MessageBean.ok(requestRecordService.urlStatistics(startTime, endTime, frequencyEnum));
     }
 }

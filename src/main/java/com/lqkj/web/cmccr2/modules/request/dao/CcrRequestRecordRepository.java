@@ -21,4 +21,9 @@ public interface CcrRequestRecordRepository extends JpaRepository<CcrRequestReco
                               @Param("endTime") Timestamp endTime,
                               @Param("frequency") String frequency,
                               @Param("successed") Boolean successed);
+
+    @Query(nativeQuery = true, value = "select (string_to_array(r.url,'/'))[4] ar,count(r) " +
+            "from ccr_request_record r where r.create_time>:startTime and r.create_time<:endTime group by ar;")
+    List<Object[]> urlRecord(@Param("startTime") Timestamp startTime,
+                             @Param("endTime") Timestamp endTime);
 }
