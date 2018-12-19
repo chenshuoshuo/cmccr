@@ -51,9 +51,11 @@ public class CcrRequestRecordController {
 
     @ApiOperation("查询流量统计结果")
     @GetMapping("/center/record/" + APIVersion.V1 + "/url")
-    public MessageBean<List<Object[]>> urlRecord(@RequestParam Timestamp startTime,
-                                                 @RequestParam Timestamp endTime) {
-        return MessageBean.ok(requestRecordService.urlStatistics(startTime, endTime));
+    public MessageBean<Page<Object[]>> urlRecord(@RequestParam Timestamp startTime,
+                                                 @RequestParam Timestamp endTime,
+                                                 @RequestParam Integer page,
+                                                 @RequestParam Integer pageSize) {
+        return MessageBean.ok(requestRecordService.urlStatistics(startTime, endTime, page, pageSize));
     }
 
     @ApiOperation("查询流量统计结果")

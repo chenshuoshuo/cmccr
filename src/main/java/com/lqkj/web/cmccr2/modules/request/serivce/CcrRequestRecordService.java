@@ -54,8 +54,10 @@ public class CcrRequestRecordService {
     /**
      * 网关流量统计
      */
-    public List<Object[]> urlStatistics(Timestamp startTime, Timestamp endTime) {
-        List<Object[]> result = requestRecordRepository.urlRecord(startTime, endTime);
+    public Page<Object[]> urlStatistics(Timestamp startTime, Timestamp endTime,
+                                        Integer page, Integer pageSize) {
+        Page<Object[]> result = requestRecordRepository.urlRecord(startTime, endTime,
+                PageRequest.of(page, pageSize));
 
         logger.info("流量统计结果:{}", result);
 
