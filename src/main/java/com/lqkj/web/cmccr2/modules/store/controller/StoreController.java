@@ -26,8 +26,13 @@ public class StoreController {
 
     @DeleteMapping("/center/store/" + APIVersion.V1 + "/remove/{storeName}/{key}")
     public MessageBean remove(@PathVariable(name = "storeName") String storeName,
-                                  @PathVariable(name = "key") String key) {
+                              @PathVariable(name = "key") String key) {
         storeService.remove(storeName, key);
         return MessageBean.ok();
+    }
+
+    @GetMapping("/center/store/" + APIVersion.V1 + "/{storeName}/{key}")
+    public MessageBean<String> get(@PathVariable String storeName, @PathVariable String key) {
+        return MessageBean.ok(storeService.get(storeName, key));
     }
 }

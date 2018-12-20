@@ -16,7 +16,7 @@ public class CcrStoreItem {
     @Column(length = 128, nullable = false)
     private String key;
 
-    @Column(length = 1024, nullable = false)
+    @Column(columnDefinition = " text", nullable = false)
     private String value;
 
     @ManyToOne(fetch = FetchType.LAZY)

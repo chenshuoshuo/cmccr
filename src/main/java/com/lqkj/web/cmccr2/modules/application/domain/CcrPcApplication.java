@@ -67,6 +67,7 @@ public class CcrPcApplication implements Serializable {
 
     @Type(type = "string-array")
     @Column(name = "has_roles", columnDefinition = " text[]")
+    @Enumerated(EnumType.STRING)
     private CcrUser.CcrUserGroupType[] hasRoles;
 
     @Column(name = "has_users")

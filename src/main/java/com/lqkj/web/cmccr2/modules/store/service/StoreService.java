@@ -92,4 +92,8 @@ public class StoreService {
 
         return storeItemDao.save(item).getId();
     }
+
+    public String get(String storeName, String key) {
+        return storeItemDao.findByNameAndKey(storeName, key).getValue();
+    }
 }
