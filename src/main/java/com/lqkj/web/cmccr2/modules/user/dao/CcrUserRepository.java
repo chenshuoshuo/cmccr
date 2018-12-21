@@ -14,6 +14,6 @@ public interface CcrUserRepository extends JpaRepository<CcrUser, Long> {
     @Query("select u from CcrUser u where u.userCode=:name")
     CcrUser findByUserName(@Param("name") String name);
 
-    @Query("select u.group,count(u) from CcrUser u group by u.group order by u.group")
+    @Query("select u.userGroup,count(u) from CcrUser u group by u.userGroup order by u.userGroup")
     List<Object[]> userStatistics();
 }

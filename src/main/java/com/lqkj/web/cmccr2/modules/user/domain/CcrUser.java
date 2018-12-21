@@ -6,7 +6,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -55,18 +54,17 @@ public class CcrUser implements Serializable, UserDetails {
     )
     private List<CcrUserRule> rules;
 
-    @NotNull(message = "请输入用户群体")
     @ApiModelProperty(value = "用户群体")
-    @Column
+    @Column(name = "user_group")
     @Enumerated(EnumType.STRING)
-    private CcrUserGroupType group;
+    private CcrUserGroupType userGroup;
 
-    public CcrUserGroupType getGroup() {
-        return group;
+    public CcrUserGroupType getUserGroup() {
+        return userGroup;
     }
 
-    public void setGroup(CcrUserGroupType group) {
-        this.group = group;
+    public void setUserGroup(CcrUserGroupType userGroup) {
+        this.userGroup = userGroup;
     }
 
     public List<CcrUserRule> getRules() {
