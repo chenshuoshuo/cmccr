@@ -32,7 +32,6 @@ logging:
   path: classpath:log4j2.xml
 spring:
   application:
-    name: cmccr2
   servlet:
     multipart:
       max-file-size: 1000MB
@@ -65,7 +64,7 @@ spring:
       username: postgres
       password: postgres
       auto-commit: true
-      pool-name: ips
+      pool-name: ccr
       minimum-idle: 5
       maximum-pool-size: 20
       idle-timeout: 60000

@@ -50,9 +50,6 @@ import java.util.concurrent.TimeUnit;
 public class OauthAuthorizationConfig extends WebSecurityConfigurerAdapter implements AuthorizationServerConfigurer {
 
     @Autowired
-    PasswordEncoder passwordEncoder;
-
-    @Autowired
     CcrUserService userService;
 
     @Autowired
@@ -60,6 +57,9 @@ public class OauthAuthorizationConfig extends WebSecurityConfigurerAdapter imple
 
     @Autowired
     AuthenticationManager authenticationManager;
+
+    @Autowired
+    PasswordEncoder passwordEncoder;
 
     @Override
     public void configure(AuthorizationServerSecurityConfigurer security) {
@@ -133,10 +133,5 @@ public class OauthAuthorizationConfig extends WebSecurityConfigurerAdapter imple
     @Override
     public AuthenticationManager authenticationManagerBean() throws Exception {
         return super.authenticationManagerBean();
-    }
-
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
     }
 }

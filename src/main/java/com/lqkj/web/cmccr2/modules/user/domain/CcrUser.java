@@ -2,11 +2,13 @@ package com.lqkj.web.cmccr2.modules.user.domain;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import java.io.Serializable;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -58,6 +60,11 @@ public class CcrUser implements Serializable, UserDetails {
     @Column(name = "user_group")
     @Enumerated(EnumType.STRING)
     private CcrUserGroupType userGroup;
+
+    @ApiModelProperty(value = "更新时间")
+    @Column(name = "update_time")
+    @UpdateTimestamp
+    private Timestamp updateTime;
 
     public CcrUserGroupType getUserGroup() {
         return userGroup;
@@ -113,6 +120,14 @@ public class CcrUser implements Serializable, UserDetails {
 
     public void setCasTicket(String casTicket) {
         this.casTicket = casTicket;
+    }
+
+    public Timestamp getUpdateTime() {
+        return updateTime;
+    }
+
+    public void setUpdateTime(Timestamp updateTime) {
+        this.updateTime = updateTime;
     }
 
     @Override
