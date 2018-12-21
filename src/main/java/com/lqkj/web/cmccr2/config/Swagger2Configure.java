@@ -1,6 +1,7 @@
 package com.lqkj.web.cmccr2.config;
 
 import com.google.common.collect.Lists;
+import com.lqkj.web.cmccr2.APIVersion;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -46,10 +47,10 @@ public class Swagger2Configure {
      */
     private ApiInfo apiInfo() {
         return new ApiInfoBuilder()
-                .title("地图服务器")
-                .description("地图服务器api")
+                .title("中控发布平台")
+                .description("中控发布平台api")
                 .termsOfServiceUrl("http://www.you07.com")
-                .version("v2")
+                .version(APIVersion.V1)
                 .build();
     }
 
