@@ -6,9 +6,14 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 @Repository
 public interface CcrUserRepository extends JpaRepository<CcrUser, Long> {
 
     @Query("select u from CcrUser u where u.userCode=:name")
     CcrUser findByUserName(@Param("name") String name);
+
+    @Query("select u.group,count(u) from CcrUser u group by u.group order by u.group")
+    List<Object[]> userStatistics();
 }

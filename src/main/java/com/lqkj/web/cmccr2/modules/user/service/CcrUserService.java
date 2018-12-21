@@ -138,4 +138,14 @@ public class CcrUserService implements UserDetailsService {
 
         return userRepository.getOne(id).getRules();
     }
+
+    /**
+     * 用戶統計
+     */
+    public List<Object[]> userGroup() {
+        systemLogService.addLog("用户管理服务", "userGroup",
+                "用戶統計");
+
+        return userRepository.userStatistics();
+    }
 }

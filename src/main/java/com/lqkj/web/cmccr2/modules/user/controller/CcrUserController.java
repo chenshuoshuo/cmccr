@@ -95,6 +95,12 @@ public class CcrUserController {
                 weiXinOAuthService.createAuthorizeURL(baseURL, user.getUserId())));
     }
 
+    @ApiOperation("用戶組統計")
+    @GetMapping("/center/user/group")
+    public MessageListBean<Object[]> group() {
+        return MessageListBean.ok(ccrUserService.userGroup());
+    }
+
     @ApiImplicitParams({
             @ApiImplicitParam(name = "platform", allowableValues = "weixin")
     })
