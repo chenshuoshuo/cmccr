@@ -68,7 +68,7 @@ public class CcrPcApplication implements Serializable {
     @Type(type = "string-array")
     @Column(name = "has_roles", columnDefinition = " text[]")
     @Enumerated(EnumType.STRING)
-    private CcrUser.CcrUserGroupType[] hasRoles;
+    private String[] hasRoles;
 
     @Column(name = "has_users")
     @ManyToMany(targetEntity = CcrUser.class)
@@ -170,11 +170,11 @@ public class CcrPcApplication implements Serializable {
         this.updateTime = updateTime;
     }
 
-    public CcrUser.CcrUserGroupType[] getHasRoles() {
+    public String[] getHasRoles() {
         return hasRoles;
     }
 
-    public void setHasRoles(CcrUser.CcrUserGroupType[] hasRoles) {
+    public void setHasRoles(String[] hasRoles) {
         this.hasRoles = hasRoles;
     }
 

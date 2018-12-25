@@ -65,8 +65,8 @@ public class OauthResourceConfig implements ResourceServerConfigurer {
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .authorizeRequests()
-                .antMatchers("/center/user/register"
-                        , "/center/store/" + APIVersion.V1 + "/**")
+                .antMatchers("/center/user/register",
+                        "/center/store/" + APIVersion.V1 + "/**")
                 .permitAll()
                 .antMatchers("/center/application/**",
                         "/center/menu/**",
