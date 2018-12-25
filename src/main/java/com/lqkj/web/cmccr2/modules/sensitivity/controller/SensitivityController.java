@@ -3,6 +3,7 @@ package com.lqkj.web.cmccr2.modules.sensitivity.controller;
 import com.lqkj.web.cmccr2.APIVersion;
 import com.lqkj.web.cmccr2.message.MessageBean;
 import com.lqkj.web.cmccr2.message.MessageListBean;
+import com.lqkj.web.cmccr2.modules.sensitivity.domain.CcrSensitivityRecord;
 import com.lqkj.web.cmccr2.modules.sensitivity.domain.CcrSensitivityWord;
 import com.lqkj.web.cmccr2.modules.sensitivity.service.SensitivityWordService;
 import com.lqkj.web.cmccr2.modules.sensitivity.domain.CheckResult;
@@ -60,7 +61,15 @@ public class SensitivityController {
 
     @ApiOperation("分页查询违禁字列表")
     @GetMapping("/center/sensitivity/" + APIVersion.V1 + "/page")
-    public MessageBean<Page<CcrSensitivityWord>> page(Integer page, Integer pageSize) {
+    public MessageBean<Page<CcrSensitivityWord>> page(@RequestParam Integer page,
+                                                      @RequestParam Integer pageSize) {
         return MessageBean.ok(sensitivityWordService.page(page, pageSize));
+    }
+
+    @ApiOperation("分页查询违禁字记录")
+    @GetMapping("/center/sensitivity/" + APIVersion.V1 + "/record/page")
+    public MessageBean<Page<CcrSensitivityRecord>> recordPage(@RequestParam Integer page,
+                                                              @RequestParam Integer pageSize) {
+        return MessageBean.ok(sensitivityWordService.recordPage(page, pageSize));
     }
 }

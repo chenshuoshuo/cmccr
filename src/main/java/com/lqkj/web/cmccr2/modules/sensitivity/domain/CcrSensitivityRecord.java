@@ -24,8 +24,8 @@ public class CcrSensitivityRecord implements Serializable {
     @Column
     private String source;
 
-    @Column
-    private Long userId;
+    @Column(name = "user_name")
+    private String userName;
 
     @Column
     private String content;
@@ -40,6 +40,15 @@ public class CcrSensitivityRecord implements Serializable {
     @Column
     @CreationTimestamp
     private Timestamp createTime;
+
+    public CcrSensitivityRecord(String source, String content, String sensitivityWords,
+                                CcrSensitivityWord.HandleType handleType) {
+        this.recordId = UUID.randomUUID();
+        this.source = source;
+        this.content = content;
+        this.sensitivityWords = sensitivityWords;
+        this.handleType = handleType;
+    }
 
     public CcrSensitivityRecord() {
         this.recordId = UUID.randomUUID();
@@ -61,12 +70,12 @@ public class CcrSensitivityRecord implements Serializable {
         this.source = source;
     }
 
-    public Long getUserId() {
-        return userId;
+    public String getUserName() {
+        return userName;
     }
 
-    public void setUserId(Long userId) {
-        this.userId = userId;
+    public void setUserName(String userName) {
+        this.userName = userName;
     }
 
     public String getContent() {
@@ -103,20 +112,20 @@ public class CcrSensitivityRecord implements Serializable {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this==o) return true;
+        if (o==null || getClass()!=o.getClass()) return false;
         CcrSensitivityRecord that = (CcrSensitivityRecord) o;
         return Objects.equals(recordId, that.recordId) &&
                 Objects.equals(source, that.source) &&
-                Objects.equals(userId, that.userId) &&
+                Objects.equals(userName, that.userName) &&
                 Objects.equals(content, that.content) &&
                 Objects.equals(sensitivityWords, that.sensitivityWords) &&
-                handleType == that.handleType &&
+                handleType==that.handleType &&
                 Objects.equals(createTime, that.createTime);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(recordId, source, userId, content, sensitivityWords, handleType, createTime);
+        return Objects.hash(recordId, source, userName, content, sensitivityWords, handleType, createTime);
     }
 }

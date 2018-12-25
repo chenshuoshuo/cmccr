@@ -2,16 +2,20 @@ package com.lqkj.web.cmccr2.modules.sensitivity.service;
 
 import com.lqkj.web.cmccr2.index.WordTree;
 import com.lqkj.web.cmccr2.modules.log.service.CcrSystemLogService;
+import com.lqkj.web.cmccr2.modules.sensitivity.dao.CcrSensitivityRecordRepository;
 import com.lqkj.web.cmccr2.modules.sensitivity.dao.CcrSensitivityWordRepository;
+import com.lqkj.web.cmccr2.modules.sensitivity.domain.CcrSensitivityRecord;
 import com.lqkj.web.cmccr2.modules.sensitivity.domain.CcrSensitivityWord;
 import com.lqkj.web.cmccr2.modules.sensitivity.domain.CheckResult;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.scheduling.annotation.Async;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -37,10 +41,13 @@ public class SensitivityWordService {
     @Autowired
     CcrSystemLogService systemLogService;
 
+    @Autowired
+    CcrSensitivityRecordRepository sensitivityRecordRepository;
+
     private WordTree wordTree;
 
     public CcrSensitivityWord add(String word) throws IOException {
-        systemLogService.addLog("违禁词服务","add",
+        systemLogService.addLog("违禁词服务", "add",
                 "增加一个违禁词");
 
         CcrSensitivityWord sensitivityWord = this.sensitivityWordDao.save(new CcrSensitivityWord(word));
@@ -51,7 +58,7 @@ public class SensitivityWordService {
     }
 
     public void delete(Long id) throws IOException {
-        systemLogService.addLog("违禁词服务","delete",
+        systemLogService.addLog("违禁词服务", "delete",
                 "删除一个违禁词");
 
         this.sensitivityWordDao.deleteById(id);
@@ -60,7 +67,7 @@ public class SensitivityWordService {
     }
 
     public CcrSensitivityWord update(Long id, String word) throws IOException {
-        systemLogService.addLog("违禁词服务","update",
+        systemLogService.addLog("违禁词服务", "update",
                 "更新一个违禁词");
 
         CcrSensitivityWord sensitivityWord = sensitivityWordDao.getOne(id);
@@ -75,21 +82,21 @@ public class SensitivityWordService {
     }
 
     public CcrSensitivityWord info(Long id) {
-        systemLogService.addLog("违禁词服务","info",
+        systemLogService.addLog("违禁词服务", "info",
                 "查询一个违禁词");
 
         return this.sensitivityWordDao.getOne(id);
     }
 
     public Page<CcrSensitivityWord> page(Integer page, Integer pageSize) {
-        systemLogService.addLog("违禁词服务","page",
+        systemLogService.addLog("违禁词服务", "page",
                 "分页一个违禁词");
 
         return this.sensitivityWordDao.findAll(PageRequest.of(page, pageSize));
     }
 
     public List<CheckResult> checkWords(String[] words) {
-        systemLogService.addLog("违禁词服务","checkWords",
+        systemLogService.addLog("违禁词服务", "checkWords",
                 "违禁词检查");
 
         List<CheckResult> results = new ArrayList<>(words.length);
@@ -109,7 +116,23 @@ public class SensitivityWordService {
         result.setContent(checkWords);
         result.setSensitivity(!checkWords.isEmpty());
 
+        CcrSensitivityRecord record = new CcrSensitivityRecord("未知", word, StringUtils.join(checkWords, ","),
+                CcrSensitivityWord.HandleType.prevent);
+        record.setUserName(SecurityContextHolder.getContext().getAuthentication()
+                .getName());
+        sensitivityRecordRepository.save(record);
+
         return result;
+    }
+
+    /**
+     * 记录列表
+     */
+    public Page<CcrSensitivityRecord> recordPage(Integer page, Integer pageSize) {
+        systemLogService.addLog("违禁词服务", "recordPage",
+                "记录列表");
+
+        return this.sensitivityRecordRepository.findAll(PageRequest.of(page, pageSize));
     }
 
     /**
