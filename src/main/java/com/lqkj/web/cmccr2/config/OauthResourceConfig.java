@@ -1,5 +1,6 @@
 package com.lqkj.web.cmccr2.config;
 
+import com.lqkj.web.cmccr2.APIVersion;
 import com.lqkj.web.cmccr2.modules.user.service.CcrUserService;
 import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -64,14 +65,17 @@ public class OauthResourceConfig implements ResourceServerConfigurer {
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .authorizeRequests()
-                .antMatchers("/center/user/register")
+                .antMatchers("/center/user/register"
+                        , "/center/store/" + APIVersion.V1 + "/**")
                 .permitAll()
                 .antMatchers("/center/application/**",
                         "/center/menu/**",
                         "/center/request/**",
                         "/center/sensitivity/**",
                         "/center/store/**",
-                        "/center/user/**")
+                        "/center/user/**",
+                        "/center/sys/log/**"
+                        )
                 .authenticated()
         ;
     }

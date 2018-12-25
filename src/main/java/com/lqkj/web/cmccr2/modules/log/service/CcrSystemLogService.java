@@ -7,6 +7,7 @@ import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.scheduling.annotation.Async;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
@@ -21,7 +22,10 @@ public class CcrSystemLogService {
      * 增加一条日志记录
      */
     public void addLog(String source, String method, String description) {
-        systemLogRepository.save(new CcrSystemLog(source, method, description));
+        CcrSystemLog systemLog = new CcrSystemLog(source, method, description);
+        systemLog.setUserName(SecurityContextHolder.getContext().getAuthentication().getName());
+
+        systemLogRepository.save(systemLog);
     }
 
     /**

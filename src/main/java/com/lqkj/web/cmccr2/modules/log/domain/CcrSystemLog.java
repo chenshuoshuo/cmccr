@@ -22,8 +22,8 @@ public class CcrSystemLog implements Serializable {
     @Type(type = "org.hibernate.type.PostgresUUIDType")
     private UUID logId;
 
-    @Column(name = "user_id")
-    private Long userId;
+    @Column(name = "user_name")
+    private String userName;
 
     @Column
     private String source;
@@ -49,12 +49,12 @@ public class CcrSystemLog implements Serializable {
         this.description = description;
     }
 
-    public Long getUserId() {
-        return userId;
+    public String getUserName() {
+        return userName;
     }
 
-    public void setUserId(Long userId) {
-        this.userId = userId;
+    public void setUserName(String userName) {
+        this.userName = userName;
     }
 
     public UUID getLogId() {
@@ -99,19 +99,19 @@ public class CcrSystemLog implements Serializable {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        CcrSystemLog that = (CcrSystemLog) o;
-        return Objects.equals(logId, that.logId) &&
-                Objects.equals(userId, that.userId) &&
-                Objects.equals(source, that.source) &&
-                Objects.equals(method, that.method) &&
-                Objects.equals(description, that.description) &&
-                Objects.equals(createTime, that.createTime);
+        if (this==o) return true;
+        if (o==null || getClass()!=o.getClass()) return false;
+        CcrSystemLog systemLog = (CcrSystemLog) o;
+        return Objects.equals(logId, systemLog.logId) &&
+                Objects.equals(userName, systemLog.userName) &&
+                Objects.equals(source, systemLog.source) &&
+                Objects.equals(method, systemLog.method) &&
+                Objects.equals(description, systemLog.description) &&
+                Objects.equals(createTime, systemLog.createTime);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(logId, userId, source, method, description, createTime);
+        return Objects.hash(logId, userName, source, method, description, createTime);
     }
 }
