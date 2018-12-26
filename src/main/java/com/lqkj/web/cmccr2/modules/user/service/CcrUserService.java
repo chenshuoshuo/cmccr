@@ -71,12 +71,7 @@ public class CcrUserService implements UserDetailsService {
         systemLogService.addLog("用户管理服务", "info",
                 "用户信息查询");
 
-        CcrUser user = userRepository.findById(id).get();
-
-        user.setPassWord(null);
-        user.setCasTicket(null);
-
-        return user;
+        return userRepository.findById(id).get();
     }
 
     /**
@@ -120,13 +115,7 @@ public class CcrUserService implements UserDetailsService {
                 .withIgnorePaths("userId");
 
         return userRepository.findAll(Example.of(ccrUser, exampleMatcher),
-                PageRequest.of(page, pageSize))
-                .map(v -> {
-                    v.setPassWord(null);
-                    v.setCasTicket(null);
-                    return v;
-                })
-                ;
+                PageRequest.of(page, pageSize));
     }
 
     /**

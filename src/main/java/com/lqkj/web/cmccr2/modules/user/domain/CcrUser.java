@@ -37,7 +37,6 @@ public class CcrUser implements Serializable, UserDetails {
     @Column(name = "user_code")
     private String userCode;
 
-    @NotBlank(message = "密码不能为空")
     @ApiModelProperty(value = "密码")
     @Column(name = "pass_word")
     private String passWord;
