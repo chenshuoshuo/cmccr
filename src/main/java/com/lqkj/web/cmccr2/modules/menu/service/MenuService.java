@@ -5,10 +5,7 @@ import com.lqkj.web.cmccr2.modules.menu.domain.CcrMenu;
 import com.lqkj.web.cmccr2.modules.application.dao.CcrVersionApplicationRepository;
 import com.lqkj.web.cmccr2.modules.menu.dao.CcrMenuRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Example;
-import org.springframework.data.domain.ExampleMatcher;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -50,7 +47,7 @@ public class MenuService {
         for (Long i : id) {
             CcrMenu menu = menuDao.getOne(i);
 
-            if (menu.getType()!= null && !menu.getType().equals(CcrMenu.IpsMenuType.embed)) {
+            if (menu.getType()!=null && !menu.getType().equals(CcrMenu.IpsMenuType.embed)) {
                 menuDao.delete(menu);
             }
         }
@@ -91,7 +88,7 @@ public class MenuService {
                 .withIgnorePaths("id");
 
         return menuDao.findAll(Example.of(menu, matcher),
-                PageRequest.of(page, pageSize));
+                PageRequest.of(page, pageSize, Sort.by("sort")));
     }
 
     /**
@@ -109,6 +106,6 @@ public class MenuService {
                 .withIgnorePaths("id");
 
         return menuDao.findAll(Example.of(menu, matcher),
-                PageRequest.of(page, pageSize));
+                PageRequest.of(page, pageSize, Sort.by("sort")));
     }
 }
