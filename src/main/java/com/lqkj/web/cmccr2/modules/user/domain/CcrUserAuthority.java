@@ -53,6 +53,10 @@ public class CcrUserAuthority implements Serializable, GrantedAuthority {
     @Enumerated(EnumType.STRING)
     private UserAuthorityType type;
 
+    @Column
+    @ApiModelProperty(value = "是否开发该功能")
+    private Boolean enabled;
+
     public CcrUserAuthority() {
     }
 
@@ -117,10 +121,18 @@ public class CcrUserAuthority implements Serializable, GrantedAuthority {
         this.type = type;
     }
 
+    public Boolean getEnabled() {
+        return enabled;
+    }
+
+    public void setEnabled(Boolean enabled) {
+        this.enabled = enabled;
+    }
+
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this==o) return true;
+        if (o==null || getClass()!=o.getClass()) return false;
         CcrUserAuthority authority = (CcrUserAuthority) o;
         return Objects.equals(authorityId, authority.authorityId) &&
                 Objects.equals(name, authority.name) &&
@@ -128,12 +140,14 @@ public class CcrUserAuthority implements Serializable, GrantedAuthority {
                 Objects.equals(route, authority.route) &&
                 Objects.equals(icon, authority.icon) &&
                 Objects.equals(parentId, authority.parentId) &&
-                type == authority.type;
+                type==authority.type &&
+                Objects.equals(enabled, authority.enabled);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(authorityId, name, content, route, icon, parentId, type);
+        return Objects.hash(authorityId, name, content, route, icon,
+                parentId, type, enabled);
     }
 
     @Override

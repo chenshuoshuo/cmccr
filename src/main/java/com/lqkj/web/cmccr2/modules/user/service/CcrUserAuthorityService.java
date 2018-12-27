@@ -4,6 +4,7 @@ import com.lqkj.web.cmccr2.modules.log.service.CcrSystemLogService;
 import com.lqkj.web.cmccr2.modules.user.dao.CcrUserAuthorityRepository;
 import com.lqkj.web.cmccr2.modules.user.dao.CcrUserRuleRepository;
 import com.lqkj.web.cmccr2.modules.user.domain.CcrUserAuthority;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.ExampleMatcher;
@@ -34,6 +35,8 @@ public class CcrUserAuthorityService {
         systemLogService.addLog("用户权限服务", "add",
                 "增加一个用户权限");
 
+        authority.setEnabled(Boolean.TRUE);
+
         return userAuthorityRepository.save(authority);
     }
 
@@ -52,10 +55,7 @@ public class CcrUserAuthorityService {
 
         CcrUserAuthority savedAuthority = userAuthorityRepository.getOne(id);
 
-        savedAuthority.setContent(authority.getContent());
-        savedAuthority.setName(authority.getName());
-        savedAuthority.setRoute(authority.getRoute());
-        savedAuthority.setParentId(authority.getParentId());
+        BeanUtils.copyProperties(authority, savedAuthority);
 
         return userAuthorityRepository.save(savedAuthority);
     }
