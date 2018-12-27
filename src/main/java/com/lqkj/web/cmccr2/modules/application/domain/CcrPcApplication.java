@@ -1,5 +1,6 @@
 package com.lqkj.web.cmccr2.modules.application.domain;
 
+import com.lqkj.web.cmccr2.modules.menu.domain.CcrMenu;
 import com.lqkj.web.cmccr2.modules.user.domain.CcrUser;
 import com.vladmihalcea.hibernate.type.array.StringArrayType;
 import org.hibernate.annotations.Type;
@@ -29,7 +30,7 @@ public class CcrPcApplication implements Serializable {
     @Column(name = "app_id")
     private Long appId;
 
-    @Column(name = "icon",columnDefinition = " text")
+    @Column(name = "icon", columnDefinition = " text")
     private String icon;
 
     @Column(name = "name")
@@ -73,6 +74,9 @@ public class CcrPcApplication implements Serializable {
     @Column(name = "has_users")
     @ManyToMany(targetEntity = CcrUser.class)
     private List<Long> hasUsers;
+
+    @Column(name = "parent_menu_id")
+    private Long parentMenu;
 
     public IpsApplicationPlatform getPlatform() {
         return platform;
@@ -186,10 +190,18 @@ public class CcrPcApplication implements Serializable {
         this.hasUsers = hasUsers;
     }
 
+    public Long getParentMenu() {
+        return parentMenu;
+    }
+
+    public void setParentMenu(Long parentMenu) {
+        this.parentMenu = parentMenu;
+    }
+
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this==o) return true;
+        if (o==null || getClass()!=o.getClass()) return false;
         CcrPcApplication that = (CcrPcApplication) o;
         return Objects.equals(appId, that.appId) &&
                 Objects.equals(icon, that.icon) &&
@@ -202,15 +214,18 @@ public class CcrPcApplication implements Serializable {
                 Objects.equals(enabled, that.enabled) &&
                 Objects.equals(sort, that.sort) &&
                 Objects.equals(updateTime, that.updateTime) &&
-                platform == that.platform &&
+                platform==that.platform &&
                 Arrays.equals(hasRoles, that.hasRoles) &&
-                Objects.equals(hasUsers, that.hasUsers);
+                Objects.equals(hasUsers, that.hasUsers) &&
+                Objects.equals(parentMenu, that.parentMenu);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(appId, icon, name, nameEn, version, url, hasQRCode, description,
-                enabled, sort, updateTime, platform, hasRoles, hasUsers);
+        int result = Objects.hash(appId, icon, name, nameEn, version, url, hasQRCode, description,
+                enabled, sort, updateTime, platform, hasUsers, parentMenu);
+        result = 31 * result + Arrays.hashCode(hasRoles);
+        return result;
     }
 
     public enum IpsApplicationPlatform {

@@ -50,4 +50,10 @@ public class PcApplicationController {
     public MessageListBean<CcrPcApplication> list() {
         return MessageListBean.ok(pcApplicationService.all());
     }
+
+    @ApiOperation("根据菜单id获取应用列表")
+    @GetMapping("/center/application/pc/" + APIVersion.V1 + "/menu/{menuId}/list")
+    public MessageListBean<CcrPcApplication> findByMenuId(@PathVariable("menuId") Long menuId) {
+        return MessageListBean.ok(pcApplicationService.findByParentId(menuId));
+    }
 }

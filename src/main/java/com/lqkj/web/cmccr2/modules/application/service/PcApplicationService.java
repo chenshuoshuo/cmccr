@@ -24,21 +24,21 @@ public class PcApplicationService {
     CcrSystemLogService systemLogService;
 
     public CcrPcApplication add(CcrPcApplication application) {
-        systemLogService.addLog("pc应用管理","add",
+        systemLogService.addLog("pc应用管理", "add",
                 "增加pc应用");
 
         return applicationRepository.save(application);
     }
 
     public void delete(Long appId) {
-        systemLogService.addLog("pc应用管理","delete",
+        systemLogService.addLog("pc应用管理", "delete",
                 "删除pc应用");
 
         applicationRepository.deleteById(appId);
     }
 
     public CcrPcApplication update(Long id, CcrPcApplication application) {
-        systemLogService.addLog("pc应用管理","update",
+        systemLogService.addLog("pc应用管理", "update",
                 "更新pc应用");
 
         CcrPcApplication savedApp = applicationRepository.getOne(id);
@@ -49,16 +49,23 @@ public class PcApplicationService {
     }
 
     public CcrPcApplication info(Long id) {
-        systemLogService.addLog("pc应用管理","info",
+        systemLogService.addLog("pc应用管理", "info",
                 "查询pc应用");
 
         return applicationRepository.findById(id).get();
     }
 
     public List<CcrPcApplication> all() {
-        systemLogService.addLog("pc应用管理","info",
+        systemLogService.addLog("pc应用管理", "info",
                 "查询所有pc应用");
 
         return applicationRepository.findAll();
+    }
+
+    public List<CcrPcApplication> findByParentId(Long parentMenuId) {
+        systemLogService.addLog("pc应用管理", "findByParentId",
+                "根据菜单id查询应用");
+
+        return applicationRepository.findByMenuId(parentMenuId);
     }
 }
