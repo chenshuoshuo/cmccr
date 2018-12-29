@@ -1,18 +1,24 @@
 package com.lqkj.web.cmccr2.modules.user.domain;
 
+import com.vladmihalcea.hibernate.type.array.StringArrayType;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import io.swagger.annotations.ApiOperation;
+import org.hibernate.annotations.Type;
+import org.hibernate.annotations.TypeDef;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.core.GrantedAuthority;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import java.io.Serializable;
+import java.util.Arrays;
 import java.util.Objects;
 
 /**
  * 用户权限
  */
+@TypeDef(name = "string-array", typeClass = StringArrayType.class)
 @ApiModel(description = "用户权限")
 @Entity
 @Table(name = "ccr_user_authority", indexes = {
@@ -56,6 +62,11 @@ public class CcrUserAuthority implements Serializable, GrantedAuthority {
     @Column
     @ApiModelProperty(value = "是否开发该功能")
     private Boolean enabled;
+
+    @ApiModelProperty(value = "支持的http方法")
+    @Type(type = "string-array")
+    @Column(name = "http_method", columnDefinition = " text[]")
+    private String[] httpMethod;
 
     public CcrUserAuthority() {
     }
@@ -129,6 +140,14 @@ public class CcrUserAuthority implements Serializable, GrantedAuthority {
         this.enabled = enabled;
     }
 
+    public String[] getHttpMethod() {
+        return httpMethod;
+    }
+
+    public void setHttpMethod(String[] httpMethod) {
+        this.httpMethod = httpMethod;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this==o) return true;
@@ -141,13 +160,15 @@ public class CcrUserAuthority implements Serializable, GrantedAuthority {
                 Objects.equals(icon, authority.icon) &&
                 Objects.equals(parentId, authority.parentId) &&
                 type==authority.type &&
-                Objects.equals(enabled, authority.enabled);
+                Objects.equals(enabled, authority.enabled) &&
+                Arrays.equals(httpMethod, authority.httpMethod);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(authorityId, name, content, route, icon,
-                parentId, type, enabled);
+        int result = Objects.hash(authorityId, name, content, route, icon, parentId, type, enabled);
+        result = 31 * result + Arrays.hashCode(httpMethod);
+        return result;
     }
 
     @Override
