@@ -46,11 +46,11 @@ public class SensitivityWordService {
 
     private WordTree wordTree;
 
-    public CcrSensitivityWord add(String word) throws IOException {
+    public CcrSensitivityWord add(String word, CcrSensitivityWord.HandleType handleType) throws IOException {
         systemLogService.addLog("违禁词服务", "add",
                 "增加一个违禁词");
 
-        CcrSensitivityWord sensitivityWord = this.sensitivityWordDao.save(new CcrSensitivityWord(word));
+        CcrSensitivityWord sensitivityWord = this.sensitivityWordDao.save(new CcrSensitivityWord(word, handleType));
 
         this.initSensitivityWords();
 

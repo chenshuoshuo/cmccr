@@ -15,7 +15,7 @@ import java.util.Objects;
  */
 @ApiModel(description = "违禁字")
 @Entity
-@Table(name = "ccr_sensitivity_word", indexes = {@Index(name = "word_index", columnList = "word")})
+@Table(name = "ccr_sensitivity_word")
 public class CcrSensitivityWord implements Serializable {
 
     @ApiModelProperty(value = "违禁字id", accessMode = ApiModelProperty.AccessMode.READ_ONLY)
@@ -42,6 +42,11 @@ public class CcrSensitivityWord implements Serializable {
     private HandleType handleType;
 
     public CcrSensitivityWord() {
+    }
+
+    public CcrSensitivityWord(String word, HandleType handleType) {
+        this.word = word;
+        this.handleType = handleType;
     }
 
     public Timestamp getCreateTime() {

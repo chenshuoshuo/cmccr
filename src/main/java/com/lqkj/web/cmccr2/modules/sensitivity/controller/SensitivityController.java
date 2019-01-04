@@ -35,8 +35,9 @@ public class SensitivityController {
 
     @ApiOperation("增加一个违禁字")
     @PutMapping("/center/sensitivity/" + APIVersion.V1 + "/add/{word}")
-    public MessageBean<CcrSensitivityWord> add(@PathVariable String word) throws IOException {
-        return MessageBean.ok(sensitivityWordService.add(word));
+    public MessageBean<CcrSensitivityWord> add(@PathVariable String word,
+                                               @RequestParam CcrSensitivityWord.HandleType handleType) throws IOException {
+        return MessageBean.ok(sensitivityWordService.add(word, handleType));
     }
 
     @ApiOperation("删除一个违禁字")
