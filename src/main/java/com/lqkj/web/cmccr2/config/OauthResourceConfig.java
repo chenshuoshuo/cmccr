@@ -1,6 +1,7 @@
 package com.lqkj.web.cmccr2.config;
 
 import com.lqkj.web.cmccr2.APIVersion;
+import com.lqkj.web.cmccr2.modules.menu.controller.MenuController;
 import com.lqkj.web.cmccr2.modules.user.service.CcrUserService;
 import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -67,7 +68,8 @@ public class OauthResourceConfig implements ResourceServerConfigurer {
                 .authorizeRequests()
                 .antMatchers("/center/user/register")
                 .permitAll()
-                .antMatchers(HttpMethod.GET,"/center/store/" + APIVersion.V1 + "/*/*")
+                .antMatchers(HttpMethod.GET, "/center/menu/" + MenuController.VERSION + "/page",
+                        "/center/store/" + APIVersion.V1 + "/*/*")
                 .permitAll()
                 .antMatchers("/center/application/**",
                         "/center/menu/**",
@@ -76,7 +78,7 @@ public class OauthResourceConfig implements ResourceServerConfigurer {
                         "/center/store/**",
                         "/center/user/**",
                         "/center/sys/log/**"
-                        )
+                )
                 .authenticated()
         ;
     }
