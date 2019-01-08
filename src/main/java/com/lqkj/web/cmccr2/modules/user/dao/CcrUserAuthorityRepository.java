@@ -13,4 +13,7 @@ public interface CcrUserAuthorityRepository extends JpaRepository<CcrUserAuthori
 
     @Query("select a from CcrUserAuthority a where a.type=:t and a.enabled=true")
     List<CcrUserAuthority> findByType(@Param("t") CcrUserAuthority.UserAuthorityType type);
+
+    @Query("select a.name from CcrUserAuthority a where upper(a.content)=upper(:content) ")
+    String findNameByContent(@Param("content") String content);
 }

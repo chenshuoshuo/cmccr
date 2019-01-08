@@ -97,11 +97,11 @@ spring:
       cache: true
   cloud:
     consul:
-      enabled: false
+      enabled: true
       host: 192.168.4.240
       port: 8500
       discovery:
-        enabled: false
+        enabled: true
         tags: version=v2,author=free
         healthCheckPath: ${server.servlet.context-path}/actuator/health
         healthCheckInterval: 60s

@@ -1,5 +1,6 @@
 package com.lqkj.web.cmccr2.modules.request.controller;
 
+import com.ecwid.consul.v1.health.model.Check;
 import com.lqkj.web.cmccr2.APIVersion;
 import com.lqkj.web.cmccr2.message.MessageBean;
 import com.lqkj.web.cmccr2.message.MessageListBean;
@@ -21,6 +22,7 @@ import org.springframework.web.context.request.async.WebAsyncTask;
 import javax.servlet.http.HttpServletRequest;
 import java.sql.Timestamp;
 import java.util.List;
+import java.util.Map;
 
 @Api(tags = "网关统计")
 @RestController
@@ -73,5 +75,11 @@ public class CcrRequestRecordController {
                                                            @RequestParam Integer pageSize) {
         return MessageBean.ok(requestRecordService.errorRecord(startTime, endTime,
                 page, pageSize));
+    }
+
+    @ApiOperation("查询系统状态统计结果")
+    @GetMapping("/center/record/" + APIVersion.V1 + "/system")
+    public MessageBean<Map<String, List<Check.CheckStatus>>> systemRecord() {
+        return MessageBean.ok(requestRecordService.systemRecord());
     }
 }

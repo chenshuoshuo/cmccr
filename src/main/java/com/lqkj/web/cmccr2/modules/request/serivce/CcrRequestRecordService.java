@@ -1,9 +1,14 @@
 package com.lqkj.web.cmccr2.modules.request.serivce;
 
+import com.ecwid.consul.v1.ConsulClient;
+import com.ecwid.consul.v1.QueryParams;
+import com.ecwid.consul.v1.Response;
+import com.ecwid.consul.v1.health.model.Check;
 import com.lqkj.web.cmccr2.modules.request.dao.CcrRequestRecordRepository;
 import com.lqkj.web.cmccr2.modules.request.doamin.CcrLocationRecord;
 import com.lqkj.web.cmccr2.modules.request.doamin.CcrRequestRecord;
 import com.lqkj.web.cmccr2.modules.request.doamin.CcrStatisticsFrequency;
+import com.lqkj.web.cmccr2.modules.user.dao.CcrUserAuthorityRepository;
 import org.lionsoul.ip2region.DataBlock;
 import org.lionsoul.ip2region.DbSearcher;
 import org.slf4j.Logger;
@@ -14,11 +19,13 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.io.IOException;
 import java.math.BigInteger;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 public class CcrRequestRecordService {
@@ -27,6 +34,12 @@ public class CcrRequestRecordService {
 
     @Autowired
     CcrRequestRecordRepository requestRecordRepository;
+
+    @Autowired
+    CcrUserAuthorityRepository authorityRepository;
+
+    @Autowired
+    ConsulClient consulClient;
 
     @Autowired
     DbSearcher dbSearcher;
@@ -96,6 +109,32 @@ public class CcrRequestRecordService {
                                               Integer page, Integer pageSize) {
         return this.requestRecordRepository.errorRecord(startTime, endTime,
                 PageRequest.of(page, pageSize));
+    }
+
+    /**
+     * 系统状态记录
+     */
+    public Map<String, List<Check.CheckStatus>> systemRecord() {
+        Map<String, List<Check.CheckStatus>> statusMap = new HashMap<>();
+
+        Response<Map<String, List<String>>> services = consulClient
+                .getCatalogServices(QueryParams.DEFAULT);
+
+        for (String serviceName : services.getValue().keySet()) {
+            if (serviceName.equals("consul")) continue;
+
+            Response<List<com.ecwid.consul.v1.health.model.Check>> check = consulClient
+                    .getHealthChecksForService(serviceName, QueryParams.DEFAULT);
+
+            List<Check.CheckStatus> statuses = check.getValue().stream().map(Check::getStatus)
+                    .collect(Collectors.toList());
+
+            String chineseName = authorityRepository.findNameByContent(serviceName);
+
+            statusMap.put(chineseName!=null ? chineseName : serviceName, statuses);
+        }
+
+        return statusMap;
     }
 
     private String enumToFrequency(CcrStatisticsFrequency frequencyEnum) {
