@@ -94,16 +94,21 @@ public class MenuService {
     /**
      * 按照类型分页查询
      */
-    public Page<CcrMenu> typePage(CcrMenu.IpsMenuType type, Integer page, Integer pageSize) {
+    public Page<CcrMenu> typePage(CcrMenu.IpsMenuType type, String keyword, Integer page, Integer pageSize) {
         systemLogService.addLog("菜单管理服务", "typePage"
                 , "按照类型分页查询菜单信息");
 
         CcrMenu menu = new CcrMenu();
         menu.setType(type);
+        menu.setName(keyword);
 
         ExampleMatcher matcher = ExampleMatcher.matching()
-                .withMatcher("type", ExampleMatcher.GenericPropertyMatchers.exact())
+                .withMatcher("name", ExampleMatcher.GenericPropertyMatchers.contains())
                 .withIgnorePaths("id");
+
+        if (type!=null) {
+            matcher.withMatcher("type", ExampleMatcher.GenericPropertyMatchers.exact());
+        }
 
         return menuDao.findAll(Example.of(menu, matcher),
                 PageRequest.of(page, pageSize, Sort.by("sort")));

@@ -14,6 +14,8 @@ import com.lqkj.web.cmccr2.modules.application.dao.CcrMultiApplicationRepository
 import com.lqkj.web.cmccr2.modules.log.service.CcrSystemLogService;
 import org.apache.commons.codec.binary.Base64;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Example;
+import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
@@ -51,11 +53,11 @@ public class MultiApplicationService {
      */
     public Long createApplication(CcrMultiApplication application, String iconPath)
             throws Exception {
-        systemLogService.addLog("组合应用服务","createApplication"
-                ,"创建一个组合应用");
+        systemLogService.addLog("组合应用服务", "createApplication"
+                , "创建一个组合应用");
 
-        if (application.getAndroidURL() == null && application.getIosURL() == null &&
-                application.getWebURL() == null) {
+        if (application.getAndroidURL()==null && application.getIosURL()==null &&
+                application.getWebURL()==null) {
             throw new Exception("请至少输入应用URL参数");
         }
 
@@ -70,8 +72,8 @@ public class MultiApplicationService {
      * @param id 组合应用id
      */
     public void deleteApplication(Long[] id) {
-        systemLogService.addLog("组合应用服务","deleteApplication"
-                ,"批量删除组合应用");
+        systemLogService.addLog("组合应用服务", "deleteApplication"
+                , "批量删除组合应用");
 
         for (Long i : id) {
             multiApplicationDao.deleteById(i);
@@ -82,15 +84,15 @@ public class MultiApplicationService {
      * 更新组合应用
      */
     public Long updateApplication(@NotNull Long applicationId, CcrMultiApplication application) throws Exception {
-        if (application.getAndroidURL() == null && application.getIosURL() == null &&
-                application.getWebURL() == null) {
+        if (application.getAndroidURL()==null && application.getIosURL()==null &&
+                application.getWebURL()==null) {
             throw new Exception("请至少输入应用URL参数");
         }
         if (!applicationId.equals(application.getId())) {
             throw new Exception("应用id不相等");
         }
-        systemLogService.addLog("组合应用服务","updateApplication"
-                ,"更新组合应用");
+        systemLogService.addLog("组合应用服务", "updateApplication"
+                , "更新组合应用");
 
         return multiApplicationDao.save(application).getId();
     }
@@ -102,8 +104,8 @@ public class MultiApplicationService {
      * @return 信息
      */
     public CcrMultiApplication getApplication(Long id) {
-        systemLogService.addLog("组合应用服务","getApplication"
-                ,"查询组合应用");
+        systemLogService.addLog("组合应用服务", "getApplication"
+                , "查询组合应用");
 
         return multiApplicationDao.findById(id).get();
     }
@@ -111,11 +113,19 @@ public class MultiApplicationService {
     /**
      * 分页查询
      */
-    public Page<CcrMultiApplication> getPage(Integer page, Integer pageSize) {
-        systemLogService.addLog("组合应用服务","getPage"
-                ,"分页查询组合应用");
+    public Page<CcrMultiApplication> getPage(String keyword, Integer page, Integer pageSize) {
+        systemLogService.addLog("组合应用服务", "getPage"
+                , "分页查询组合应用");
 
-        return multiApplicationDao.findAll(PageRequest.of(page, pageSize));
+        CcrMultiApplication application = new CcrMultiApplication();
+        application.setName(keyword);
+
+        ExampleMatcher exampleMatcher = ExampleMatcher.matching()
+                .withMatcher("name", ExampleMatcher.GenericPropertyMatchers.contains())
+                .withIgnorePaths("id");
+
+        return multiApplicationDao.findAll(Example.of(application, exampleMatcher),
+                PageRequest.of(page, pageSize));
     }
 
     /**
@@ -124,8 +134,8 @@ public class MultiApplicationService {
      * @param applicationId 组合应用id
      */
     public String createAppQRCode(Long applicationId, String requestURL) throws Exception {
-        systemLogService.addLog("组合应用服务","createAppQRCode"
-                ,"创建二维码");
+        systemLogService.addLog("组合应用服务", "createAppQRCode"
+                , "创建二维码");
 
         CcrMultiApplication application = multiApplicationDao.getOne(applicationId);
 
@@ -150,7 +160,7 @@ public class MultiApplicationService {
         BufferedImage bufferedImage = MatrixToImageWriter.toBufferedImage(m,
                 new MatrixToImageConfig(0xFF000001, 0xFFFFFFF1));
 
-        if (iconPath != null) {
+        if (iconPath!=null) {
             Graphics2D graphics = bufferedImage.createGraphics();
 
             BufferedImage logoImage = ImageIO.read(new File(iconPath));
@@ -177,8 +187,8 @@ public class MultiApplicationService {
      * 创造一个测试用的二维码
      */
     public void createSimpleQRCode(OutputStream outputStream) throws WriterException, IOException {
-        systemLogService.addLog("组合应用服务","createSimpleQRCode"
-                ,"创建测试二维码");
+        systemLogService.addLog("组合应用服务", "createSimpleQRCode"
+                , "创建测试二维码");
 
         String content = "http://www.baidu.com";
 

@@ -62,4 +62,12 @@ public class CcrUserAuthorityController {
     public MessageListBean<CcrUserAuthority> queryByType(@PathVariable CcrUserAuthority.UserAuthorityType type) {
         return MessageListBean.ok(authorityService.findByType(type));
     }
+
+    @ApiOperation("匹配更新权限是否开启")
+    @PostMapping("/center/user/authority/batch/enabled")
+    public MessageBean batchUpdateEnabled(@RequestParam Long[] authorities,
+                                          @RequestParam Boolean enabled) {
+        this.authorityService.batchUpdateEnabled(authorities, enabled);
+        return MessageBean.ok();
+    }
 }

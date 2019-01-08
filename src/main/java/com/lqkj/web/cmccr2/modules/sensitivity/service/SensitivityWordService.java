@@ -12,6 +12,8 @@ import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Example;
+import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.scheduling.annotation.Async;
@@ -46,11 +48,13 @@ public class SensitivityWordService {
 
     private WordTree wordTree;
 
-    public CcrSensitivityWord add(String word, CcrSensitivityWord.HandleType handleType) throws IOException {
+    public CcrSensitivityWord add(String word, CcrSensitivityWord.HandleType handleType,
+                                  String replaceContent) throws IOException {
         systemLogService.addLog("违禁词服务", "add",
                 "增加一个违禁词");
 
-        CcrSensitivityWord sensitivityWord = this.sensitivityWordDao.save(new CcrSensitivityWord(word, handleType));
+        CcrSensitivityWord sensitivityWord = this.sensitivityWordDao.save(new CcrSensitivityWord(word, replaceContent,
+                handleType));
 
         this.initSensitivityWords();
 
@@ -128,11 +132,19 @@ public class SensitivityWordService {
     /**
      * 记录列表
      */
-    public Page<CcrSensitivityRecord> recordPage(Integer page, Integer pageSize) {
+    public Page<CcrSensitivityRecord> recordPage(String keyword, Integer page, Integer pageSize) {
         systemLogService.addLog("违禁词服务", "recordPage",
                 "记录列表");
 
-        return this.sensitivityRecordRepository.findAll(PageRequest.of(page, pageSize));
+        CcrSensitivityRecord record = new CcrSensitivityRecord();
+        record.setContent(keyword);
+
+        ExampleMatcher exampleMatcher = ExampleMatcher.matching()
+                .withMatcher("content", ExampleMatcher.GenericPropertyMatchers.contains())
+                .withIgnorePaths("recordId");
+
+        return this.sensitivityRecordRepository.findAll(Example.of(record, exampleMatcher),
+                PageRequest.of(page, pageSize));
     }
 
     /**

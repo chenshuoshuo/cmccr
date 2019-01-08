@@ -2,6 +2,7 @@ package com.lqkj.web.cmccr2.modules.user.service;
 
 import com.lqkj.web.cmccr2.modules.log.service.CcrSystemLogService;
 import com.lqkj.web.cmccr2.modules.user.dao.CcrUserRepository;
+import com.lqkj.web.cmccr2.modules.user.dao.CcrUserRuleRepository;
 import com.lqkj.web.cmccr2.modules.user.domain.CcrUser;
 import com.lqkj.web.cmccr2.modules.user.domain.CcrUserRule;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +29,9 @@ public class CcrUserService implements UserDetailsService {
 
     @Autowired
     CcrUserRepository userRepository;
+
+    @Autowired
+    CcrUserRuleRepository ruleRepository;
 
     @Autowired
     PasswordEncoder passwordEncoder;
@@ -77,8 +81,8 @@ public class CcrUserService implements UserDetailsService {
     /**
      * 更新用户密码
      */
-    public String updatePassword(Long id, String password) {
-        systemLogService.addLog("用户管理服务", "updatePassword",
+    public String update(Long id, String password) {
+        systemLogService.addLog("用户管理服务", "update",
                 "更新用户密码");
 
         CcrUser user = userRepository.getOne(id);
@@ -136,5 +140,23 @@ public class CcrUserService implements UserDetailsService {
                 "用戶統計");
 
         return userRepository.userStatistics();
+    }
+
+    /**
+     * 绑定角色
+     */
+    public void bindRules(Long userId, Long[] rules) {
+        systemLogService.addLog("用户管理服务", "bindRules",
+                "绑定用户角色");
+
+        CcrUser user = userRepository.getOne(userId);
+
+        user.getRules().clear();
+
+        for (Long rule : rules) {
+            user.getRules().add(this.ruleRepository.getOne(rule));
+        }
+
+        userRepository.save(user);
     }
 }

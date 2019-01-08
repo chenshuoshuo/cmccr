@@ -95,4 +95,17 @@ public class CcrUserAuthorityService {
 
         return userAuthorityRepository.findByType(type);
     }
+
+    public void batchUpdateEnabled(Long[] authorities, Boolean enabled) {
+        systemLogService.addLog("用户权限服务", "batchUpdate",
+                "批量更新权限状态");
+
+        for (Long authority : authorities) {
+            CcrUserAuthority userAuthority = userAuthorityRepository.getOne(authority);
+
+            userAuthority.setEnabled(enabled);
+
+            userAuthorityRepository.save(userAuthority);
+        }
+    }
 }

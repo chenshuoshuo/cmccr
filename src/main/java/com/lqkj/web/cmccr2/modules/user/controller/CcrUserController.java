@@ -15,18 +15,13 @@ import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 import springfox.documentation.annotations.ApiIgnore;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.io.OutputStream;
 
 @Api(tags = "用户管理")
 @RestController
@@ -56,8 +51,9 @@ public class CcrUserController {
 
     @ApiOperation("更新用户密码")
     @PostMapping("/center/user/{id}")
-    public MessageBean<String> updatePassword(@RequestParam String password, @PathVariable Long id) {
-        return MessageBean.ok(ccrUserService.updatePassword(id, password));
+    public MessageBean<String> update(@RequestParam String password,
+                                      @PathVariable Long id) {
+        return MessageBean.ok(ccrUserService.update(id, password));
     }
 
     @ApiOperation("根据用户id删除用户")
@@ -110,5 +106,13 @@ public class CcrUserController {
                          @RequestParam(name = "code") String code,
                          @RequestParam(name = "state") String state) {
 
+    }
+
+    @ApiOperation("绑定用户角色")
+    @PostMapping("/center/user/{userId}/rule/bind")
+    public MessageBean bindRules(@PathVariable Long userId,
+                                         @RequestParam Long[] rules) {
+        this.ccrUserService.bindRules(userId, rules);
+        return MessageBean.ok();
     }
 }

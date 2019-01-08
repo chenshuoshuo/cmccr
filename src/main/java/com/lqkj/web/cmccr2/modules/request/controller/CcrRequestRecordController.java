@@ -58,14 +58,14 @@ public class CcrRequestRecordController {
         return MessageBean.ok(requestRecordService.urlStatistics(startTime, endTime, page, pageSize));
     }
 
-    @ApiOperation("查询流量统计结果")
+    @ApiOperation("查询地理统计结果")
     @GetMapping("/center/record/" + APIVersion.V1 + "/location")
     public MessageListBean<CcrLocationRecord> locationRecord(@RequestParam Timestamp startTime,
                                                              @RequestParam Timestamp endTime) {
         return MessageListBean.ok(requestRecordService.locationStatistics(startTime, endTime));
     }
 
-    @ApiOperation("查询流量统计结果")
+    @ApiOperation("查询错误统计结果")
     @GetMapping("/center/record/" + APIVersion.V1 + "/error")
     public MessageBean<Page<CcrRequestRecord>> errorRecord(@RequestParam Timestamp startTime,
                                                            @RequestParam Timestamp endTime,

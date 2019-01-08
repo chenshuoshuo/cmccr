@@ -36,8 +36,9 @@ public class SensitivityController {
     @ApiOperation("增加一个违禁字")
     @PutMapping("/center/sensitivity/" + APIVersion.V1 + "/add/{word}")
     public MessageBean<CcrSensitivityWord> add(@PathVariable String word,
+                                               @RequestParam String replaceContent,
                                                @RequestParam CcrSensitivityWord.HandleType handleType) throws IOException {
-        return MessageBean.ok(sensitivityWordService.add(word, handleType));
+        return MessageBean.ok(sensitivityWordService.add(word, handleType, replaceContent));
     }
 
     @ApiOperation("删除一个违禁字")
@@ -69,8 +70,9 @@ public class SensitivityController {
 
     @ApiOperation("分页查询违禁字记录")
     @GetMapping("/center/sensitivity/" + APIVersion.V1 + "/record/page")
-    public MessageBean<Page<CcrSensitivityRecord>> recordPage(@RequestParam Integer page,
+    public MessageBean<Page<CcrSensitivityRecord>> recordPage(@RequestParam(required = false) String keyword,
+                                                              @RequestParam Integer page,
                                                               @RequestParam Integer pageSize) {
-        return MessageBean.ok(sensitivityWordService.recordPage(page, pageSize));
+        return MessageBean.ok(sensitivityWordService.recordPage(keyword, page, pageSize));
     }
 }

@@ -86,7 +86,7 @@ public class MultiApplicationController {
     @ApiOperation("根据应用id获取二维码")
     @GetMapping("/center/application/multi/" + APIVersion.V1 + "/qrcode/{id}")
     public MessageBean<String> qrcode(@PathVariable Long id,
-                                                        HttpServletRequest request) throws Exception {
+                                      HttpServletRequest request) throws Exception {
 
         return MessageBean.ok(multiApplicationService.createAppQRCode(id, ServletUtils.createBaseUrl(request)));
     }
@@ -101,7 +101,7 @@ public class MultiApplicationController {
         if (userAgent.contains("Android")) {
             String androidURL = application.getAndroidURL();
 
-            if (androidURL != null) {
+            if (androidURL!=null) {
                 response.sendRedirect(androidURL);
                 return;
             }
@@ -110,7 +110,7 @@ public class MultiApplicationController {
         if (userAgent.contains("iPhone")) {
             String iosURL = application.getIosURL();
 
-            if (iosURL != null) {
+            if (iosURL!=null) {
                 response.sendRedirect(iosURL);
                 return;
             }
@@ -118,16 +118,17 @@ public class MultiApplicationController {
         //web浏览器
         String webURL = application.getWebURL();
 
-        if (webURL != null) {
+        if (webURL!=null) {
             response.sendRedirect(webURL);
         }
     }
 
     @ApiOperation("分页查询组合应用列表")
     @GetMapping("/center/application/multi/" + APIVersion.V1 + "/page")
-    public MessageBean<Page<CcrMultiApplication>> page(@RequestParam Integer page,
+    public MessageBean<Page<CcrMultiApplication>> page(@RequestParam(required = false) String keyword,
+                                                       @RequestParam Integer page,
                                                        @RequestParam Integer pageSize) {
-        return MessageBean.ok(multiApplicationService.getPage(page, pageSize));
+        return MessageBean.ok(multiApplicationService.getPage(keyword, page, pageSize));
     }
 
     @ApiOperation("测试二维码生成")

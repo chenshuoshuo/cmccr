@@ -44,8 +44,9 @@ public class CcrSensitivityWord implements Serializable {
     public CcrSensitivityWord() {
     }
 
-    public CcrSensitivityWord(String word, HandleType handleType) {
+    public CcrSensitivityWord(String word, String replaceContent, HandleType handleType) {
         this.word = word;
+        this.replaceContent = replaceContent;
         this.handleType = handleType;
     }
 
