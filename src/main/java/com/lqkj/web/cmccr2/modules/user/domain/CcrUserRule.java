@@ -6,6 +6,7 @@ import javax.persistence.*;
 import java.io.Serializable;
 import java.sql.Timestamp;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * 用户角色
@@ -85,5 +86,22 @@ public class CcrUserRule implements Serializable {
 
     public void setContent(String content) {
         this.content = content;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this==o) return true;
+        if (o==null || getClass()!=o.getClass()) return false;
+        CcrUserRule rule = (CcrUserRule) o;
+        return Objects.equals(ruleId, rule.ruleId) &&
+                Objects.equals(authorities, rule.authorities) &&
+                Objects.equals(updateTime, rule.updateTime) &&
+                Objects.equals(name, rule.name) &&
+                Objects.equals(content, rule.content);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(ruleId, authorities, updateTime, name, content);
     }
 }

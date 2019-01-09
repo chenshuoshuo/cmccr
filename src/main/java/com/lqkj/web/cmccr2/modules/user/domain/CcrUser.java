@@ -9,10 +9,7 @@ import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import java.io.Serializable;
 import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 /**
  * 用户
@@ -51,10 +48,11 @@ public class CcrUser implements Serializable, UserDetails {
 
     @ApiModelProperty(value = "用户角色")
     @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(name = "ccr_user_to_rule", joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "user_id"),
+    @JoinTable(name = "ccr_user_to_rule",
+            joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "rule_id", referencedColumnName = "rule_id")
     )
-    private List<CcrUserRule> rules;
+    private Set<CcrUserRule> rules;
 
     @ApiModelProperty(value = "用户群体")
     @Column(name = "user_group")
@@ -74,11 +72,11 @@ public class CcrUser implements Serializable, UserDetails {
         this.userGroup = userGroup;
     }
 
-    public List<CcrUserRule> getRules() {
+    public Set<CcrUserRule> getRules() {
         return rules;
     }
 
-    public void setRules(List<CcrUserRule> rules) {
+    public void setRules(Set<CcrUserRule> rules) {
         this.rules = rules;
     }
 

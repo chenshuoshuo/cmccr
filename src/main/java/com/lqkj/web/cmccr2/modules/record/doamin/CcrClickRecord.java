@@ -30,9 +30,6 @@ public class CcrClickRecord implements Serializable {
     @Column
     private String name;
 
-    @Column
-    private Long count;
-
     public CcrClickRecord() {
         this.recordId = UUID.randomUUID();
     }
@@ -67,13 +64,5 @@ public class CcrClickRecord implements Serializable {
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    public Long getCount() {
-        return count;
-    }
-
-    public void setCount(Long count) {
-        this.count = count;
     }
 }

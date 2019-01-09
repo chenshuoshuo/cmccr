@@ -22,6 +22,7 @@ import springfox.documentation.annotations.ApiIgnore;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
+import java.util.ArrayList;
 
 @Api(tags = "用户管理")
 @RestController
@@ -49,6 +50,12 @@ public class CcrUserController {
         return MessageBean.ok(ccrUserService.info(id));
     }
 
+    @ApiOperation("根据用户名查询用户信息")
+    @GetMapping("/center/user/name/{username}")
+    public MessageBean<CcrUser> info(@PathVariable String username) {
+        return MessageBean.ok((CcrUser) ccrUserService.loadUserByUsername(username));
+    }
+
     @ApiOperation("更新用户密码")
     @PostMapping("/center/user/{id}")
     public MessageBean<String> update(@RequestParam String password,
@@ -72,7 +79,7 @@ public class CcrUserController {
     @ApiOperation("根据用户id查询用户角色")
     @GetMapping("/center/user/{id}/rules")
     public MessageListBean<CcrUserRule> ruleByUserId(@PathVariable Long id) {
-        return MessageListBean.ok(ccrUserService.findRulesByUserId(id));
+        return MessageListBean.ok(new ArrayList<>(ccrUserService.findRulesByUserId(id)));
     }
 
     @ApiImplicitParams({
@@ -111,7 +118,7 @@ public class CcrUserController {
     @ApiOperation("绑定用户角色")
     @PostMapping("/center/user/{userId}/rule/bind")
     public MessageBean bindRules(@PathVariable Long userId,
-                                         @RequestParam Long[] rules) {
+                                 @RequestParam Long[] rules) {
         this.ccrUserService.bindRules(userId, rules);
         return MessageBean.ok();
     }

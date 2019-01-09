@@ -19,6 +19,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Set;
 
 /**
  * 用户管理服务
@@ -125,7 +126,7 @@ public class CcrUserService implements UserDetailsService {
     /**
      * 查询用户角色
      */
-    public List<CcrUserRule> findRulesByUserId(Long id) {
+    public Set<CcrUserRule> findRulesByUserId(Long id) {
         systemLogService.addLog("用户管理服务", "findRulesByUserId",
                 "查询用户角色");
 
