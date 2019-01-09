@@ -33,6 +33,10 @@ public class CcrClickRecord implements Serializable {
     @Column
     private Long count;
 
+    public CcrClickRecord() {
+        this.recordId = UUID.randomUUID();
+    }
+
     public UUID getRecordId() {
         return recordId;
     }
