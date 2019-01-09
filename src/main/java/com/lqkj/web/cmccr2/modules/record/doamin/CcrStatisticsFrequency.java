@@ -1,4 +1,4 @@
-package com.lqkj.web.cmccr2.modules.request.doamin;
+package com.lqkj.web.cmccr2.modules.record.doamin;
 
 /**
  * 统计频率

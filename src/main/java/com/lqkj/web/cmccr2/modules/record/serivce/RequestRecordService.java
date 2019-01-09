@@ -1,13 +1,13 @@
-package com.lqkj.web.cmccr2.modules.request.serivce;
+package com.lqkj.web.cmccr2.modules.record.serivce;
 
 import com.ecwid.consul.v1.ConsulClient;
 import com.ecwid.consul.v1.QueryParams;
 import com.ecwid.consul.v1.Response;
 import com.ecwid.consul.v1.health.model.Check;
-import com.lqkj.web.cmccr2.modules.request.dao.CcrRequestRecordRepository;
-import com.lqkj.web.cmccr2.modules.request.doamin.CcrLocationRecord;
-import com.lqkj.web.cmccr2.modules.request.doamin.CcrRequestRecord;
-import com.lqkj.web.cmccr2.modules.request.doamin.CcrStatisticsFrequency;
+import com.lqkj.web.cmccr2.modules.record.dao.CcrRequestRecordRepository;
+import com.lqkj.web.cmccr2.modules.record.doamin.CcrLocationRecord;
+import com.lqkj.web.cmccr2.modules.record.doamin.CcrRequestRecord;
+import com.lqkj.web.cmccr2.modules.record.doamin.CcrStatisticsFrequency;
 import com.lqkj.web.cmccr2.modules.user.dao.CcrUserAuthorityRepository;
 import org.lionsoul.ip2region.DataBlock;
 import org.lionsoul.ip2region.DbSearcher;
@@ -28,7 +28,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
-public class CcrRequestRecordService {
+public class RequestRecordService {
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 

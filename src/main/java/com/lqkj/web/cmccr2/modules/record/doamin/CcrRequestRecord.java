@@ -1,4 +1,4 @@
-package com.lqkj.web.cmccr2.modules.request.doamin;
+package com.lqkj.web.cmccr2.modules.record.doamin;
 
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.Type;

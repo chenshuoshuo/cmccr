@@ -58,7 +58,8 @@ public class MenuController {
     }
 
     @ApiOperation("按照类型分页查询菜单列表")
-    @GetMapping("/center/menu/" + VERSION + "/page/{type}")
+    @GetMapping(value = {"/center/menu/" + VERSION + "/page/{type}/",
+            "/center/menu/" + VERSION + "/page"})
     public MessageBean<Page<CcrMenu>> typePage(@RequestParam Integer page,
                                                @RequestParam Integer pageSize,
                                                @RequestParam(required = false) String keyword,

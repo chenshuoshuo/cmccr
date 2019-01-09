@@ -89,14 +89,22 @@ public class SensitivityWordService {
         systemLogService.addLog("违禁词服务", "info",
                 "查询一个违禁词");
 
-        return this.sensitivityWordDao.getOne(id);
+        return this.sensitivityWordDao.findById(id).get();
     }
 
-    public Page<CcrSensitivityWord> page(Integer page, Integer pageSize) {
+    public Page<CcrSensitivityWord> page(String keyword, Integer page, Integer pageSize) {
         systemLogService.addLog("违禁词服务", "page",
                 "分页一个违禁词");
 
-        return this.sensitivityWordDao.findAll(PageRequest.of(page, pageSize));
+        CcrSensitivityWord word = new CcrSensitivityWord();
+        word.setWord(keyword);
+
+        ExampleMatcher exampleMatcher = ExampleMatcher.matching()
+                .withMatcher("word", ExampleMatcher.GenericPropertyMatchers.contains())
+                .withIgnorePaths("id");
+
+        return this.sensitivityWordDao.findAll(Example.of(word, exampleMatcher),
+                PageRequest.of(page, pageSize));
     }
 
     public List<CheckResult> checkWords(String[] words) {

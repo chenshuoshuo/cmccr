@@ -1,13 +1,13 @@
-package com.lqkj.web.cmccr2.modules.request.controller;
+package com.lqkj.web.cmccr2.modules.record.controller;
 
 import com.ecwid.consul.v1.health.model.Check;
 import com.lqkj.web.cmccr2.APIVersion;
 import com.lqkj.web.cmccr2.message.MessageBean;
 import com.lqkj.web.cmccr2.message.MessageListBean;
-import com.lqkj.web.cmccr2.modules.request.doamin.CcrLocationRecord;
-import com.lqkj.web.cmccr2.modules.request.doamin.CcrRequestRecord;
-import com.lqkj.web.cmccr2.modules.request.doamin.CcrStatisticsFrequency;
-import com.lqkj.web.cmccr2.modules.request.serivce.CcrRequestRecordService;
+import com.lqkj.web.cmccr2.modules.record.doamin.CcrLocationRecord;
+import com.lqkj.web.cmccr2.modules.record.doamin.CcrRequestRecord;
+import com.lqkj.web.cmccr2.modules.record.doamin.CcrStatisticsFrequency;
+import com.lqkj.web.cmccr2.modules.record.serivce.RequestRecordService;
 import com.lqkj.web.cmccr2.utils.ServletUtils;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -26,10 +26,10 @@ import java.util.Map;
 
 @Api(tags = "网关统计")
 @RestController
-public class CcrRequestRecordController {
+public class RequestRecordController {
 
     @Autowired
-    CcrRequestRecordService requestRecordService;
+    RequestRecordService requestRecordService;
 
     @ApiOperation("增加请求记录")
     @PutMapping("/center/record/" + APIVersion.V1 + "/add")

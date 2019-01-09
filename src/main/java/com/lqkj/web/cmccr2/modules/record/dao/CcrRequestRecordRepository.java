@@ -1,9 +1,7 @@
-package com.lqkj.web.cmccr2.modules.request.dao;
+package com.lqkj.web.cmccr2.modules.record.dao;
 
-import com.google.common.collect.Lists;
-import com.lqkj.web.cmccr2.modules.request.doamin.CcrRequestRecord;
+import com.lqkj.web.cmccr2.modules.record.doamin.CcrRequestRecord;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
