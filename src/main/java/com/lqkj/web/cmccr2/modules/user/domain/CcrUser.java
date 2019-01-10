@@ -130,8 +130,8 @@ public class CcrUser implements Serializable, UserDetails {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this==o) return true;
+        if (o==null || getClass()!=o.getClass()) return false;
         CcrUser ccrUser = (CcrUser) o;
         return Objects.equals(userId, ccrUser.userId) &&
                 Objects.equals(userCode, ccrUser.userCode) &&
@@ -151,7 +151,7 @@ public class CcrUser implements Serializable, UserDetails {
     public Collection getAuthorities() {
         List<CcrUserAuthority> authorities = new ArrayList<>();
 
-        if (rules == null) {
+        if (rules==null) {
             return authorities;
         }
 
@@ -163,7 +163,7 @@ public class CcrUser implements Serializable, UserDetails {
 
     @Override
     public String getPassword() {
-        if (passWord != null) {
+        if (passWord!=null) {
             return passWord;
         } else {
             return casTicket;
@@ -196,6 +196,6 @@ public class CcrUser implements Serializable, UserDetails {
     }
 
     public enum CcrUserGroupType {
-        student, teacher, staff
+        student, teacher, staff, guest, teacher_staff
     }
 }

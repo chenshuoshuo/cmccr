@@ -4,6 +4,7 @@ import com.lqkj.web.cmccr2.modules.log.service.CcrSystemLogService;
 import com.lqkj.web.cmccr2.modules.user.dao.CcrUserAuthorityRepository;
 import com.lqkj.web.cmccr2.modules.user.dao.CcrUserRuleRepository;
 import com.lqkj.web.cmccr2.modules.user.domain.CcrUser;
+import com.lqkj.web.cmccr2.modules.user.domain.CcrUserAuthority;
 import com.lqkj.web.cmccr2.modules.user.domain.CcrUserRule;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Example;
@@ -66,7 +67,7 @@ public class CcrUserRuleService {
         rule.setName(name);
         rule.setContent(enName);
 
-        if (rule.getAuthorities() == null) {
+        if (rule.getAuthorities()==null) {
             rule.setAuthorities(new ArrayList<>());
         } else {
             rule.getAuthorities().clear();

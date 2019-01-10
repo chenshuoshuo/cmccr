@@ -24,7 +24,8 @@ public class CcrUserRule implements Serializable {
     private Long ruleId;
 
     @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(name = "ccr_rule_to_authority", joinColumns = @JoinColumn(name = "rule_id", referencedColumnName = "rule_id"),
+    @JoinTable(name = "ccr_rule_to_authority",
+            joinColumns = @JoinColumn(name = "rule_id", referencedColumnName = "rule_id"),
             inverseJoinColumns = @JoinColumn(name = "authority_id", referencedColumnName = "authority_id")
     )
     private List<CcrUserAuthority> authorities;
