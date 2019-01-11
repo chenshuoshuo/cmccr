@@ -87,11 +87,13 @@ public class OauthAuthorizationConfig extends WebSecurityConfigurerAdapter imple
                 .accessTokenValiditySeconds((int) TimeUnit.MINUTES.toSeconds(10))
                 .refreshTokenValiditySeconds((int) TimeUnit.DAYS.toSeconds(7))
                     .and()
-                .withClient("cmccr-server")
+                .withClient("cmccr-guest")
                 .scopes("guest")
-                .resourceIds("cmccr-guest")
+                .resourceIds("cmccr-server")
                 .authorizedGrantTypes("client_credentials")
-                .secret(passwordEncoder.encode("cmccr-guest"));
+                .secret(passwordEncoder.encode("cmccr-guest"))
+                .accessTokenValiditySeconds((int) TimeUnit.DAYS.toSeconds(365))
+        ;
     }
 
     @Override

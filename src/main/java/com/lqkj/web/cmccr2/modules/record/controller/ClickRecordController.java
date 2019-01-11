@@ -1,10 +1,12 @@
 package com.lqkj.web.cmccr2.modules.record.controller;
 
 import com.lqkj.web.cmccr2.APIVersion;
+import com.lqkj.web.cmccr2.message.MessageListBean;
 import com.lqkj.web.cmccr2.modules.record.doamin.CcrClickRecord;
 import com.lqkj.web.cmccr2.modules.record.serivce.ClickRecordService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -27,5 +29,11 @@ public class ClickRecordController {
             clickRecordService.add(clickRecord);
             return null;
         });
+    }
+
+    @ApiOperation("查询地图点击接口")
+    @GetMapping("/center/click/" + APIVersion.V1 + "/record")
+    public MessageListBean<Object[]> clickRecord() {
+        return MessageListBean.ok(clickRecordService.clickRecord());
     }
 }

@@ -5,6 +5,8 @@ import com.lqkj.web.cmccr2.modules.record.doamin.CcrClickRecord;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class ClickRecordService {
     private CcrClickRecordRepository clickRecordRepository;
@@ -16,5 +18,9 @@ public class ClickRecordService {
 
     public void add(CcrClickRecord clickRecord) {
         clickRecordRepository.save(clickRecord);
+    }
+
+    public List<Object[]> clickRecord() {
+        return clickRecordRepository.clickRecord();
     }
 }
