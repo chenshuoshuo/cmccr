@@ -38,7 +38,7 @@ public class RequestRecordService {
     @Autowired
     CcrUserAuthorityRepository authorityRepository;
 
-    @Autowired
+    @Autowired(required = false)
     ConsulClient consulClient;
 
     @Autowired
@@ -135,6 +135,13 @@ public class RequestRecordService {
         }
 
         return statusMap;
+    }
+
+    /**
+     * ip访问总数
+     */
+    public Integer ipRecord(){
+        return this.requestRecordRepository.ipRecord();
     }
 
     private String enumToFrequency(CcrStatisticsFrequency frequencyEnum) {

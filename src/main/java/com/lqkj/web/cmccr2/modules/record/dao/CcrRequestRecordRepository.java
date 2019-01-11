@@ -44,4 +44,7 @@ public interface CcrRequestRecordRepository extends JpaRepository<CcrRequestReco
     Page<CcrRequestRecord> errorRecord(@Param("startTime") Timestamp startTime,
                                        @Param("endTime") Timestamp endTime,
                                        Pageable pageable);
+
+    @Query(nativeQuery = true, value = "select count(t) from (select r.ip from ccr_request_record r group by r.ip) t")
+    Integer ipRecord();
 }

@@ -28,8 +28,11 @@ import java.util.Map;
 @RestController
 public class RequestRecordController {
 
-    @Autowired
-    RequestRecordService requestRecordService;
+    private RequestRecordService requestRecordService;
+
+    public RequestRecordController(RequestRecordService requestRecordService) {
+        this.requestRecordService = requestRecordService;
+    }
 
     @ApiOperation("增加请求记录")
     @PutMapping("/center/record/" + APIVersion.V1 + "/add")
@@ -81,5 +84,11 @@ public class RequestRecordController {
     @GetMapping("/center/record/" + APIVersion.V1 + "/system")
     public MessageBean<Map<String, List<Check.CheckStatus>>> systemRecord() {
         return MessageBean.ok(requestRecordService.systemRecord());
+    }
+
+    @ApiOperation("查询ip访问统计结果")
+    @GetMapping("/center/record/" + APIVersion.V1 + "/ip")
+    public MessageBean<Integer> ipRecord() {
+        return MessageBean.ok(requestRecordService.ipRecord());
     }
 }
