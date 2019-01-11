@@ -123,7 +123,7 @@ public class RequestRecordService {
         for (String serviceName : services.getValue().keySet()) {
             if (serviceName.equals("consul")) continue;
 
-            Response<List<com.ecwid.consul.v1.health.model.Check>> check = consulClient
+            Response<List<Check>> check = consulClient
                     .getHealthChecksForService(serviceName, QueryParams.DEFAULT);
 
             List<Check.CheckStatus> statuses = check.getValue().stream().map(Check::getStatus)

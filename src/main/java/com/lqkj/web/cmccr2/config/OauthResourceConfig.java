@@ -68,9 +68,11 @@ public class OauthResourceConfig implements ResourceServerConfigurer {
                 .authorizeRequests()
                 .antMatchers("/center/user/register")
                 .permitAll()
-                .antMatchers(HttpMethod.GET, "/center/menu/" + MenuController.VERSION + "/page",
-                        "/center/store/" + APIVersion.V1 + "/*/*")
+                .antMatchers(HttpMethod.GET, "/center/menu/*/page",
+                        "/center/store/*/*/*")
                 .permitAll()
+                .antMatchers("/center/application/pc/*/list")
+                .access("#oauth2.hasAnyScope('js','guest')")
                 .antMatchers("/center/application/**",
                         "/center/menu/**",
                         "/center/request/**",
@@ -79,7 +81,7 @@ public class OauthResourceConfig implements ResourceServerConfigurer {
                         "/center/user/**",
                         "/center/sys/log/**"
                 )
-                .authenticated()
+                .access("#oauth2.hasScope('js')")
         ;
     }
 
