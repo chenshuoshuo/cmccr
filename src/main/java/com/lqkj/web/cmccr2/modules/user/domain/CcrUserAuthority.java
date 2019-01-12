@@ -177,6 +177,6 @@ public class CcrUserAuthority implements Serializable, GrantedAuthority {
     }
 
     public enum UserAuthorityType {
-        menu, home_menu, normal
+        menu, home_menu, ips_menu, normal
     }
 }
