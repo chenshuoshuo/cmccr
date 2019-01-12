@@ -1,5 +1,6 @@
 package com.lqkj.web.cmccr2.modules.application.controller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.lqkj.web.cmccr2.APIVersion;
 import com.lqkj.web.cmccr2.message.MessageBean;
 import com.lqkj.web.cmccr2.message.MessageListBean;
@@ -13,16 +14,19 @@ import org.springframework.web.bind.annotation.*;
 
 @Api(tags = "pc应用管理")
 @RestController
-@Validated
 public class PcApplicationController {
 
     @Autowired
     PcApplicationService pcApplicationService;
 
+    @Autowired
+    ObjectMapper objectMapper;
+
     @ApiOperation("增加pc端应用")
     @PutMapping("/center/application/pc/" + APIVersion.V1 + "/create")
-    public MessageBean<CcrPcApplication> add(@RequestBody CcrPcApplication application) {
-        return MessageBean.ok(pcApplicationService.add(application));
+    public MessageBean<CcrPcApplication> add(@RequestBody String application) throws Exception {
+        return MessageBean.ok(pcApplicationService.add(objectMapper.readValue(application,
+                CcrPcApplication.class)));
     }
 
     @ApiOperation("删除pc端应用")

@@ -1,8 +1,11 @@
 package com.lqkj.web.cmccr2.modules.application.domain;
 
+import com.fasterxml.jackson.annotation.JsonAlias;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.lqkj.web.cmccr2.modules.menu.domain.CcrMenu;
 import com.lqkj.web.cmccr2.modules.user.domain.CcrUser;
 import com.vladmihalcea.hibernate.type.array.StringArrayType;
+import io.swagger.annotations.ApiModelProperty;
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -25,59 +28,38 @@ import java.util.Objects;
 })
 public class CcrPcApplication implements Serializable {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "app_id")
     private Long appId;
 
-    @Column(name = "icon", columnDefinition = " text")
     private String icon;
 
-    @Column(name = "name")
     private String name;
 
-    @Column(name = "name_en")
     private String nameEn;
 
-    @Column(name = "v")
     private Integer version;
 
-    @Column(name = "url")
     private String url;
 
-    @Column(name = "has_qr_code")
     private Boolean hasQRCode;
 
-    @Column(name = "description")
     private String description;
 
-    @Column(name = "enabled")
     private Boolean enabled;
 
-    @OrderBy
-    @Column(name = "sort")
     private Integer sort;
 
-    @UpdateTimestamp
-    @Column(name = "update_time")
     private Timestamp updateTime;
+
+    private IpsApplicationPlatform platform;
+
+    private String[] hasRoles;
+
+    private List<String> hasUsers;
+
+    private Long parentMenu;
 
     @Column
     @Enumerated(EnumType.STRING)
-    private IpsApplicationPlatform platform;
-
-    @Type(type = "string-array")
-    @Column(name = "has_roles", columnDefinition = " text[]")
-    @Enumerated(EnumType.STRING)
-    private String[] hasRoles;
-
-    @Column(name = "has_users")
-    @ManyToMany(targetEntity = CcrUser.class)
-    private List<Long> hasUsers;
-
-    @Column(name = "parent_menu_id")
-    private Long parentMenu;
-
     public IpsApplicationPlatform getPlatform() {
         return platform;
     }
@@ -86,6 +68,9 @@ public class CcrPcApplication implements Serializable {
         this.platform = platform;
     }
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "app_id")
     public Long getAppId() {
         return appId;
     }
@@ -94,6 +79,7 @@ public class CcrPcApplication implements Serializable {
         this.appId = appId;
     }
 
+    @Column(name = "icon", columnDefinition = " text")
     public String getIcon() {
         return icon;
     }
@@ -102,6 +88,7 @@ public class CcrPcApplication implements Serializable {
         this.icon = icon;
     }
 
+    @Column(name = "name")
     public String getName() {
         return name;
     }
@@ -110,6 +97,7 @@ public class CcrPcApplication implements Serializable {
         this.name = name;
     }
 
+    @Column(name = "name_en")
     public String getNameEn() {
         return nameEn;
     }
@@ -118,6 +106,7 @@ public class CcrPcApplication implements Serializable {
         this.nameEn = nameEn;
     }
 
+    @Column(name = "v")
     public Integer getVersion() {
         return version;
     }
@@ -126,6 +115,7 @@ public class CcrPcApplication implements Serializable {
         this.version = version;
     }
 
+    @Column(name = "url")
     public String getUrl() {
         return url;
     }
@@ -134,6 +124,7 @@ public class CcrPcApplication implements Serializable {
         this.url = url;
     }
 
+    @Column(name = "has_qr_code")
     public Boolean getHasQRCode() {
         return hasQRCode;
     }
@@ -142,6 +133,7 @@ public class CcrPcApplication implements Serializable {
         this.hasQRCode = hasQRCode;
     }
 
+    @Column(name = "description")
     public String getDescription() {
         return description;
     }
@@ -150,6 +142,7 @@ public class CcrPcApplication implements Serializable {
         this.description = description;
     }
 
+    @Column(name = "enabled")
     public Boolean getEnabled() {
         return enabled;
     }
@@ -158,6 +151,8 @@ public class CcrPcApplication implements Serializable {
         this.enabled = enabled;
     }
 
+    @OrderBy
+    @Column(name = "sort")
     public Integer getSort() {
         return sort;
     }
@@ -166,6 +161,8 @@ public class CcrPcApplication implements Serializable {
         this.sort = sort;
     }
 
+    @UpdateTimestamp
+    @Column(name = "update_time")
     public Timestamp getUpdateTime() {
         return updateTime;
     }
@@ -174,6 +171,9 @@ public class CcrPcApplication implements Serializable {
         this.updateTime = updateTime;
     }
 
+    @Basic
+    @Type(type = "string-array")
+    @Column(name = "has_roles", columnDefinition = " text[]")
     public String[] getHasRoles() {
         return hasRoles;
     }
@@ -182,14 +182,16 @@ public class CcrPcApplication implements Serializable {
         this.hasRoles = hasRoles;
     }
 
-    public List<Long> getHasUsers() {
+    @Transient
+    public List<String> getHasUsers() {
         return hasUsers;
     }
 
-    public void setHasUsers(List<Long> hasUsers) {
+    public void setHasUsers(List<String> hasUsers) {
         this.hasUsers = hasUsers;
     }
 
+    @Column(name = "parent_menu_id")
     public Long getParentMenu() {
         return parentMenu;
     }

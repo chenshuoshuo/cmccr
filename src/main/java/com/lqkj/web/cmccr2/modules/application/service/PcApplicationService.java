@@ -1,6 +1,8 @@
 package com.lqkj.web.cmccr2.modules.application.service;
 
+import com.lqkj.web.cmccr2.modules.application.dao.CcrApplicationHasUsersRepository;
 import com.lqkj.web.cmccr2.modules.application.dao.CcrPcApplicationRepository;
+import com.lqkj.web.cmccr2.modules.application.domain.CcrApplicationHasUsers;
 import com.lqkj.web.cmccr2.modules.application.domain.CcrPcApplication;
 import com.lqkj.web.cmccr2.modules.log.service.CcrSystemLogService;
 import org.springframework.beans.BeanUtils;
@@ -9,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * pc应用服务
@@ -21,18 +24,32 @@ public class PcApplicationService {
     CcrPcApplicationRepository applicationRepository;
 
     @Autowired
+    CcrApplicationHasUsersRepository hasUsersRepository;
+
+    @Autowired
     CcrSystemLogService systemLogService;
 
     public CcrPcApplication add(CcrPcApplication application) {
         systemLogService.addLog("pc应用管理", "add",
                 "增加pc应用");
 
-        return applicationRepository.save(application);
+        CcrPcApplication pcApplication = applicationRepository.save(application);
+
+        if (application.getHasUsers()!=null) {
+            List<CcrApplicationHasUsers> hasUsers = application.getHasUsers().stream()
+                    .map(v -> new CcrApplicationHasUsers(pcApplication.getAppId(), v))
+                    .collect(Collectors.toList());
+
+            hasUsersRepository.saveAll(hasUsers);
+        }
+        return pcApplication;
     }
 
     public void delete(Long appId) {
         systemLogService.addLog("pc应用管理", "delete",
                 "删除pc应用");
+
+        hasUsersRepository.deleteByAppId(appId);
 
         applicationRepository.deleteById(appId);
     }
@@ -45,6 +62,16 @@ public class PcApplicationService {
 
         BeanUtils.copyProperties(application, savedApp);
 
+        hasUsersRepository.deleteByAppId(id);
+
+        if (application.getHasUsers()!=null) {
+            List<CcrApplicationHasUsers> hasUsers = application.getHasUsers().stream()
+                    .map(v -> new CcrApplicationHasUsers(id, v))
+                    .collect(Collectors.toList());
+
+            hasUsersRepository.saveAll(hasUsers);
+        }
+
         return applicationRepository.save(savedApp);
     }
 
@@ -52,7 +79,11 @@ public class PcApplicationService {
         systemLogService.addLog("pc应用管理", "info",
                 "查询pc应用");
 
-        return applicationRepository.findById(id).get();
+        CcrPcApplication application = applicationRepository.findById(id).get();
+
+        application.setHasUsers(hasUsersRepository.findUserIdsByAppId(id));
+
+        return application;
     }
 
     public List<CcrPcApplication> all() {
