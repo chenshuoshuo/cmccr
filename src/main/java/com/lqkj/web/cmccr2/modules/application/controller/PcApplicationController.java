@@ -1,5 +1,6 @@
 package com.lqkj.web.cmccr2.modules.application.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.lqkj.web.cmccr2.APIVersion;
 import com.lqkj.web.cmccr2.message.MessageBean;
@@ -24,9 +25,9 @@ public class PcApplicationController {
 
     @ApiOperation("增加pc端应用")
     @PutMapping("/center/application/pc/" + APIVersion.V1 + "/create")
-    public MessageBean<CcrPcApplication> add(@RequestBody String application) throws Exception {
-        return MessageBean.ok(pcApplicationService.add(objectMapper.readValue(application,
-                CcrPcApplication.class)));
+    public String add(@RequestBody String application) throws Exception {
+        return objectMapper.writeValueAsString(MessageBean.ok(pcApplicationService.add(objectMapper.readValue(application,
+                CcrPcApplication.class))));
     }
 
     @ApiOperation("删除pc端应用")
@@ -38,15 +39,15 @@ public class PcApplicationController {
 
     @ApiOperation("更新pc端应用")
     @PostMapping("/center/application/pc/" + APIVersion.V1 + "/update/{id}")
-    public MessageBean<CcrPcApplication> update(@PathVariable Long id,
-                                                @RequestBody CcrPcApplication application) {
-        return MessageBean.ok(pcApplicationService.update(id, application));
+    public String update(@PathVariable Long id,
+                                                @RequestBody CcrPcApplication application) throws JsonProcessingException {
+        return objectMapper.writeValueAsString(MessageBean.ok(pcApplicationService.update(id, application)));
     }
 
     @ApiOperation("查询pc端应用信息")
     @GetMapping("/center/application/pc/" + APIVersion.V1 + "/{id}")
-    public MessageBean<CcrPcApplication> info(@PathVariable Long id) {
-        return MessageBean.ok(pcApplicationService.info(id));
+    public String info(@PathVariable Long id) throws JsonProcessingException {
+        return objectMapper.writeValueAsString(MessageBean.ok(pcApplicationService.info(id)));
     }
 
     @ApiOperation("获取所有pc应用列表")

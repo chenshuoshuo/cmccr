@@ -12,7 +12,8 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface CcrApplicationHasUsersRepository extends JpaRepository<CcrApplicationHasUsers, CcrApplicationHasUsersPK> {
+public interface CcrApplicationHasUsersRepository extends JpaRepository<CcrApplicationHasUsers,
+        CcrApplicationHasUsersPK> {
 
     @Modifying
     @Query("delete from CcrApplicationHasUsers has where has.ccrPcApplicationAppId=:appId")
