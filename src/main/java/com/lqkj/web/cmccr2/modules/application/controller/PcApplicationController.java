@@ -13,6 +13,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
+
 @Api(tags = "pc应用管理")
 @RestController
 public class PcApplicationController {
@@ -40,8 +42,9 @@ public class PcApplicationController {
     @ApiOperation("更新pc端应用")
     @PostMapping("/center/application/pc/" + APIVersion.V1 + "/update/{id}")
     public String update(@PathVariable Long id,
-                                                @RequestBody CcrPcApplication application) throws JsonProcessingException {
-        return objectMapper.writeValueAsString(MessageBean.ok(pcApplicationService.update(id, application)));
+                         @RequestBody String application) throws IOException {
+        return objectMapper.writeValueAsString(MessageBean.ok(pcApplicationService.update(id,
+                objectMapper.readValue(application,CcrPcApplication.class))));
     }
 
     @ApiOperation("查询pc端应用信息")
