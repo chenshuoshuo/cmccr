@@ -133,6 +133,8 @@ public class OauthAuthorizationConfig extends WebSecurityConfigurerAdapter imple
         defaultTokenServices.setTokenStore(tokenStore());
         defaultTokenServices.setTokenEnhancer(accessTokenConverter());
         defaultTokenServices.setSupportRefreshToken(true);
+        defaultTokenServices.setAccessTokenValiditySeconds((int) TimeUnit.MINUTES.toSeconds(10));
+        defaultTokenServices.setRefreshTokenValiditySeconds((int) TimeUnit.DAYS.toSeconds(7));
         return defaultTokenServices;
     }
 
