@@ -26,7 +26,7 @@ public class CcrPcApplicationBatchDao {
         for (int i = 0; i < hasUsers.size(); i++) {
             CcrApplicationHasUsers hasUser = hasUsers.get(i);
 
-            sql.append("(" + hasUser.getCcrPcApplicationAppId() + ",")
+            sql.append("(").append(hasUser.getCcrPcApplicationAppId()).append(",")
                     .append("'").append(hasUser.getHasUsersUserCode()).append("'")
                     .append(")");
 
