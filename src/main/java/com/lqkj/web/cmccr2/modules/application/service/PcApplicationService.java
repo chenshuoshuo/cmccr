@@ -1,6 +1,7 @@
 package com.lqkj.web.cmccr2.modules.application.service;
 
 import com.lqkj.web.cmccr2.modules.application.dao.CcrApplicationHasUsersRepository;
+import com.lqkj.web.cmccr2.modules.application.dao.CcrPcApplicationBatchDao;
 import com.lqkj.web.cmccr2.modules.application.dao.CcrPcApplicationRepository;
 import com.lqkj.web.cmccr2.modules.application.domain.CcrApplicationHasUsers;
 import com.lqkj.web.cmccr2.modules.application.domain.CcrPcApplication;
@@ -27,6 +28,9 @@ public class PcApplicationService {
     CcrApplicationHasUsersRepository hasUsersRepository;
 
     @Autowired
+    CcrPcApplicationBatchDao pcApplicationBatchDao;
+
+    @Autowired
     CcrSystemLogService systemLogService;
 
     public CcrPcApplication add(CcrPcApplication application) {
@@ -40,7 +44,7 @@ public class PcApplicationService {
                     .map(v -> new CcrApplicationHasUsers(pcApplication.getAppId(), v))
                     .collect(Collectors.toList());
 
-            hasUsersRepository.saveAll(hasUsers);
+            pcApplicationBatchDao.batchInsertHasUsers(hasUsers);
         }
         return pcApplication;
     }
@@ -69,7 +73,7 @@ public class PcApplicationService {
                     .map(v -> new CcrApplicationHasUsers(id, v))
                     .collect(Collectors.toList());
 
-            hasUsersRepository.saveAll(hasUsers);
+            pcApplicationBatchDao.batchInsertHasUsers(hasUsers);
         }
 
         return applicationRepository.save(savedApp);
