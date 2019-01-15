@@ -1,5 +1,6 @@
 package com.lqkj.web.cmccr2.modules.record.doamin;
 
+import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.Type;
 
 import javax.persistence.Column;
@@ -7,32 +8,30 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import java.io.Serializable;
+import java.sql.Timestamp;
 import java.util.UUID;
 
 /**
- * 地图点击记录
+ * 菜单点击记录
  */
 @Entity
-@Table(name = "ccr_click_record")
-public class CcrClickRecord implements Serializable {
+@Table(name = "ccr_menu_click_record")
+public class CcrMenuClickRecord implements Serializable {
 
     @Id
     @Column(name = "record_id")
     @Type(type = "org.hibernate.type.PostgresUUIDType")
     private UUID recordId;
 
-    @Column(name = "way_id")
-    private Long wayId;
-
-    @Column(name = "node_id")
-    private Long nodeId;
+    @Column(name = "menu_id")
+    private Long menuId;
 
     @Column
     private String name;
 
-    public CcrClickRecord() {
-        this.recordId = UUID.randomUUID();
-    }
+    @CreationTimestamp
+    @Column(name = "create_time")
+    private Timestamp createTime;
 
     public UUID getRecordId() {
         return recordId;
@@ -42,20 +41,12 @@ public class CcrClickRecord implements Serializable {
         this.recordId = recordId;
     }
 
-    public Long getWayId() {
-        return wayId;
+    public Long getMenuId() {
+        return menuId;
     }
 
-    public void setWayId(Long wayId) {
-        this.wayId = wayId;
-    }
-
-    public Long getNodeId() {
-        return nodeId;
-    }
-
-    public void setNodeId(Long nodeId) {
-        this.nodeId = nodeId;
+    public void setMenuId(Long menuId) {
+        this.menuId = menuId;
     }
 
     public String getName() {
@@ -64,5 +55,13 @@ public class CcrClickRecord implements Serializable {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public Timestamp getCreateTime() {
+        return createTime;
+    }
+
+    public void setCreateTime(Timestamp createTime) {
+        this.createTime = createTime;
     }
 }
