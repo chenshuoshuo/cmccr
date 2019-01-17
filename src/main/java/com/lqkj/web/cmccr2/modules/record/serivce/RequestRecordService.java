@@ -9,6 +9,9 @@ import com.lqkj.web.cmccr2.modules.record.doamin.CcrLocationRecord;
 import com.lqkj.web.cmccr2.modules.record.doamin.CcrRequestRecord;
 import com.lqkj.web.cmccr2.modules.record.doamin.CcrStatisticsFrequency;
 import com.lqkj.web.cmccr2.modules.user.dao.CcrUserAuthorityRepository;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.lionsoul.ip2region.DataBlock;
 import org.lionsoul.ip2region.DbSearcher;
 import org.slf4j.Logger;
@@ -19,6 +22,8 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.IOException;
+import java.io.OutputStream;
 import java.math.BigInteger;
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -103,6 +108,37 @@ public class RequestRecordService {
     }
 
     /**
+     * 导出网关地理统计
+     */
+    public void exportLocationStatistics(Timestamp startTime, Timestamp endTime, OutputStream outputStream) throws IOException {
+        List<CcrLocationRecord> locationRecords = locationStatistics(startTime, endTime);
+
+        SXSSFWorkbook workbook = new SXSSFWorkbook(10);
+
+        Sheet sheet = workbook.createSheet();
+
+        //设置头
+        Row rootRow = sheet.createRow(0);
+        rootRow.createCell(0).setCellValue("区域名称");
+        rootRow.createCell(1).setCellValue("城市id");
+        rootRow.createCell(2).setCellValue("访问数");
+
+        for (int i = 0; i < locationRecords.size(); i++) {
+            CcrLocationRecord record = locationRecords.get(i);
+
+            Row dataRow = sheet.createRow(i + 1);
+
+            dataRow.createCell(0).setCellValue(record.getRegion());
+            dataRow.createCell(1).setCellValue(record.getCityId());
+            dataRow.createCell(2).setCellValue(record.getCount());
+        }
+
+        workbook.write(outputStream);
+
+        workbook.dispose();
+    }
+
+    /**
      * 异常列表
      */
     public Page<CcrRequestRecord> errorRecord(Timestamp startTime, Timestamp endTime,
@@ -140,7 +176,7 @@ public class RequestRecordService {
     /**
      * ip访问总数
      */
-    public Integer ipRecord(){
+    public Integer ipRecord() {
         return this.requestRecordRepository.ipRecord();
     }
 

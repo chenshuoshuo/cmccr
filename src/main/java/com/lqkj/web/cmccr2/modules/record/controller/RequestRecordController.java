@@ -13,11 +13,13 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.context.request.async.WebAsyncTask;
+import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
 import java.sql.Timestamp;
@@ -68,6 +70,19 @@ public class RequestRecordController {
     public MessageListBean<CcrLocationRecord> locationRecord(@RequestParam Timestamp startTime,
                                                              @RequestParam Timestamp endTime) {
         return MessageListBean.ok(requestRecordService.locationStatistics(startTime, endTime));
+    }
+
+    @GetMapping("/center/sys/log/" + APIVersion.V1 + "/location/export")
+    @ApiOperation("导出地理统计结果")
+    public ResponseEntity<StreamingResponseBody> export(@RequestParam Timestamp startTime,
+                                                        @RequestParam Timestamp endTime) {
+        StreamingResponseBody body = outputStream -> {
+            requestRecordService.exportLocationStatistics(startTime, endTime, outputStream);
+        };
+
+        return ResponseEntity.ok()
+                .header("Content-Disposition", "attachment;filename=location.xlsx")
+                .body(body);
     }
 
     @ApiOperation("查询错误统计结果")
