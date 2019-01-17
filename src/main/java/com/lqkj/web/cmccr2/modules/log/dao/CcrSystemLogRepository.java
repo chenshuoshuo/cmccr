@@ -9,7 +9,9 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.sql.Timestamp;
+import java.util.List;
 import java.util.UUID;
+import java.util.stream.Stream;
 
 @Repository
 public interface CcrSystemLogRepository extends JpaRepository<CcrSystemLog, UUID> {
@@ -18,4 +20,8 @@ public interface CcrSystemLogRepository extends JpaRepository<CcrSystemLog, UUID
     Page<CcrSystemLog> pageByTime(@Param("startTime")Timestamp startTime,
                                   @Param("endTime") Timestamp endTime,
                                   Pageable pageable);
+
+    @Query("select log from CcrSystemLog log where log.createTime>:startTime and log.createTime<:endTime")
+    List<CcrSystemLog> findAllByTime(@Param("startTime")Timestamp startTime,
+                                       @Param("endTime") Timestamp endTime);
 }
