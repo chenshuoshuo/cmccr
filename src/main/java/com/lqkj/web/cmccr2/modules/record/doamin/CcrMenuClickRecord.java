@@ -33,6 +33,10 @@ public class CcrMenuClickRecord implements Serializable {
     @Column(name = "create_time")
     private Timestamp createTime;
 
+    public CcrMenuClickRecord() {
+        this.recordId = UUID.randomUUID();
+    }
+
     public UUID getRecordId() {
         return recordId;
     }

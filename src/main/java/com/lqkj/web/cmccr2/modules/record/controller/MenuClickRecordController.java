@@ -22,7 +22,7 @@ public class MenuClickRecordController {
         this.menuClickRecordService = menuClickRecordService;
     }
 
-    @ApiOperation("增加点击地图记录")
+    @ApiOperation("增加点击菜单记录")
     @PutMapping("/center/click/menu/" + APIVersion.V1 + "/add")
     public WebAsyncTask<Void> addRecord(@RequestBody CcrMenuClickRecord clickRecord) {
         return new WebAsyncTask<>(() -> {
@@ -31,7 +31,7 @@ public class MenuClickRecordController {
         });
     }
 
-    @ApiOperation("查询地图点击接口")
+    @ApiOperation("查询菜单点击接口")
     @GetMapping("/center/click/menu/" + APIVersion.V1 + "/record")
     public MessageListBean<Object[]> clickRecord() {
         return MessageListBean.ok(menuClickRecordService.record());
