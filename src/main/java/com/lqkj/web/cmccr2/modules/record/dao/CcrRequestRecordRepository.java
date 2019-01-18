@@ -34,6 +34,13 @@ public interface CcrRequestRecordRepository extends JpaRepository<CcrRequestReco
                              @Param("endTime") Timestamp endTime,
                              Pageable pageable);
 
+    @Query(nativeQuery = true, value = "select to_char(r.create_time,'YYYY-MM-DD HH24') as t,count(r) from ccr_request_record r " +
+            "where r.create_time>:startTime and r.create_time<:endTime and (string_to_array(r.url,'/'))[4]=:name" +
+            " group by t order by t")
+    List<Object[]> urlRecordDetail(@Param("startTime") Timestamp startTime,
+                                   @Param("endTime") Timestamp endTime,
+                                   @Param("name") String name);
+
     @Query(nativeQuery = true, value = "select ip,count(r) " +
             "from ccr_request_record r where r.create_time>:startTime and r.create_time<:endTime group by ip;")
     List<Object[]> locationRecord(@Param("startTime") Timestamp startTime,

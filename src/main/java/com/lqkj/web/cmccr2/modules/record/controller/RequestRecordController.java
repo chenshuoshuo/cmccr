@@ -65,6 +65,12 @@ public class RequestRecordController {
         return MessageBean.ok(requestRecordService.urlStatistics(startTime, endTime, page, pageSize));
     }
 
+    @ApiOperation("查询详细流量统计结果")
+    @GetMapping("/center/record/" + APIVersion.V1 + "/url/detail")
+    public MessageListBean<Object[]> urlRecordDetail(Timestamp startTime, Timestamp endTime, String name) {
+        return MessageListBean.ok(requestRecordService.urlRecordDetail(startTime, endTime, name));
+    }
+
     @ApiOperation("查询地理统计结果")
     @GetMapping("/center/record/" + APIVersion.V1 + "/location")
     public MessageListBean<CcrLocationRecord> locationRecord(@RequestParam Timestamp startTime,
