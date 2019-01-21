@@ -23,12 +23,8 @@ public class UserInfoTokenEnhancer implements TokenEnhancer {
 
         CcrUser user = (CcrUser) authentication.getUserAuthentication().getPrincipal();
 
-        user.getRules().forEach(v -> {
-            scopes.add("role_" + v.getContent());
-        });
-        user.getAuthorities().forEach(v -> {
-            scopes.add("authority_" + v.getContent());
-        });
+        user.getRules().forEach(v -> scopes.add("role_" + v.getContent()));
+        user.getAuthorities().forEach(v -> scopes.add("authority_" + v.getContent()));
 
         ((DefaultOAuth2AccessToken) accessToken).setScope(scopes);
         return accessToken;
