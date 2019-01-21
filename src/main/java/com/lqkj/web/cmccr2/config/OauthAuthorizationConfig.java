@@ -133,12 +133,9 @@ public class OauthAuthorizationConfig extends WebSecurityConfigurerAdapter imple
     @Bean
     @Primary
     public DefaultTokenServices tokenServices() {
-        TokenEnhancerChain tokenEnhancerChain = new TokenEnhancerChain();
-        tokenEnhancerChain.setTokenEnhancers(Arrays.asList(new UserInfoTokenEnhancer(), accessTokenConverter()));
-
         DefaultTokenServices defaultTokenServices = new DefaultTokenServices();
         defaultTokenServices.setTokenStore(tokenStore());
-        defaultTokenServices.setTokenEnhancer(tokenEnhancerChain);
+        defaultTokenServices.setTokenEnhancer(accessTokenConverter());
         defaultTokenServices.setSupportRefreshToken(true);
         defaultTokenServices.setAccessTokenValiditySeconds((int) TimeUnit.MINUTES.toSeconds(10));
         defaultTokenServices.setRefreshTokenValiditySeconds((int) TimeUnit.DAYS.toSeconds(7));
