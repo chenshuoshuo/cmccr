@@ -14,12 +14,16 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.jwt.crypto.sign.RsaVerifier;
+import org.springframework.security.oauth2.common.OAuth2AccessToken;
 import org.springframework.security.oauth2.config.annotation.configurers.ClientDetailsServiceConfigurer;
 import org.springframework.security.oauth2.config.annotation.web.configuration.AuthorizationServerConfigurer;
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableAuthorizationServer;
 import org.springframework.security.oauth2.config.annotation.web.configurers.AuthorizationServerEndpointsConfigurer;
 import org.springframework.security.oauth2.config.annotation.web.configurers.AuthorizationServerSecurityConfigurer;
+import org.springframework.security.oauth2.provider.OAuth2Authentication;
 import org.springframework.security.oauth2.provider.token.DefaultTokenServices;
+import org.springframework.security.oauth2.provider.token.TokenEnhancer;
+import org.springframework.security.oauth2.provider.token.TokenEnhancerChain;
 import org.springframework.security.oauth2.provider.token.TokenStore;
 import org.springframework.security.oauth2.provider.token.store.JwtAccessTokenConverter;
 import org.springframework.security.oauth2.provider.token.store.JwtTokenStore;
@@ -27,6 +31,7 @@ import org.springframework.security.oauth2.provider.token.store.KeyStoreKeyFacto
 
 import javax.sql.DataSource;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -78,7 +83,7 @@ public class OauthAuthorizationConfig extends WebSecurityConfigurerAdapter imple
                 .secret(passwordEncoder.encode("cmccr-h5"))
                 .accessTokenValiditySeconds((int) TimeUnit.MINUTES.toSeconds(10))
                 .refreshTokenValiditySeconds((int) TimeUnit.DAYS.toSeconds(7))
-                    .and()
+                .and()
                 .withClient("cmips-h5")
                 .scopes("js")
                 .resourceIds("cmccr-server")
@@ -86,7 +91,7 @@ public class OauthAuthorizationConfig extends WebSecurityConfigurerAdapter imple
                 .secret(passwordEncoder.encode("cmips-h5"))
                 .accessTokenValiditySeconds((int) TimeUnit.MINUTES.toSeconds(10))
                 .refreshTokenValiditySeconds((int) TimeUnit.DAYS.toSeconds(7))
-                    .and()
+                .and()
                 .withClient("cmccr-guest")
                 .scopes("guest")
                 .resourceIds("cmccr-server")
@@ -103,8 +108,7 @@ public class OauthAuthorizationConfig extends WebSecurityConfigurerAdapter imple
                 .tokenStore(tokenStore())
                 .tokenServices(tokenServices())
                 .userDetailsService(userService)
-                .authenticationManager(authenticationManager)
-        ;
+                .authenticationManager(authenticationManager);
     }
 
     @Bean
@@ -129,9 +133,12 @@ public class OauthAuthorizationConfig extends WebSecurityConfigurerAdapter imple
     @Bean
     @Primary
     public DefaultTokenServices tokenServices() {
+        TokenEnhancerChain tokenEnhancerChain = new TokenEnhancerChain();
+        tokenEnhancerChain.setTokenEnhancers(Arrays.asList(new UserInfoTokenEnhancer(), accessTokenConverter()));
+
         DefaultTokenServices defaultTokenServices = new DefaultTokenServices();
         defaultTokenServices.setTokenStore(tokenStore());
-        defaultTokenServices.setTokenEnhancer(accessTokenConverter());
+        defaultTokenServices.setTokenEnhancer(tokenEnhancerChain);
         defaultTokenServices.setSupportRefreshToken(true);
         defaultTokenServices.setAccessTokenValiditySeconds((int) TimeUnit.MINUTES.toSeconds(10));
         defaultTokenServices.setRefreshTokenValiditySeconds((int) TimeUnit.DAYS.toSeconds(7));
