@@ -148,7 +148,7 @@ public class CcrUser implements Serializable, UserDetails {
 
 
     @Override
-    public Collection getAuthorities() {
+    public Collection<CcrUserAuthority> getAuthorities() {
         List<CcrUserAuthority> authorities = new ArrayList<>();
 
         if (rules==null) {
