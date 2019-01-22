@@ -1,0 +1,1 @@
+ALTER TABLE public.ccr_user ADD is_admin boolean DEFAULT false NULL;

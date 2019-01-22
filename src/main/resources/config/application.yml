@@ -115,6 +115,7 @@ spring:
       initialize-schema: never
   main:
     allow-bean-definition-overriding: true
+
 management:
   endpoints:
     web:

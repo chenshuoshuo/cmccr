@@ -64,6 +64,10 @@ public class CcrUser implements Serializable, UserDetails {
     @UpdateTimestamp
     private Timestamp updateTime;
 
+    @ApiModelProperty("是否允许登录后台")
+    @Column(name = "is_admin")
+    private Boolean isAdmin;
+
     public CcrUserGroupType getUserGroup() {
         return userGroup;
     }
@@ -128,24 +132,34 @@ public class CcrUser implements Serializable, UserDetails {
         this.updateTime = updateTime;
     }
 
+    public Boolean getAdmin() {
+        return isAdmin;
+    }
+
+    public void setAdmin(Boolean admin) {
+        isAdmin = admin;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this==o) return true;
         if (o==null || getClass()!=o.getClass()) return false;
-        CcrUser ccrUser = (CcrUser) o;
-        return Objects.equals(userId, ccrUser.userId) &&
-                Objects.equals(userCode, ccrUser.userCode) &&
-                Objects.equals(passWord, ccrUser.passWord) &&
-                Objects.equals(openId, ccrUser.openId) &&
-                Objects.equals(casTicket, ccrUser.casTicket) &&
-                Objects.equals(rules, ccrUser.rules);
+        CcrUser user = (CcrUser) o;
+        return Objects.equals(userId, user.userId) &&
+                Objects.equals(userCode, user.userCode) &&
+                Objects.equals(passWord, user.passWord) &&
+                Objects.equals(openId, user.openId) &&
+                Objects.equals(casTicket, user.casTicket) &&
+                Objects.equals(rules, user.rules) &&
+                userGroup==user.userGroup &&
+                Objects.equals(updateTime, user.updateTime) &&
+                Objects.equals(isAdmin, user.isAdmin);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(userId, userCode, passWord, openId, casTicket, rules);
+        return Objects.hash(userId, userCode, passWord, openId, casTicket, rules, userGroup, updateTime, isAdmin);
     }
-
 
     @Override
     public Collection<CcrUserAuthority> getAuthorities() {

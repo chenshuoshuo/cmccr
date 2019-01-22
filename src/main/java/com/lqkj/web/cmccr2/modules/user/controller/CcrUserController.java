@@ -58,9 +58,10 @@ public class CcrUserController {
 
     @ApiOperation("更新用户密码")
     @PostMapping("/center/user/{id}")
-    public MessageBean<String> update(@RequestParam String password,
+    public MessageBean<String> update(@RequestParam(required = false) String password,
+                                      @RequestParam(required = false) Boolean admin,
                                       @PathVariable Long id) {
-        return MessageBean.ok(ccrUserService.update(id, password));
+        return MessageBean.ok(ccrUserService.update(id, password, admin));
     }
 
     @ApiOperation("根据用户id删除用户")

@@ -64,6 +64,7 @@ public class CcrUserService implements UserDetailsService {
         systemLogService.addLog("用户管理服务", "registerAdmin",
                 "用户注册");
 
+        ccrUser.setAdmin(Boolean.TRUE);
         ccrUser.setPassWord(passwordEncoder.encode(ccrUser.getPassword()));
 
         return userRepository.save(ccrUser);
@@ -82,13 +83,14 @@ public class CcrUserService implements UserDetailsService {
     /**
      * 更新用户密码
      */
-    public String update(Long id, String password) {
+    public String update(Long id, String password, Boolean admin) {
         systemLogService.addLog("用户管理服务", "update",
                 "更新用户密码");
 
         CcrUser user = userRepository.getOne(id);
 
-        user.setPassWord(passwordEncoder.encode(password));
+        if (password!=null) user.setPassWord(passwordEncoder.encode(password));
+        if (admin!=null) user.setAdmin(admin);
 
         userRepository.save(user);
 
