@@ -170,8 +170,11 @@ public class CcrUser implements Serializable, UserDetails {
         }
 
         for (CcrUserRule rule : this.rules) {
-            authorities.addAll(rule.getAuthorities());
+            for (CcrUserAuthority authority : rule.getAuthorities()) {
+                if (authority.getEnabled()) authorities.add(authority);
+            }
         }
+
         return authorities;
     }
 

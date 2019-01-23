@@ -3,6 +3,7 @@ package com.lqkj.web.cmccr2.modules.user.service;
 import com.lqkj.web.cmccr2.modules.log.service.CcrSystemLogService;
 import com.lqkj.web.cmccr2.modules.user.dao.CcrUserAuthorityRepository;
 import com.lqkj.web.cmccr2.modules.user.dao.CcrUserRuleRepository;
+import com.lqkj.web.cmccr2.modules.user.domain.CcrUser;
 import com.lqkj.web.cmccr2.modules.user.domain.CcrUserAuthority;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +11,7 @@ import org.springframework.data.domain.Example;
 import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -57,6 +59,8 @@ public class CcrUserAuthorityService {
 
         BeanUtils.copyProperties(authority, savedAuthority);
 
+        userAuthorityRepository.updateChildState(id, savedAuthority.getEnabled());
+
         return userAuthorityRepository.save(savedAuthority);
     }
 
@@ -71,14 +75,11 @@ public class CcrUserAuthorityService {
         systemLogService.addLog("用户权限服务", "page",
                 "分页查询用户权限");
 
-        CcrUserAuthority authority = new CcrUserAuthority();
-        authority.setName(keyword);
+        String name = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
-        ExampleMatcher matcher = ExampleMatcher.matching()
-                .withMatcher("name", ExampleMatcher.GenericPropertyMatchers.contains())
-                .withIgnorePaths("authorityId");
+        String k = keyword==null ? "" : keyword;
 
-        return userAuthorityRepository.findAll(Example.of(authority, matcher),
+        return userAuthorityRepository.findSupportAuthority(name, "%" + k + "%",
                 PageRequest.of(page, pageSize));
     }
 

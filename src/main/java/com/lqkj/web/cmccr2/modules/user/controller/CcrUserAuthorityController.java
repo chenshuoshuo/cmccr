@@ -47,7 +47,9 @@ public class CcrUserAuthorityController {
 
     @ApiOperation("分页查询用户权限")
     @GetMapping("/center/user/authority/page")
-    public MessageBean<Page<CcrUserAuthority>> page(String keyword, Integer page, Integer pageSize) {
+    public MessageBean<Page<CcrUserAuthority>> page(String keyword,
+                                                    @RequestParam Integer page,
+                                                    @RequestParam Integer pageSize) {
         return MessageBean.ok(authorityService.page(keyword, page, pageSize));
     }
 

@@ -11,6 +11,7 @@ import org.springframework.data.domain.Example;
 import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -91,16 +92,11 @@ public class CcrUserRuleService {
         systemLogService.addLog("用户角色服务", "add",
                 "分页查询用户角色");
 
-        CcrUserRule rule = new CcrUserRule();
-        rule.setName(keyword);
-        rule.setContent(keyword);
+        String k = keyword==null ? "" : keyword;
 
-        ExampleMatcher exampleMatcher = ExampleMatcher.matchingAny()
-                .withMatcher("name", ExampleMatcher.GenericPropertyMatchers.contains())
-                .withMatcher("content", ExampleMatcher.GenericPropertyMatchers.contains())
-                .withIgnorePaths("ruleId");
+        String username = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
-        return userRuleRepository.findAll(Example.of(rule, exampleMatcher),
+        return userRuleRepository.findSupportRules(username, "%" + k + "%",
                 PageRequest.of(page, pageSize));
     }
 }
