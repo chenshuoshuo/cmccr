@@ -16,6 +16,8 @@ public class UserInfoTokenEnhancer implements TokenEnhancer {
 
     @Override
     public OAuth2AccessToken enhance(OAuth2AccessToken accessToken, OAuth2Authentication authentication) {
+        if (authentication.getUserAuthentication() == null) return accessToken;
+
         Object principal = authentication.getUserAuthentication().getPrincipal();
 
         if (!(principal instanceof CcrUser)){
