@@ -1,5 +1,6 @@
 package com.lqkj.web.cmccr2.modules.user.service;
 
+import com.google.common.collect.Sets;
 import com.lqkj.web.cmccr2.modules.log.service.CcrSystemLogService;
 import com.lqkj.web.cmccr2.modules.user.dao.CcrUserRepository;
 import com.lqkj.web.cmccr2.modules.user.dao.CcrUserRuleRepository;
@@ -67,6 +68,8 @@ public class CcrUserService implements UserDetailsService {
 
         ccrUser.setAdmin(Boolean.TRUE);
         ccrUser.setPassWord(passwordEncoder.encode(ccrUser.getPassword()));
+        ccrUser.setUserGroup(CcrUser.CcrUserGroupType.teacher_staff);
+        ccrUser.setRules(Sets.newHashSet(ruleRepository.getOne(1L)));
 
         return userRepository.save(ccrUser);
     }
