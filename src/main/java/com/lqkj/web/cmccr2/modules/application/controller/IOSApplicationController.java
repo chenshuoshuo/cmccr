@@ -32,7 +32,12 @@ public class IOSApplicationController {
 
     @ApiOperation("更新ios应用")
     @PostMapping("/center/application/ios/" + APIVersion.V1 + "/update/")
-    public MessageBean<Long> update(@RequestBody CcrIosApplication application) throws Exception {
+    public MessageBean<Long> update(@ApiParam(value = "应用信息") CcrIosApplication application,
+                                    @ApiParam(value = "图标文件") MultipartFile iconFile) throws Exception {
+        if (iconFile!=null) {
+            application.setIconPath(applicationCommonService.saveUploadFile(iconFile, "png", "jpg"));
+        }
+
         return MessageBean.ok(iosApplicationService.updateApplication(application));
     }
 

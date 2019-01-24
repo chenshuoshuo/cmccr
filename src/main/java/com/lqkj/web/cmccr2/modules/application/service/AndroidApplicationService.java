@@ -45,7 +45,7 @@ public class AndroidApplicationService {
      * @param id 应用id
      */
     public void updateAndroidApplication(Long id, Integer versionCode, String versionName, String updateDescription,
-                                         String apkPath) throws Exception {
+                                         String apkPath, String iconPath) throws Exception {
         CcrAndroidApplication application = androidApplicationDao.getOne(id);
 
         if (application.getVersionCode() >= versionCode) {
@@ -56,6 +56,8 @@ public class AndroidApplicationService {
         application.setVersionName(versionName);
         application.setUpdateDescription(updateDescription);
         application.setApkPath(apkPath);
+
+        if (iconPath!=null) application.setIconPath(iconPath);
 
         androidApplicationDao.saveAndFlush(application);
 

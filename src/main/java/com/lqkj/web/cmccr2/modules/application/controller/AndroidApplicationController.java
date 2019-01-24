@@ -48,10 +48,18 @@ public class AndroidApplicationController {
                                        Integer versionCode,
                                        String versionName,
                                        String updateDescription,
-                                       MultipartFile apkFile) throws Exception {
+                                       MultipartFile apkFile,
+                                       MultipartFile iconFile) throws Exception {
+        String iconPath = null;
+
+        if (iconFile!=null) {
+            iconPath = applicationCommonService.saveUploadFile(iconFile, "png", "jpg");
+        }
+
         String applicationPath = applicationCommonService.saveUploadFile(apkFile, "apk");
+
         androidApplicationService.updateAndroidApplication(id, versionCode, versionName,
-                updateDescription, applicationPath);
+                updateDescription, applicationPath, iconPath);
         return MessageBean.ok(versionCode);
     }
 
