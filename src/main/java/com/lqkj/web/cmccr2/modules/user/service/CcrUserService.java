@@ -11,6 +11,7 @@ import org.springframework.data.domain.Example;
 import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -161,5 +162,19 @@ public class CcrUserService implements UserDetailsService {
         }
 
         userRepository.save(user);
+    }
+
+    /**
+     * 退出登录
+     * @param userId
+     */
+    public void loginout(Long userId) {
+        CcrUser savedUser = userRepository.getOne(userId);
+
+        savedUser.setCasTicket(null);
+
+        userRepository.save(savedUser);
+
+        SecurityContextHolder.clearContext();
     }
 }

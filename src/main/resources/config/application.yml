@@ -34,7 +34,7 @@ logging:
   path: classpath:log4j2.xml
 spring:
   application:
-    name: cmccr2
+    name: cmccr
   servlet:
     multipart:
       max-file-size: 1000MB

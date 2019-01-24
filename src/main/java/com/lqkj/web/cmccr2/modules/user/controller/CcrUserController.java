@@ -123,4 +123,11 @@ public class CcrUserController {
         this.ccrUserService.bindRules(userId, rules);
         return MessageBean.ok();
     }
+
+    @ApiOperation("退出登录")
+    @PostMapping("/center/user/loginout/{userId}")
+    public MessageBean loginout(@PathVariable Long userId) {
+        this.ccrUserService.loginout(userId);
+        return MessageBean.ok();
+    }
 }
