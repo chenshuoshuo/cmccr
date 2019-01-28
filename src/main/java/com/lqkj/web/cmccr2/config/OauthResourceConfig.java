@@ -67,7 +67,8 @@ public class OauthResourceConfig implements ResourceServerConfigurer {
                         "/center/sensitivity/**",
                         "/center/store/**",
                         "/center/user/**",
-                        "/center/sys/log/**"
+                        "/center/sys/log/**",
+                        "/center/record/**"
                 )
                 .access("#oauth2.hasScope('js')")
         ;
