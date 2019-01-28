@@ -7,6 +7,7 @@ import com.lqkj.web.cmccr2.message.MessageListBean;
 import com.lqkj.web.cmccr2.modules.record.doamin.CcrLocationRecord;
 import com.lqkj.web.cmccr2.modules.record.doamin.CcrRequestRecord;
 import com.lqkj.web.cmccr2.modules.record.doamin.CcrStatisticsFrequency;
+import com.lqkj.web.cmccr2.modules.record.serivce.MapSearchServiceApi;
 import com.lqkj.web.cmccr2.modules.record.serivce.RequestRecordService;
 import com.lqkj.web.cmccr2.utils.ServletUtils;
 import io.swagger.annotations.Api;
@@ -32,8 +33,12 @@ public class RequestRecordController {
 
     private RequestRecordService requestRecordService;
 
-    public RequestRecordController(RequestRecordService requestRecordService) {
+    private MapSearchServiceApi searchServiceApi;
+
+    public RequestRecordController(RequestRecordService requestRecordService,
+                                   MapSearchServiceApi searchServiceApi) {
         this.requestRecordService = requestRecordService;
+        this.searchServiceApi = searchServiceApi;
     }
 
     @ApiOperation("增加请求记录")
@@ -111,5 +116,11 @@ public class RequestRecordController {
     @GetMapping("/center/record/" + APIVersion.V1 + "/ip")
     public MessageBean<Integer> ipRecord() {
         return MessageBean.ok(requestRecordService.ipRecord());
+    }
+
+    @ApiOperation("查询地图搜索统计")
+    @GetMapping("/center/record/" + APIVersion.V1 + "/map/search")
+    public MessageBean<Object[]> searchRecord() {
+        return searchServiceApi.record();
     }
 }

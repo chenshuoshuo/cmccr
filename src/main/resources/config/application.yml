@@ -7,6 +7,9 @@ cas:
 weixin:
   client_id: wxe157e9dc1e7cc817
   client_secret: 273ddb2fda8c03a95e31d151bff966b4
+cmgis:
+  username: free
+  password: 123456
 server:
   port: 8100
   servlet:
@@ -115,7 +118,10 @@ spring:
       initialize-schema: never
   main:
     allow-bean-definition-overriding: true
-
+#远程调用配置
+feign:
+  httpclient:
+    enabled: true
 management:
   endpoints:
     web:

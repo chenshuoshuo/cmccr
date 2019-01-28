@@ -2,13 +2,11 @@ package com.lqkj.web.cmccr2.modules.user.service;
 
 import com.lqkj.web.cmccr2.modules.log.service.CcrSystemLogService;
 import com.lqkj.web.cmccr2.modules.user.dao.CcrUserAuthorityRepository;
+import com.lqkj.web.cmccr2.modules.user.dao.CcrUserRepository;
 import com.lqkj.web.cmccr2.modules.user.dao.CcrUserRuleRepository;
 import com.lqkj.web.cmccr2.modules.user.domain.CcrUser;
-import com.lqkj.web.cmccr2.modules.user.domain.CcrUserAuthority;
 import com.lqkj.web.cmccr2.modules.user.domain.CcrUserRule;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Example;
-import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -23,6 +21,9 @@ import java.util.ArrayList;
 @Service
 @Transactional
 public class CcrUserRuleService {
+
+    @Autowired
+    CcrUserRepository userRepository;
 
     @Autowired
     CcrUserRuleRepository userRuleRepository;
@@ -47,7 +48,24 @@ public class CcrUserRuleService {
             rule.getAuthorities().add(userAuthorityRepository.getOne(authority));
         }
 
-        return userRuleRepository.save(rule);
+        rule = userRuleRepository.save(rule);
+
+        appendUserToNowUser(rule);
+
+        return rule;
+    }
+
+    /**
+     * 增加角色到当前用户
+     */
+    private void appendUserToNowUser(CcrUserRule rule) {
+        String username = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+        CcrUser ccrUser = userRepository.findByUserName(username);
+
+        ccrUser.getRules().add(rule);
+
+        userRepository.save(ccrUser);
     }
 
     public void delete(Long[] id) {
