@@ -5,15 +5,25 @@ import com.lqkj.web.cmccr2.message.MessageBean;
 import com.lqkj.web.cmccr2.modules.store.service.StoreService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.apache.commons.codec.digest.DigestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.CacheControl;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.concurrent.TimeUnit;
 
 @Api(tags = "数据字典")
 @RestController
 public class StoreController {
 
+    private final StoreService storeService;
+
     @Autowired
-    public StoreService storeService;
+    public StoreController(StoreService storeService) {
+        this.storeService = storeService;
+    }
 
     @ApiOperation("存储一个键值对到服务器")
     @PutMapping("/center/store/" + APIVersion.V1 + "/put")
@@ -32,7 +42,15 @@ public class StoreController {
     }
 
     @GetMapping("/center/store/" + APIVersion.V1 + "/{storeName}/{key}")
-    public MessageBean<String> get(@PathVariable String storeName, @PathVariable String key) {
-        return MessageBean.ok(storeService.get(storeName, key));
+    public ResponseEntity<MessageBean<String>> get(@PathVariable String storeName, @PathVariable String key) {
+        String value = storeService.get(storeName, key);
+
+        String digest = DigestUtils.md2Hex(value);
+
+        return ResponseEntity.ok()
+                .contentType(MediaType.APPLICATION_JSON_UTF8)
+                .eTag("w/" + digest)
+                .cacheControl(CacheControl.maxAge(120, TimeUnit.SECONDS))
+                .body(MessageBean.ok(value));
     }
 }

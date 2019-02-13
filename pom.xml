@@ -30,6 +30,8 @@
 		<poi.version>4.0.0</poi.version>
 		<spring-cloud.version>Finchley.SR2</spring-cloud.version>
 		<pac4j.version>3.4.0</pac4j.version>
+		<maven.compiler.source>${java.version}</maven.compiler.source>
+		<maven.compiler.target>${java.version}</maven.compiler.target>
 	</properties>
 
 	<repositories>
