@@ -92,6 +92,8 @@ public class AndroidApplicationController {
     public ResponseEntity<StreamingResponseBody> download(@ApiParam(value = "应用id") @PathVariable("id") Long id) {
         StreamingResponseBody body = outputStream -> {
             androidApplicationService.readAndroidStream(id, outputStream);
+
+            applicationCommonService.countPlusOne(id);
         };
         return ResponseEntity.ok()
                 .header("Content-Disposition", "attachment;filename="
@@ -99,9 +101,10 @@ public class AndroidApplicationController {
                 .body(body);
     }
 
+    @ApiOperation("检查apk更新")
     @GetMapping("/center/application/android/" + APIVersion.V1 + "/check/{id}")
     public MessageBean<Boolean> checkUpdate(@PathVariable("id") Long id,
                                             @RequestParam("versionCode") Integer versionCode) {
-        return null;
+        return MessageBean.ok(androidApplicationService.checkUpdate(id,versionCode));
     }
 }

@@ -121,6 +121,8 @@ public class MultiApplicationController {
         if (webURL!=null) {
             response.sendRedirect(webURL);
         }
+
+        this.applicationCommonService.countPlusOne(id);
     }
 
     @ApiOperation("分页查询组合应用列表")

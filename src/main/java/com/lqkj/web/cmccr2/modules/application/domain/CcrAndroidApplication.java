@@ -31,18 +31,6 @@ public class CcrAndroidApplication extends CcrVersionApplication {
     @Column(name = "force_update")
     private Boolean forceUpdate;
 
-    @ApiModelProperty(value = "下载次数", readOnly = true)
-    @Column(name = "download_count")
-    private Long downloadCount;
-
-    public Long getDownloadCount() {
-        return downloadCount;
-    }
-
-    public void setDownloadCount(Long downloadCount) {
-        this.downloadCount = downloadCount;
-    }
-
     public Boolean getForceUpdate() {
         return forceUpdate;
     }

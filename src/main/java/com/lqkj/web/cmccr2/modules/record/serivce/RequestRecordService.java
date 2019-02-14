@@ -4,6 +4,7 @@ import com.ecwid.consul.v1.ConsulClient;
 import com.ecwid.consul.v1.QueryParams;
 import com.ecwid.consul.v1.Response;
 import com.ecwid.consul.v1.health.model.Check;
+import com.lqkj.web.cmccr2.modules.application.dao.CcrVersionApplicationRepository;
 import com.lqkj.web.cmccr2.modules.record.dao.CcrRequestRecordRepository;
 import com.lqkj.web.cmccr2.modules.record.doamin.CcrLocationRecord;
 import com.lqkj.web.cmccr2.modules.record.doamin.CcrRequestRecord;
@@ -49,6 +50,9 @@ public class RequestRecordService {
 
     @Autowired
     DbSearcher dbSearcher;
+
+    @Autowired
+    CcrVersionApplicationRepository versionApplicationRepository;
 
     public void add(CcrRequestRecord requestRecord) {
         requestRecordRepository.save(requestRecord);
@@ -186,6 +190,13 @@ public class RequestRecordService {
      */
     public Integer ipRecord() {
         return this.requestRecordRepository.ipRecord();
+    }
+
+    /**
+     * app访问统计
+     */
+    public List<Object[]> appRecord() {
+        return versionApplicationRepository.downloadRecord();
     }
 
     private String enumToFrequency(CcrStatisticsFrequency frequencyEnum) {

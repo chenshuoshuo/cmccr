@@ -90,6 +90,13 @@ public class CcrVersionApplication implements Serializable {
     @Column(name = "update_time")
     private Timestamp updateTime;
 
+    /**
+     * 下载次数
+     */
+    @ApiModelProperty(value = "下载次数", readOnly = true)
+    @Column(name = "download_count")
+    private Long downloadCount;
+
     public String getIconURL() {
         return iconURL;
     }
@@ -162,16 +169,33 @@ public class CcrVersionApplication implements Serializable {
         this.type = type;
     }
 
+    public Long getDownloadCount() {
+        return downloadCount;
+    }
+
+    public void setDownloadCount(Long downloadCount) {
+        this.downloadCount = downloadCount;
+    }
+
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this==o) return true;
+        if (o==null || getClass()!=o.getClass()) return false;
         CcrVersionApplication that = (CcrVersionApplication) o;
-        return Objects.equals(id, that.id);
+        return Objects.equals(id, that.id) &&
+                Objects.equals(name, that.name) &&
+                Objects.equals(description, that.description) &&
+                Objects.equals(type, that.type) &&
+                Objects.equals(iconPath, that.iconPath) &&
+                Objects.equals(iconURL, that.iconURL) &&
+                Objects.equals(updateDescription, that.updateDescription) &&
+                Objects.equals(createTime, that.createTime) &&
+                Objects.equals(updateTime, that.updateTime) &&
+                Objects.equals(downloadCount, that.downloadCount);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id);
+        return Objects.hash(id, name, description, type, iconPath, iconURL, updateDescription, createTime, updateTime, downloadCount);
     }
 }

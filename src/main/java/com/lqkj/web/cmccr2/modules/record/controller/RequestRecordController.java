@@ -35,10 +35,8 @@ public class RequestRecordController {
 
     private MapSearchServiceApi searchServiceApi;
 
-    public RequestRecordController(RequestRecordService requestRecordService,
-                                   MapSearchServiceApi searchServiceApi) {
+    public RequestRecordController(RequestRecordService requestRecordService) {
         this.requestRecordService = requestRecordService;
-        this.searchServiceApi = searchServiceApi;
     }
 
     @ApiOperation("增加请求记录")
@@ -50,6 +48,12 @@ public class RequestRecordController {
             requestRecordService.add(requestRecord);
             return null;
         });
+    }
+
+    @ApiOperation("查询app访问统计")
+    @GetMapping("/center/record/" + APIVersion.V1 + "/app")
+    public MessageBean<List<Object[]>> appRecord() {
+        return MessageBean.ok(requestRecordService.appRecord());
     }
 
     @ApiOperation("查询数据统计结果")
@@ -122,5 +126,14 @@ public class RequestRecordController {
     @GetMapping("/center/record/" + APIVersion.V1 + "/map/search")
     public MessageBean<Object[]> searchRecord() {
         return searchServiceApi.record();
+    }
+
+    public MapSearchServiceApi getSearchServiceApi() {
+        return searchServiceApi;
+    }
+
+    @Autowired(required = false)
+    public void setSearchServiceApi(MapSearchServiceApi searchServiceApi) {
+        this.searchServiceApi = searchServiceApi;
     }
 }
