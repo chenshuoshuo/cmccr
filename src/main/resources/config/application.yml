@@ -118,6 +118,11 @@ spring:
       initialize-schema: never
   main:
     allow-bean-definition-overriding: true
+  cache:
+    type: caffeine
+    caffeine:
+      spec: maximumSize=10,expireAfterAccess=1h
+    cache-names: ipRecord
 #远程调用配置
 feign:
   httpclient:

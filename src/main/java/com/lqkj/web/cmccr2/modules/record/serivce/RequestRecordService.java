@@ -18,6 +18,7 @@ import org.lionsoul.ip2region.DbSearcher;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.repository.query.Param;
@@ -188,6 +189,7 @@ public class RequestRecordService {
     /**
      * ip访问总数
      */
+    @Cacheable(cacheNames = "ipRecord")
     public Integer ipRecord() {
         return this.requestRecordRepository.ipRecord();
     }
