@@ -66,13 +66,15 @@ public class MultiApplicationController {
     @ApiOperation("更新组合应用")
     @PostMapping("/center/application/multi/" + APIVersion.V1 + "/update/{id}")
     public MessageBean<Long> update(@RequestParam String application,
-                                    @RequestParam MultipartFile iconFile,
+                                    @RequestParam(required = false) MultipartFile iconFile,
                                     @PathVariable Long id) throws Exception {
-        String iconPath = applicationCommonService.saveUploadFile(iconFile, "png", "jpg");
-
         CcrMultiApplication multiApplication = objectMapper.readValue(application,
                 CcrMultiApplication.class);
-        multiApplication.setIconPath(iconPath);
+
+        if (iconFile!=null) {
+            String iconPath = applicationCommonService.saveUploadFile(iconFile, "png", "jpg");
+            multiApplication.setIconPath(iconPath);
+        }
 
         return MessageBean.ok(multiApplicationService.updateApplication(id, multiApplication));
     }
