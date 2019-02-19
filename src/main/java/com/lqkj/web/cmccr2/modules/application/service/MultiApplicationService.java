@@ -13,6 +13,7 @@ import com.lqkj.web.cmccr2.modules.application.domain.CcrMultiApplication;
 import com.lqkj.web.cmccr2.modules.application.dao.CcrMultiApplicationRepository;
 import com.lqkj.web.cmccr2.modules.log.service.CcrSystemLogService;
 import org.apache.commons.codec.binary.Base64;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.ExampleMatcher;
@@ -94,7 +95,15 @@ public class MultiApplicationService {
         systemLogService.addLog("组合应用服务", "updateApplication"
                 , "更新组合应用");
 
-        return multiApplicationDao.save(application).getId();
+        CcrMultiApplication savedApp = this.multiApplicationDao.getOne(applicationId);
+
+        if (application.getIconPath()==null) {
+            BeanUtils.copyProperties(application, savedApp, "iconPath");
+        } else {
+            BeanUtils.copyProperties(application, savedApp);
+        }
+
+        return multiApplicationDao.save(savedApp).getId();
     }
 
     /**
