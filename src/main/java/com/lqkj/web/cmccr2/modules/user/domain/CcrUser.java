@@ -163,7 +163,7 @@ public class CcrUser implements Serializable, UserDetails {
 
     @Override
     public Collection<CcrUserAuthority> getAuthorities() {
-        List<CcrUserAuthority> authorities = new ArrayList<>();
+        Set<CcrUserAuthority> authorities = new HashSet<>();
 
         if (rules==null) {
             return authorities;

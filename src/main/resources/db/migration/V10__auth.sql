@@ -22,3 +22,6 @@ INSERT INTO public.ccr_user_authority (authority_id, content, name, route, paren
 INSERT INTO public.ccr_user_authority (authority_id, content, name, route, parent_id, type, icon, enabled, http_method) VALUES (84, 'edit-studentCourseSchedule', '编辑学生课程', '/educational-administration/edit-student', 75, 'dbe_menu', null, true, null);
 INSERT INTO public.ccr_user_authority (authority_id, content, name, route, parent_id, type, icon, enabled, http_method) VALUES (85, 'achievement', '学生成绩管理', '/educational-administration/tachievement', 75, 'dbe_menu', null, true, null);
 INSERT INTO public.ccr_user_authority (authority_id, content, name, route, parent_id, type, icon, enabled, http_method) VALUES (86, 'edit-achievement', '编辑学生成绩', '/educational-administration/edit-achievement', 75, 'dbe_menu', null, true, null);
+
+INSERT INTO public.ccr_rule_to_authority
+select 1, generate_series(63,86);
