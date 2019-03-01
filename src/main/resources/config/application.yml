@@ -64,6 +64,12 @@ spring:
       hibernate:
         temp:
           use_jdbc_metadata_defaults: false
+        cache:
+          use_second_level_cache: true
+          use_query_cache: true
+          region.factory_class: org.hibernate.cache.jcache.JCacheRegionFactory
+        javax.cache.provider: com.github.benmanes.caffeine.jcache.spi.CaffeineCachingProvider
+        javax.cache.missing_cache_strategy: create
   datasource:
     hikari:
       driver-class-name: org.postgresql.Driver

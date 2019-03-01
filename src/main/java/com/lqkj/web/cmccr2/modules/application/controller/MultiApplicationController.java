@@ -18,6 +18,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.context.request.async.WebAsyncTask;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 import springfox.documentation.annotations.ApiIgnore;
@@ -81,16 +82,16 @@ public class MultiApplicationController {
 
     @ApiOperation("查询应用信息")
     @GetMapping("/center/application/multi/" + APIVersion.V1 + "/info/{id}")
-    public MessageBean<CcrMultiApplication> info(@PathVariable(name = "id") Long id) {
-        return MessageBean.ok(multiApplicationService.getApplication(id));
+    public WebAsyncTask<MessageBean<CcrMultiApplication>> info(@PathVariable(name = "id") Long id) {
+        return new WebAsyncTask<>(() -> MessageBean.ok(multiApplicationService.getApplication(id)));
     }
 
     @ApiOperation("根据应用id获取二维码")
     @GetMapping("/center/application/multi/" + APIVersion.V1 + "/qrcode/{id}")
-    public MessageBean<String> qrcode(@PathVariable Long id,
-                                      HttpServletRequest request) throws Exception {
+    public WebAsyncTask<MessageBean<String>> qrcode(@PathVariable Long id,
+                                                    HttpServletRequest request) throws Exception {
 
-        return MessageBean.ok(multiApplicationService.createAppQRCode(id, ServletUtils.createBaseUrl(request)));
+        return new WebAsyncTask<>(() -> MessageBean.ok(multiApplicationService.createAppQRCode(id, ServletUtils.createBaseUrl(request))));
     }
 
     @ApiOperation("根据系统类型在线下载应用")
@@ -129,10 +130,10 @@ public class MultiApplicationController {
 
     @ApiOperation("分页查询组合应用列表")
     @GetMapping("/center/application/multi/" + APIVersion.V1 + "/page")
-    public MessageBean<Page<CcrMultiApplication>> page(@RequestParam(required = false) String keyword,
-                                                       @RequestParam Integer page,
-                                                       @RequestParam Integer pageSize) {
-        return MessageBean.ok(multiApplicationService.getPage(keyword, page, pageSize));
+    public WebAsyncTask<MessageBean<Page<CcrMultiApplication>>> page(@RequestParam(required = false) String keyword,
+                                                                     @RequestParam Integer page,
+                                                                     @RequestParam Integer pageSize) {
+        return new WebAsyncTask<>(() -> MessageBean.ok(multiApplicationService.getPage(keyword, page, pageSize)));
     }
 
     @ApiOperation("测试二维码生成")

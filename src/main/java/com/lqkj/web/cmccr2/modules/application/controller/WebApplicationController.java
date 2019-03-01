@@ -10,6 +10,7 @@ import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.context.request.async.WebAsyncTask;
 import org.springframework.web.multipart.MultipartFile;
 
 @Api(tags = "web应用管理")
@@ -27,7 +28,7 @@ public class WebApplicationController {
     @PostMapping("/center/application/web/" + VERSION + "/create/")
     public MessageBean<Long> create(@ApiParam(value = "应用信息") CcrWebApplication application,
                                     @ApiParam(value = "图标文件") MultipartFile iconFile) throws Exception {
-        application.setIconPath(applicationCommonService.saveUploadFile(iconFile,"png","jpg"));
+        application.setIconPath(applicationCommonService.saveUploadFile(iconFile, "png", "jpg"));
         return MessageBean.ok(webApplicationService.createApplication(application));
     }
 
@@ -47,13 +48,13 @@ public class WebApplicationController {
 
     @ApiOperation("查询web应用信息")
     @GetMapping("/center/application/web/" + VERSION + "/info/{id}/")
-    public MessageBean<CcrWebApplication> info(@PathVariable("id") Long id) {
-        return MessageBean.ok(webApplicationService.getApplicationById(id));
+    public WebAsyncTask<MessageBean<CcrWebApplication>> info(@PathVariable("id") Long id) {
+        return new WebAsyncTask<>(() -> MessageBean.ok(webApplicationService.getApplicationById(id)));
     }
 
     @ApiOperation("分页查询web应用信息")
     @GetMapping("/center/application/web/" + VERSION + "/page/")
-    public Page<CcrWebApplication> page(Integer page, Integer pageSize) {
-        return webApplicationService.getWebApplicationPage(page, pageSize);
+    public WebAsyncTask<Page<CcrWebApplication>> page(Integer page, Integer pageSize) {
+        return new WebAsyncTask<>(() -> webApplicationService.getWebApplicationPage(page, pageSize));
     }
 }

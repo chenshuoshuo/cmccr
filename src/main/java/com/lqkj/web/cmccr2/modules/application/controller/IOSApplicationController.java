@@ -11,6 +11,7 @@ import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.context.request.async.WebAsyncTask;
 import org.springframework.web.multipart.MultipartFile;
 
 @Api(tags = "ios应用管理")
@@ -50,14 +51,14 @@ public class IOSApplicationController {
 
     @ApiOperation("查询ios应用信息")
     @GetMapping("/center/application/ios/" + APIVersion.V1 + "/info/{id}/")
-    public MessageBean<CcrIosApplication> info(@PathVariable("id") Long id) {
-        return MessageBean.ok(iosApplicationService.getIOSApplicationById(id));
+    public WebAsyncTask<MessageBean<CcrIosApplication>> info(@PathVariable("id") Long id) {
+        return new WebAsyncTask<>(() -> MessageBean.ok(iosApplicationService.getIOSApplicationById(id)));
     }
 
     @ApiOperation("分页查询ios应用列表")
     @GetMapping("/center/application/ios/" + APIVersion.V1 + "/list")
-    public Page<CcrIosApplication> list(Integer page,
-                                        Integer pageSize) {
-        return iosApplicationService.page(page, pageSize);
+    public WebAsyncTask<Page<CcrIosApplication>> list(Integer page,
+                                                      Integer pageSize) {
+        return new WebAsyncTask<>(() -> iosApplicationService.page(page, pageSize));
     }
 }

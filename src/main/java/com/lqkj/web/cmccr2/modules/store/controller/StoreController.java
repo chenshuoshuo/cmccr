@@ -11,6 +11,7 @@ import org.springframework.http.CacheControl;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.context.request.async.WebAsyncTask;
 
 import java.util.concurrent.TimeUnit;
 
@@ -34,6 +35,7 @@ public class StoreController {
         return MessageBean.ok(id);
     }
 
+    @ApiOperation("删除一个储存的键值对")
     @DeleteMapping("/center/store/" + APIVersion.V1 + "/remove/{storeName}/{key}")
     public MessageBean remove(@PathVariable(name = "storeName") String storeName,
                               @PathVariable(name = "key") String key) {
@@ -41,16 +43,19 @@ public class StoreController {
         return MessageBean.ok();
     }
 
+    @ApiOperation("查询键值对信息")
     @GetMapping("/center/store/" + APIVersion.V1 + "/{storeName}/{key}")
-    public ResponseEntity<MessageBean<String>> get(@PathVariable String storeName, @PathVariable String key) {
-        String value = storeService.get(storeName, key);
+    public WebAsyncTask<ResponseEntity<MessageBean<String>>> get(@PathVariable String storeName, @PathVariable String key) {
+        return new WebAsyncTask<>(() -> {
+            String value = storeService.get(storeName, key);
 
-        String digest = DigestUtils.md2Hex(value);
+            String digest = DigestUtils.md2Hex(value);
 
-        return ResponseEntity.ok()
-                .contentType(MediaType.APPLICATION_JSON_UTF8)
-                .eTag("w/" + digest)
-                .cacheControl(CacheControl.maxAge(120, TimeUnit.SECONDS))
-                .body(MessageBean.ok(value));
+            return ResponseEntity.ok()
+                    .contentType(MediaType.APPLICATION_JSON_UTF8)
+                    .eTag("w/" + digest)
+                    .cacheControl(CacheControl.maxAge(120, TimeUnit.SECONDS))
+                    .body(MessageBean.ok(value));
+        });
     }
 }
