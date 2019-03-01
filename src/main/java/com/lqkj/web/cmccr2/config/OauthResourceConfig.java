@@ -1,5 +1,6 @@
 package com.lqkj.web.cmccr2.config;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
@@ -7,10 +8,12 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.core.token.TokenService;
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableResourceServer;
 import org.springframework.security.oauth2.config.annotation.web.configuration.ResourceServerConfigurer;
 import org.springframework.security.oauth2.config.annotation.web.configurers.ResourceServerSecurityConfigurer;
 import org.springframework.security.oauth2.provider.token.DefaultTokenServices;
+import org.springframework.security.oauth2.provider.token.ResourceServerTokenServices;
 import org.springframework.security.oauth2.provider.token.TokenEnhancerChain;
 import org.springframework.security.oauth2.provider.token.TokenStore;
 import org.springframework.security.oauth2.provider.token.store.JwtAccessTokenConverter;
@@ -40,11 +43,17 @@ import java.util.concurrent.TimeUnit;
 @EnableResourceServer
 public class OauthResourceConfig implements ResourceServerConfigurer {
 
+    @Autowired
+    TokenStore tokenStore;
+
+    @Autowired
+    ResourceServerTokenServices tokenService;
+
     @Override
     public void configure(ResourceServerSecurityConfigurer resources) throws Exception {
         resources.resourceId("cmccr-server")
-                .tokenStore(tokenStore())
-                .tokenServices(tokenServices())
+                .tokenStore(tokenStore)
+                .tokenServices(tokenService)
                 .stateless(true);
     }
 
@@ -57,10 +66,10 @@ public class OauthResourceConfig implements ResourceServerConfigurer {
                 .antMatchers("/center/user/register")
                 .permitAll()
                 .antMatchers(HttpMethod.GET, "/center/menu/*/page",
-                        "/center/store/*/*/*")
+                        "/center/store/*/*/*",
+                        "/center/application/pc/*/list"
+                        )
                 .permitAll()
-                .antMatchers("/center/application/pc/*/list")
-                .access("#oauth2.hasAnyScope('js','guest')")
                 .antMatchers("/center/application/**",
                         "/center/menu/**",
                         "/center/request/**",
@@ -71,43 +80,5 @@ public class OauthResourceConfig implements ResourceServerConfigurer {
                 )
                 .access("#oauth2.hasScope('js')")
         ;
-    }
-
-    @Bean
-    @Primary
-    public TokenStore tokenStore() throws IOException {
-        return new JwtTokenStore(accessTokenConverter());
-    }
-
-    /**
-     * keytool -genkeypair -alias oauth -keyalg RSA -keypass lqkj007 -keystore jwt.jks -storepass lqkj007
-     * keytool -list -rfc --keystore jwt.jks | openssl x509 -inform pem -pubkey
-     */
-    @Bean
-    @Primary
-    public JwtAccessTokenConverter accessTokenConverter() throws IOException {
-        JwtAccessTokenConverter converter = new JwtAccessTokenConverter();
-
-        KeyStoreKeyFactory keyStoreKeyFactory =
-                new KeyStoreKeyFactory(new ClassPathResource("key/jwt.jks"), "lqkj007".toCharArray());
-
-        converter.setKeyPair(keyStoreKeyFactory.getKeyPair("oauth"));
-
-        return converter;
-    }
-
-    @Bean
-    @Primary
-    public DefaultTokenServices tokenServices() throws IOException {
-        TokenEnhancerChain tokenEnhancerChain = new TokenEnhancerChain();
-        tokenEnhancerChain.setTokenEnhancers(Arrays.asList(accessTokenConverter(), new UserInfoTokenEnhancer()));
-
-        DefaultTokenServices defaultTokenServices = new DefaultTokenServices();
-        defaultTokenServices.setTokenStore(tokenStore());
-        defaultTokenServices.setTokenEnhancer(tokenEnhancerChain);
-        defaultTokenServices.setSupportRefreshToken(true);
-        defaultTokenServices.setAccessTokenValiditySeconds((int) TimeUnit.MINUTES.toSeconds(10));
-        defaultTokenServices.setRefreshTokenValiditySeconds((int) TimeUnit.DAYS.toSeconds(7));
-        return defaultTokenServices;
     }
 }

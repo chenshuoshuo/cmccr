@@ -91,13 +91,13 @@ public class OauthAuthorizationConfig extends WebSecurityConfigurerAdapter imple
                 .secret(passwordEncoder.encode("cmips-h5"))
                 .accessTokenValiditySeconds((int) TimeUnit.MINUTES.toSeconds(10))
                 .refreshTokenValiditySeconds((int) TimeUnit.DAYS.toSeconds(7))
-                .and()
-                .withClient("cmccr-guest")
-                .scopes("guest")
-                .resourceIds("cmccr-server")
-                .authorizedGrantTypes("client_credentials")
-                .secret(passwordEncoder.encode("cmccr-guest"))
-                .accessTokenValiditySeconds((int) TimeUnit.DAYS.toSeconds(365))
+//                .and()
+//                .withClient("cmccr-guest")
+//                .scopes("guest")
+//                .resourceIds("cmccr-server")
+//                .authorizedGrantTypes("client_credentials")
+//                .secret(passwordEncoder.encode("cmccr-guest"))
+//                .accessTokenValiditySeconds((int) TimeUnit.DAYS.toSeconds(365))
         ;
     }
 
@@ -112,13 +112,11 @@ public class OauthAuthorizationConfig extends WebSecurityConfigurerAdapter imple
     }
 
     @Bean
-    @Primary
     public TokenStore tokenStore() {
         return new JwtTokenStore(accessTokenConverter());
     }
 
     @Bean
-    @Primary
     public JwtAccessTokenConverter accessTokenConverter() {
         JwtAccessTokenConverter converter = new JwtAccessTokenConverter();
 
@@ -131,7 +129,6 @@ public class OauthAuthorizationConfig extends WebSecurityConfigurerAdapter imple
     }
 
     @Bean
-    @Primary
     public DefaultTokenServices tokenServices() {
         TokenEnhancerChain tokenEnhancerChain = new TokenEnhancerChain();
         tokenEnhancerChain.setTokenEnhancers(Arrays.asList(accessTokenConverter(), new UserInfoTokenEnhancer()));
