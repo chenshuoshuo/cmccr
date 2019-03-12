@@ -66,6 +66,7 @@ public class OauthResourceConfig implements ResourceServerConfigurer {
                 .antMatchers("/center/user/register")
                 .permitAll()
                 .antMatchers(HttpMethod.GET, "/center/menu/*/page",
+                        "/center/record/*/add",
                         "/center/store/*/*/*",
                         "/center/application/pc/*/list"
                         )
