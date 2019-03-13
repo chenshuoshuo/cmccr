@@ -13,6 +13,7 @@ import com.lqkj.web.cmccr2.utils.ServletUtils;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -34,6 +35,9 @@ public class RequestRecordController {
     private RequestRecordService requestRecordService;
 
     private MapSearchServiceApi searchServiceApi;
+
+    @Value("${cmgis.context-path}")
+    private String cmgisContextPath;
 
     public RequestRecordController(RequestRecordService requestRecordService) {
         this.requestRecordService = requestRecordService;
@@ -125,7 +129,7 @@ public class RequestRecordController {
     @ApiOperation("查询地图搜索统计")
     @GetMapping("/center/record/" + APIVersion.V1 + "/map/search")
     public MessageBean<Object[]> searchRecord() {
-        return searchServiceApi.record();
+        return searchServiceApi.record(cmgisContextPath);
     }
 
     public MapSearchServiceApi getSearchServiceApi() {

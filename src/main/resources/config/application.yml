@@ -10,6 +10,7 @@ weixin:
 cmgis:
   username: free
   password: 123456
+  context-path: cmgis-server
 server:
   port: 8100
   servlet:

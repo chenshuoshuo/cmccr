@@ -2,6 +2,7 @@ package com.lqkj.web.cmccr2.config;
 
 import com.lqkj.web.cmccr2.modules.user.domain.CcrUser;
 import com.lqkj.web.cmccr2.modules.user.domain.CcrUserRule;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.common.OAuth2AccessToken;
 import org.springframework.security.oauth2.provider.OAuth2Authentication;
 import org.springframework.security.oauth2.provider.token.DefaultAccessTokenConverter;
@@ -16,18 +17,21 @@ public class UserRulesAccessTokenConverter extends DefaultAccessTokenConverter {
     public Map<String, ?> convertAccessToken(OAuth2AccessToken token, OAuth2Authentication authentication) {
         Map<String, Object> response = new HashMap<>();
 
-        Object principal = authentication.getUserAuthentication().getPrincipal();
+        Authentication userAuthentication = authentication.getUserAuthentication();
 
-        if (principal instanceof CcrUser) {
-            CcrUser user = (CcrUser) principal;
+        if (userAuthentication!=null) {
+            Object principal = userAuthentication.getPrincipal();
 
-            Set<String> rules = user.getRules().stream()
-                    .map(CcrUserRule::getContent)
-                    .collect(Collectors.toSet());
+            if (principal instanceof CcrUser) {
+                CcrUser user = (CcrUser) principal;
 
-            response.put("rules", rules);
+                Set<String> rules = user.getRules().stream()
+                        .map(CcrUserRule::getContent)
+                        .collect(Collectors.toSet());
+
+                response.put("rules", rules);
+            }
         }
-
         response.putAll(super.convertAccessToken(token, authentication));
 
         return response;
