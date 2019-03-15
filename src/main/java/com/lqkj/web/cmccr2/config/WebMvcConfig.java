@@ -76,7 +76,6 @@ public class WebMvcConfig implements WebMvcConfigurer {
     public void addInterceptors(InterceptorRegistry registry) {
         WebContentInterceptor contentInterceptor = new WebContentInterceptor();
         contentInterceptor.setCacheSeconds(100);
-        contentInterceptor.setSupportedMethods("GET");
         contentInterceptor.setUseExpiresHeader(true);
         contentInterceptor.setUseCacheControlNoStore(false);
         contentInterceptor.setUseCacheControlHeader(true);
