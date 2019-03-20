@@ -1,10 +1,12 @@
 package com.lqkj.web.cmccr2.modules.user.dao;
 
 import com.lqkj.web.cmccr2.modules.user.domain.CcrUser;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.jpa.repository.QueryHints;
 import org.springframework.data.repository.query.Param;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.QueryHint;

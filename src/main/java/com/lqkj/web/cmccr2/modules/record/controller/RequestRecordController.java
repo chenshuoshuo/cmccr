@@ -9,6 +9,8 @@ import com.lqkj.web.cmccr2.modules.record.doamin.CcrRequestRecord;
 import com.lqkj.web.cmccr2.modules.record.doamin.CcrStatisticsFrequency;
 import com.lqkj.web.cmccr2.modules.record.serivce.MapSearchServiceApi;
 import com.lqkj.web.cmccr2.modules.record.serivce.RequestRecordService;
+import com.lqkj.web.cmccr2.modules.user.domain.CcrUser;
+import com.lqkj.web.cmccr2.modules.user.service.CcrUserService;
 import com.lqkj.web.cmccr2.utils.ServletUtils;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -16,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -36,6 +39,9 @@ public class RequestRecordController {
 
     private MapSearchServiceApi searchServiceApi;
 
+    @Autowired
+    CcrUserService ccrUserService;
+
     @Value("${cmgis.context-path}")
     private String cmgisContextPath;
 
@@ -46,9 +52,24 @@ public class RequestRecordController {
     @ApiOperation("增加请求记录")
     @PutMapping("/center/record/" + APIVersion.V1 + "/add")
     public WebAsyncTask<Void> addRecord(CcrRequestRecord requestRecord,
-                                        HttpServletRequest request) {
+                                        HttpServletRequest request,
+                                        Authentication authentication) {
         return new WebAsyncTask<>(() -> {
             requestRecord.setIp(ServletUtils.getIpAddress(request));
+
+            if(authentication == null){
+                requestRecord.setUserGroup("guest");
+            } else {
+                String userCode = authentication.getPrincipal().toString();
+                requestRecord.setUserCode(userCode);
+                CcrUser ccrUser = ccrUserService.findByUserCode(userCode);
+                if(ccrUser.getUserGroup() == null){
+                    requestRecord.setUserGroup("manager");
+                } else {
+                    requestRecord.setUserGroup(ccrUser.getUserGroup().toString());
+                }
+            }
+
             requestRecordService.add(requestRecord);
             return null;
         });
@@ -132,6 +153,12 @@ public class RequestRecordController {
         return searchServiceApi.record(cmgisContextPath);
     }
 
+    @ApiOperation("查询用户组访问统计")
+    @GetMapping("/center/record/" + APIVersion.V1 + "/userGroup")
+    public MessageBean<List<Object[]>> userGroupStatistic() {
+        return MessageBean.ok(requestRecordService.userGroupStatistic());
+    }
+
     public MapSearchServiceApi getSearchServiceApi() {
         return searchServiceApi;
     }
@@ -140,4 +167,5 @@ public class RequestRecordController {
     public void setSearchServiceApi(MapSearchServiceApi searchServiceApi) {
         this.searchServiceApi = searchServiceApi;
     }
+
 }

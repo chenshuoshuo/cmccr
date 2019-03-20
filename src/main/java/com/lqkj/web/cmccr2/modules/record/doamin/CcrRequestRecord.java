@@ -43,6 +43,12 @@ public class CcrRequestRecord implements Serializable {
     @Column
     private String exception;
 
+    @Column(name = "user_code")
+    private String userCode;
+
+    @Column(name = "user_group")
+    private String userGroup;
+
     public CcrRequestRecord() {
         this.recordId = UUID.randomUUID();
     }
@@ -101,6 +107,22 @@ public class CcrRequestRecord implements Serializable {
 
     public void setException(String exception) {
         this.exception = exception;
+    }
+
+    public String getUserCode() {
+        return userCode;
+    }
+
+    public void setUserCode(String userCode) {
+        this.userCode = userCode;
+    }
+
+    public String getUserGroup() {
+        return userGroup;
+    }
+
+    public void setUserGroup(String userGroup) {
+        this.userGroup = userGroup;
     }
 
     @Override

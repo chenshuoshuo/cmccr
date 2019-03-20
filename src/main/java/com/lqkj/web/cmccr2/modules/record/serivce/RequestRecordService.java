@@ -63,7 +63,7 @@ public class RequestRecordService {
      * 数据统计
      */
     @Transactional
-    @Cacheable(cacheNames = "dataStatistics", key = "#startTime+'_'+#endTime+'_'+#frequencyEnum+'_'+#successed")
+//    @Cacheable(cacheNames = "dataStatistics", key = "#startTime+'_'+#endTime+'_'+#frequencyEnum+'_'+#successed")
     public List<Object[]> dataStatistics(Timestamp startTime, Timestamp endTime, CcrStatisticsFrequency frequencyEnum,
                                          Boolean successed) {
         String frequency = enumToFrequency(frequencyEnum);
@@ -169,7 +169,7 @@ public class RequestRecordService {
 
         for (String serviceName : services.getValue().keySet()) {
             if (serviceName.equals("consul")) continue;
-
+            if (serviceName.indexOf("cmccr") != -1) continue;
             Response<List<Check>> check = consulClient
                     .getHealthChecksForService(serviceName, QueryParams.DEFAULT);
 
@@ -208,13 +208,20 @@ public class RequestRecordService {
         return versionApplicationRepository.downloadRecord();
     }
 
+    /**
+     * 用户组使用次数统计
+     */
+    public List<Object[]> userGroupStatistic(){
+        return requestRecordRepository.userGroupStatistic();
+    }
+
     private String enumToFrequency(CcrStatisticsFrequency frequencyEnum) {
         if (frequencyEnum.equals(CcrStatisticsFrequency.one_day)) {
-            return "YYYY-MM-DD";
+            return "create_date";
         } else if (frequencyEnum.equals(CcrStatisticsFrequency.one_hour)) {
-            return "YYYY-MM-DD HH24";
+            return "create_hour";
         } else {
-            return "YYYY-MM";
+            return "create_hour";
         }
     }
 }

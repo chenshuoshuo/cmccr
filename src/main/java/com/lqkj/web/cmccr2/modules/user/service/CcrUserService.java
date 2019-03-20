@@ -1,7 +1,10 @@
 package com.lqkj.web.cmccr2.modules.user.service;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.common.collect.Sets;
 import com.lqkj.web.cmccr2.modules.log.service.CcrSystemLogService;
+import com.lqkj.web.cmccr2.modules.user.dao.CcrUserBatchRepository;
 import com.lqkj.web.cmccr2.modules.user.dao.CcrUserRepository;
 import com.lqkj.web.cmccr2.modules.user.dao.CcrUserRuleRepository;
 import com.lqkj.web.cmccr2.modules.user.domain.CcrUser;
@@ -20,6 +23,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -29,6 +33,7 @@ import java.util.Set;
 @Service
 @Transactional
 public class CcrUserService implements UserDetailsService {
+    //private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @Autowired
     CcrUserRepository userRepository;
@@ -41,6 +46,12 @@ public class CcrUserService implements UserDetailsService {
 
     @Autowired
     CcrSystemLogService systemLogService;
+
+    @Autowired
+    CmdbeApi cmdbeApi;
+
+    @Autowired
+    CcrUserBatchRepository ccrUserBatchRepository;
 
     @Value("${admin.code}")
     Integer adminCode;
@@ -179,5 +190,80 @@ public class CcrUserService implements UserDetailsService {
         userRepository.save(savedUser);
 
         SecurityContextHolder.clearContext();
+    }
+
+    /**
+     * 根据userCode获取用户
+     * @return
+     */
+    public CcrUser findByUserCode(String userCode){
+        return userRepository.findByUserName(userCode);
+    }
+
+    /**
+     * 从CMDBE更新用户
+     */
+    @Transactional
+    public void updateUserFromCmdbe() {
+        Boolean hasNext = true;
+        int page = 0;
+        // 教职工
+        while (hasNext){
+            StringBuffer stringBuffer = new StringBuffer();
+
+            ObjectNode result = cmdbeApi.pageQueryTeachingStaff(null, null, page, 1000);
+            hasNext = !(result.get("last").booleanValue());
+            page += 1;
+
+            Iterator<JsonNode> iterator = result.get("content").iterator();
+            while (iterator.hasNext()){
+                JsonNode jsonNode = iterator.next();
+                //System.out.println(jsonNode);
+                String userCode = jsonNode.get("staffNumber").textValue();
+                stringBuffer.append(loadSql(userCode, "teacher_staff"));
+            }
+            ccrUserBatchRepository.bulkMergeUser(stringBuffer.toString());
+        }
+
+        hasNext = true;
+        page = 0;
+        // 学生
+        while (hasNext){
+            StringBuffer stringBuffer = new StringBuffer();
+
+            ObjectNode result = cmdbeApi.pageQueryStudentInfo(null, null, page, 1000);
+            hasNext = !(result.get("last").booleanValue());
+            page += 1;
+
+            Iterator<JsonNode> iterator = result.get("content").iterator();
+            while (iterator.hasNext()){
+                JsonNode jsonNode = iterator.next();
+                //System.out.println(jsonNode);
+                String userCode = jsonNode.get("studentNo").textValue();
+                stringBuffer.append(loadSql(userCode, "student"));
+            }
+            ccrUserBatchRepository.bulkMergeUser(stringBuffer.toString());
+        }
+
+    }
+
+    private String loadSql(String userCode, String userGroup){
+        StringBuffer stringBuffer = new StringBuffer();
+        //logger.info(userCode);
+        CcrUser ccrUser = userRepository.findByUserName(userCode);
+        if(ccrUser == null){
+            stringBuffer.append("insert into ccr_user values(")
+                    .append("nextval('ccr_user_user_id_seq'::regclass),") // userId
+                    .append("null,") // openid
+                    .append("null,") // passWord
+                    .append("'" + userCode + "',") // userCode
+                    .append("null,") // casTicket
+                    .append("teacher_staff,") // userGroup
+                    .append("now(),") // updateTime
+                    .append("'f');"); // isAdmin
+        } else if(!userGroup.equals(ccrUser.getUserGroup().toString())){
+            stringBuffer.append("update ccr_user set user_group = '" + userGroup + "' where user_code = '" + userCode + "';");
+        }
+        return stringBuffer.length() > 0 ? stringBuffer.toString() : "";
     }
 }
