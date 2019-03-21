@@ -78,7 +78,8 @@ public class OauthResourceConfig implements ResourceServerConfigurer {
                         "/center/store/**",
                         "/center/user/**",
                         "/center/sys/log/**",
-                        "/center/appRecord/**" // 应用访问记录
+                        "/center/appRecord/**", // 应用访问记录
+                        "/center/asr/**" // 百度语音API
                 )
                 .access("#oauth2.hasScope('js')")
         ;

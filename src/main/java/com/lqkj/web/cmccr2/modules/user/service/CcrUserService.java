@@ -9,6 +9,8 @@ import com.lqkj.web.cmccr2.modules.user.dao.CcrUserRepository;
 import com.lqkj.web.cmccr2.modules.user.dao.CcrUserRuleRepository;
 import com.lqkj.web.cmccr2.modules.user.domain.CcrUser;
 import com.lqkj.web.cmccr2.modules.user.domain.CcrUserRule;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Example;
@@ -209,61 +211,57 @@ public class CcrUserService implements UserDetailsService {
         int page = 0;
         // 教职工
         while (hasNext){
-            StringBuffer stringBuffer = new StringBuffer();
+            StringBuffer userString = new StringBuffer();
+            StringBuffer userGroupString = new StringBuffer();
 
-            ObjectNode result = cmdbeApi.pageQueryTeachingStaff(null, null, page, 1000);
+            ObjectNode result = cmdbeApi.pageQueryTeachingStaff(null, null, page, 2000);
             hasNext = !(result.get("last").booleanValue());
             page += 1;
 
             Iterator<JsonNode> iterator = result.get("content").iterator();
             while (iterator.hasNext()){
                 JsonNode jsonNode = iterator.next();
-                //System.out.println(jsonNode);
-                String userCode = jsonNode.get("staffNumber").textValue();
-                stringBuffer.append(loadSql(userCode, "teacher_staff"));
+                userString.append(jsonNode.get("staffNumber").textValue() + ",");
+                userGroupString.append("staff_number,");
             }
-            ccrUserBatchRepository.bulkMergeUser(stringBuffer.toString());
+            executeSql(userString, userGroupString);
         }
 
         hasNext = true;
         page = 0;
         // 学生
         while (hasNext){
-            StringBuffer stringBuffer = new StringBuffer();
+            StringBuffer userString = new StringBuffer();
+            StringBuffer userGroupString = new StringBuffer();
 
-            ObjectNode result = cmdbeApi.pageQueryStudentInfo(null, null, page, 1000);
+            ObjectNode result = cmdbeApi.pageQueryStudentInfo(null, null, page, 2000);
             hasNext = !(result.get("last").booleanValue());
             page += 1;
 
             Iterator<JsonNode> iterator = result.get("content").iterator();
             while (iterator.hasNext()){
                 JsonNode jsonNode = iterator.next();
-                //System.out.println(jsonNode);
-                String userCode = jsonNode.get("studentNo").textValue();
-                stringBuffer.append(loadSql(userCode, "student"));
+                userString.append(jsonNode.get("studentNo").textValue() + ",");
+                userGroupString.append("student,");
             }
-            ccrUserBatchRepository.bulkMergeUser(stringBuffer.toString());
+            executeSql(userString, userGroupString);
         }
 
     }
 
-    private String loadSql(String userCode, String userGroup){
-        StringBuffer stringBuffer = new StringBuffer();
-        //logger.info(userCode);
-        CcrUser ccrUser = userRepository.findByUserName(userCode);
-        if(ccrUser == null){
-            stringBuffer.append("insert into ccr_user values(")
-                    .append("nextval('ccr_user_user_id_seq'::regclass),") // userId
-                    .append("null,") // openid
-                    .append("null,") // passWord
-                    .append("'" + userCode + "',") // userCode
-                    .append("null,") // casTicket
-                    .append("teacher_staff,") // userGroup
-                    .append("now(),") // updateTime
-                    .append("'f');"); // isAdmin
-        } else if(!userGroup.equals(ccrUser.getUserGroup().toString())){
-            stringBuffer.append("update ccr_user set user_group = '" + userGroup + "' where user_code = '" + userCode + "';");
+    private void executeSql(StringBuffer userCodeString, StringBuffer userGroupString){
+        if(userCodeString.length() > 0){
+            userCodeString = userCodeString.deleteCharAt(userCodeString.length() - 1);
+            userGroupString = userGroupString.deleteCharAt(userGroupString.length() - 1);
         }
-        return stringBuffer.length() > 0 ? stringBuffer.toString() : "";
+        StringBuffer sqlString = new StringBuffer();
+        sqlString.append("select fun_ccr_update_usr('")
+                .append(userCodeString)
+                .append("','")
+                .append(userGroupString)
+                .append("');");
+        //logger.info(sqlString.toString());
+        ccrUserBatchRepository.bulkMergeUser(sqlString.toString());
     }
+
 }

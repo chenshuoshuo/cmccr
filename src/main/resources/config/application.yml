@@ -97,6 +97,14 @@ spring:
         url: "http://192.168.4.241:7070/admin"
         instance:
           name: cmccr
+  quartz:
+    job-store-type: jdbc
+    jdbc:
+      initialize-schema: never
+    properties:
+      org.quartz.scheduler.instanceName: cmccr_scheduler
+      org.quartz.jobStore.driverDelegateClass: org.quartz.impl.jdbcjobstore.PostgreSQLDelegate
+      org.quartz.jobStore.isClustered: true
   resources:
     cache:
       cachecontrol:
