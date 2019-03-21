@@ -6,6 +6,7 @@ import org.hibernate.annotations.Type;
 import javax.persistence.*;
 import java.sql.Timestamp;
 import java.util.Objects;
+import java.util.UUID;
 
 /**
  * 应用访问记录
@@ -19,7 +20,7 @@ public class CcrAppRequestRecord {
     @Id
     @Column(name = "record_id")
     @Type(type = "org.hibernate.type.PostgresUUIDType")
-    private Object recordId;
+    private UUID recordId;
     /**
      * 创建时间
      */
@@ -32,11 +33,15 @@ public class CcrAppRequestRecord {
     @Column(name = "app_id")
     private long appId;
 
-    public Object getRecordId() {
+    public CcrAppRequestRecord() {
+        this.recordId = UUID.randomUUID();
+    }
+
+    public UUID getRecordId() {
         return recordId;
     }
 
-    public void setRecordId(Object recordId) {
+    public void setRecordId(UUID recordId) {
         this.recordId = recordId;
     }
 
