@@ -9,8 +9,6 @@ import com.lqkj.web.cmccr2.modules.user.dao.CcrUserRepository;
 import com.lqkj.web.cmccr2.modules.user.dao.CcrUserRuleRepository;
 import com.lqkj.web.cmccr2.modules.user.domain.CcrUser;
 import com.lqkj.web.cmccr2.modules.user.domain.CcrUserRule;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Example;
@@ -222,7 +220,7 @@ public class CcrUserService implements UserDetailsService {
             while (iterator.hasNext()){
                 JsonNode jsonNode = iterator.next();
                 userString.append(jsonNode.get("staffNumber").textValue() + ",");
-                userGroupString.append("staff_number,");
+                userGroupString.append("teacher_staff,");
             }
             executeSql(userString, userGroupString);
         }
