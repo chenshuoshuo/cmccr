@@ -211,6 +211,8 @@ public class CcrUserService implements UserDetailsService {
         while (hasNext){
             StringBuffer userString = new StringBuffer();
             StringBuffer userGroupString = new StringBuffer();
+            StringBuffer userRuleString = new StringBuffer();
+            String password = passwordEncoder.encode("123456");
 
             ObjectNode result = cmdbeApi.pageQueryTeachingStaff(null, null, page, 2000);
             hasNext = !(result.get("last").booleanValue());
@@ -221,8 +223,9 @@ public class CcrUserService implements UserDetailsService {
                 JsonNode jsonNode = iterator.next();
                 userString.append(jsonNode.get("staffNumber").textValue() + ",");
                 userGroupString.append("teacher_staff,");
+                userRuleString.append("2,");
             }
-            executeSql(userString, userGroupString);
+            executeSql(userString, userGroupString,userRuleString,password);
             //
         }
 
@@ -232,7 +235,8 @@ public class CcrUserService implements UserDetailsService {
         while (hasNext){
             StringBuffer userString = new StringBuffer();
             StringBuffer userGroupString = new StringBuffer();
-
+            StringBuffer userRuleString = new StringBuffer();
+            String password = passwordEncoder.encode("123456");
             ObjectNode result = cmdbeApi.pageQueryStudentInfo(null, null, page, 2000);
             hasNext = !(result.get("last").booleanValue());
             page += 1;
@@ -242,22 +246,28 @@ public class CcrUserService implements UserDetailsService {
                 JsonNode jsonNode = iterator.next();
                 userString.append(jsonNode.get("studentNo").textValue() + ",");
                 userGroupString.append("student,");
+                userRuleString.append("3,");
             }
-            executeSql(userString, userGroupString);
+            executeSql(userString, userGroupString,userRuleString,password);
         }
 
     }
 
-    private void executeSql(StringBuffer userCodeString, StringBuffer userGroupString){
+    private void executeSql(StringBuffer userCodeString, StringBuffer userGroupString,StringBuffer userRuleString,String password){
         if(userCodeString.length() > 0){
             userCodeString = userCodeString.deleteCharAt(userCodeString.length() - 1);
             userGroupString = userGroupString.deleteCharAt(userGroupString.length() - 1);
+            userRuleString =  userRuleString.deleteCharAt(userRuleString.length() - 1);
         }
         StringBuffer sqlString = new StringBuffer();
         sqlString.append("select fun_ccr_update_usr('")
                 .append(userCodeString)
                 .append("','")
                 .append(userGroupString)
+                .append("','")
+                .append(userRuleString)
+                .append("','")
+                .append(password)
                 .append("');");
         //logger.info(sqlString.toString());
         ccrUserBatchRepository.bulkMergeUser(sqlString.toString());
