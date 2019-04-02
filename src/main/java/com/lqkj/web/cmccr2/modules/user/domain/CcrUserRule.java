@@ -11,6 +11,7 @@ import java.util.Objects;
 /**
  * 用户角色
  */
+@Cacheable
 @Entity
 @Table(name = "ccr_user_rule", indexes = {
         @Index(name = "name_index", columnList = "name", unique = true),

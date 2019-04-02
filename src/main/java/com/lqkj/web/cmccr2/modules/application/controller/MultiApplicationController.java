@@ -18,6 +18,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.context.request.async.WebAsyncTask;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 import springfox.documentation.annotations.ApiIgnore;
@@ -66,29 +67,31 @@ public class MultiApplicationController {
     @ApiOperation("更新组合应用")
     @PostMapping("/center/application/multi/" + APIVersion.V1 + "/update/{id}")
     public MessageBean<Long> update(@RequestParam String application,
-                                    @RequestParam MultipartFile iconFile,
+                                    @RequestParam(required = false) MultipartFile iconFile,
                                     @PathVariable Long id) throws Exception {
-        String iconPath = applicationCommonService.saveUploadFile(iconFile, "png", "jpg");
-
         CcrMultiApplication multiApplication = objectMapper.readValue(application,
                 CcrMultiApplication.class);
-        multiApplication.setIconPath(iconPath);
+
+        if (iconFile!=null) {
+            String iconPath = applicationCommonService.saveUploadFile(iconFile, "png", "jpg");
+            multiApplication.setIconPath(iconPath);
+        }
 
         return MessageBean.ok(multiApplicationService.updateApplication(id, multiApplication));
     }
 
     @ApiOperation("查询应用信息")
     @GetMapping("/center/application/multi/" + APIVersion.V1 + "/info/{id}")
-    public MessageBean<CcrMultiApplication> info(@PathVariable(name = "id") Long id) {
-        return MessageBean.ok(multiApplicationService.getApplication(id));
+    public WebAsyncTask<MessageBean<CcrMultiApplication>> info(@PathVariable(name = "id") Long id) {
+        return new WebAsyncTask<>(() -> MessageBean.ok(multiApplicationService.getApplication(id)));
     }
 
     @ApiOperation("根据应用id获取二维码")
     @GetMapping("/center/application/multi/" + APIVersion.V1 + "/qrcode/{id}")
-    public MessageBean<String> qrcode(@PathVariable Long id,
-                                      HttpServletRequest request) throws Exception {
+    public WebAsyncTask<MessageBean<String>> qrcode(@PathVariable Long id,
+                                                    HttpServletRequest request) throws Exception {
 
-        return MessageBean.ok(multiApplicationService.createAppQRCode(id, ServletUtils.createBaseUrl(request)));
+        return new WebAsyncTask<>(() -> MessageBean.ok(multiApplicationService.createAppQRCode(id, ServletUtils.createBaseUrl(request))));
     }
 
     @ApiOperation("根据系统类型在线下载应用")
@@ -121,14 +124,16 @@ public class MultiApplicationController {
         if (webURL!=null) {
             response.sendRedirect(webURL);
         }
+
+        this.applicationCommonService.countPlusOne(id);
     }
 
     @ApiOperation("分页查询组合应用列表")
     @GetMapping("/center/application/multi/" + APIVersion.V1 + "/page")
-    public MessageBean<Page<CcrMultiApplication>> page(@RequestParam(required = false) String keyword,
-                                                       @RequestParam Integer page,
-                                                       @RequestParam Integer pageSize) {
-        return MessageBean.ok(multiApplicationService.getPage(keyword, page, pageSize));
+    public WebAsyncTask<MessageBean<Page<CcrMultiApplication>>> page(@RequestParam(required = false) String keyword,
+                                                                     @RequestParam Integer page,
+                                                                     @RequestParam Integer pageSize) {
+        return new WebAsyncTask<>(() -> MessageBean.ok(multiApplicationService.getPage(keyword, page, pageSize)));
     }
 
     @ApiOperation("测试二维码生成")

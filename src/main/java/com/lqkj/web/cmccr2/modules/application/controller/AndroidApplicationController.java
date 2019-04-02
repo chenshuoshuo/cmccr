@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.context.request.async.WebAsyncTask;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 
@@ -72,15 +73,15 @@ public class AndroidApplicationController {
 
     @ApiOperation("查询android应用信息")
     @GetMapping("/center/application/android/" + APIVersion.V1 + "/info/{id}/")
-    public MessageBean<CcrAndroidApplication> info(@PathVariable("id") Long id) {
-        return MessageBean.ok(androidApplicationService.getApplicationById(id));
+    public WebAsyncTask<MessageBean<CcrAndroidApplication>> info(@PathVariable("id") Long id) {
+        return new WebAsyncTask<>(() -> MessageBean.ok(androidApplicationService.getApplicationById(id)));
     }
 
     @ApiOperation("分页查询android应用列表")
     @GetMapping("/center/application/android/" + APIVersion.V1 + "/list")
-    public Page<CcrAndroidApplication> list(Integer page,
-                                            Integer pageSize) {
-        return androidApplicationService.page(page, pageSize);
+    public WebAsyncTask<Page<CcrAndroidApplication>> list(Integer page,
+                                                          Integer pageSize) {
+        return new WebAsyncTask<>(() -> androidApplicationService.page(page, pageSize));
     }
 
     @ApiOperation("下载android应用")
@@ -92,6 +93,8 @@ public class AndroidApplicationController {
     public ResponseEntity<StreamingResponseBody> download(@ApiParam(value = "应用id") @PathVariable("id") Long id) {
         StreamingResponseBody body = outputStream -> {
             androidApplicationService.readAndroidStream(id, outputStream);
+
+            applicationCommonService.countPlusOne(id);
         };
         return ResponseEntity.ok()
                 .header("Content-Disposition", "attachment;filename="
@@ -99,9 +102,10 @@ public class AndroidApplicationController {
                 .body(body);
     }
 
+    @ApiOperation("检查apk更新")
     @GetMapping("/center/application/android/" + APIVersion.V1 + "/check/{id}")
-    public MessageBean<Boolean> checkUpdate(@PathVariable("id") Long id,
-                                            @RequestParam("versionCode") Integer versionCode) {
-        return null;
+    public WebAsyncTask<MessageBean<Boolean>> checkUpdate(@PathVariable("id") Long id,
+                                                          @RequestParam("versionCode") Integer versionCode) {
+        return new WebAsyncTask<>(() -> MessageBean.ok(androidApplicationService.checkUpdate(id, versionCode)));
     }
 }

@@ -18,6 +18,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.security.core.Authentication;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.context.request.async.WebAsyncTask;
 import springfox.documentation.annotations.ApiIgnore;
 
 import javax.servlet.http.HttpServletRequest;
@@ -129,5 +130,16 @@ public class CcrUserController {
     public MessageBean loginout(@PathVariable Long userId) {
         this.ccrUserService.loginout(userId);
         return MessageBean.ok();
+    }
+
+    @ApiOperation("从CMDBE更新用户信息")
+    @PostMapping("/center/user/updateFromCmdbe")
+    public MessageBean updateFromCmdbe() {
+        ccrUserService.updateUserFromCmdbe();
+        return MessageBean.ok();
+//        return new WebAsyncTask<>(() -> {
+//            this.ccrUserService.updateUserFromCmdbe();
+//            return null;
+//        });
     }
 }

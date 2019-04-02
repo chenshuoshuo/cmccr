@@ -10,6 +10,7 @@ import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.context.request.async.WebAsyncTask;
 
 @Api(tags = "菜单")
 @RestController
@@ -46,24 +47,24 @@ public class MenuController {
     @ApiImplicitParams({
             @ApiImplicitParam(name = "keyword", paramType = "query", value = "关键字")
     })
-    public MessageBean<Page<CcrMenu>> search(String keyword, Integer page, Integer pageSize) {
-        return MessageBean.ok(menuService.page(keyword, page, pageSize));
+    public WebAsyncTask<MessageBean<Page<CcrMenu>>> search(String keyword, Integer page, Integer pageSize) {
+        return new WebAsyncTask<>(() -> MessageBean.ok(menuService.page(keyword, page, pageSize)));
     }
 
     @ApiOperation("查询菜单项信息")
     @ApiImplicitParam(name = "id", value = "菜单id")
     @GetMapping("/center/menu/" + VERSION + "/info/{id}")
-    public MessageBean<CcrMenu> info(@PathVariable("id") Long id) {
-        return MessageBean.ok(menuService.info(id));
+    public WebAsyncTask<MessageBean<CcrMenu>> info(@PathVariable("id") Long id) {
+        return new WebAsyncTask<>(() -> MessageBean.ok(menuService.info(id)));
     }
 
     @ApiOperation("按照类型分页查询菜单列表")
     @GetMapping(value = {"/center/menu/" + VERSION + "/page/{type}/",
             "/center/menu/" + VERSION + "/page"})
-    public MessageBean<Page<CcrMenu>> typePage(@RequestParam Integer page,
-                                               @RequestParam Integer pageSize,
-                                               @RequestParam(required = false) String keyword,
-                                               @PathVariable(required = false) CcrMenu.IpsMenuType type) {
-        return MessageBean.ok(menuService.typePage(type, keyword, page, pageSize));
+    public WebAsyncTask<MessageBean<Page<CcrMenu>>> typePage(@RequestParam Integer page,
+                                                             @RequestParam Integer pageSize,
+                                                             @RequestParam(required = false) String keyword,
+                                                             @PathVariable(required = false) CcrMenu.IpsMenuType type) {
+        return new WebAsyncTask<>(() -> MessageBean.ok(menuService.typePage(type, keyword, page, pageSize)));
     }
 }

@@ -18,6 +18,7 @@ import java.util.Objects;
 /**
  * 用户权限
  */
+@Cacheable
 @TypeDef(name = "string-array", typeClass = StringArrayType.class)
 @ApiModel(description = "用户权限")
 @Entity
@@ -177,6 +178,6 @@ public class CcrUserAuthority implements Serializable, GrantedAuthority {
     }
 
     public enum UserAuthorityType {
-        menu, home_menu, ips_menu, gis_menu, normal
+        menu, home_menu, ips_menu, gis_menu, normal, dbe_menu
     }
 }

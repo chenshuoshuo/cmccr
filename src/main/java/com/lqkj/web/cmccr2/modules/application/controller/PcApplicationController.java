@@ -12,6 +12,7 @@ import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.context.request.async.WebAsyncTask;
 
 import java.io.IOException;
 
@@ -44,24 +45,24 @@ public class PcApplicationController {
     public String update(@PathVariable Long id,
                          @RequestBody String application) throws IOException {
         return objectMapper.writeValueAsString(MessageBean.ok(pcApplicationService.update(id,
-                objectMapper.readValue(application,CcrPcApplication.class))));
+                objectMapper.readValue(application, CcrPcApplication.class))));
     }
 
     @ApiOperation("查询pc端应用信息")
     @GetMapping("/center/application/pc/" + APIVersion.V1 + "/{id}")
-    public String info(@PathVariable Long id) throws JsonProcessingException {
-        return objectMapper.writeValueAsString(MessageBean.ok(pcApplicationService.info(id)));
+    public WebAsyncTask<String> info(@PathVariable Long id) throws JsonProcessingException {
+        return new WebAsyncTask<>(() -> objectMapper.writeValueAsString(MessageBean.ok(pcApplicationService.info(id))));
     }
 
     @ApiOperation("获取所有pc应用列表")
     @GetMapping("/center/application/pc/" + APIVersion.V1 + "/list")
-    public MessageListBean<CcrPcApplication> list() {
-        return MessageListBean.ok(pcApplicationService.all());
+    public WebAsyncTask<MessageListBean<CcrPcApplication>> list() {
+        return new WebAsyncTask<>(() -> MessageListBean.ok(pcApplicationService.all()));
     }
 
     @ApiOperation("根据菜单id获取应用列表")
     @GetMapping("/center/application/pc/" + APIVersion.V1 + "/menu/{menuId}/list")
-    public MessageListBean<CcrPcApplication> findByMenuId(@PathVariable("menuId") Long menuId) {
-        return MessageListBean.ok(pcApplicationService.findByParentId(menuId));
+    public WebAsyncTask<MessageListBean<CcrPcApplication>> findByMenuId(@PathVariable("menuId") Long menuId) {
+        return new WebAsyncTask<>(() -> MessageListBean.ok(pcApplicationService.findByParentId(menuId)));
     }
 }

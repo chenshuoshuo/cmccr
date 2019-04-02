@@ -14,6 +14,7 @@ import java.util.*;
 /**
  * 用户
  */
+@Cacheable
 @ApiModel(value = "用户")
 @Entity
 @Table(name = "ccr_user", indexes = {
@@ -163,7 +164,7 @@ public class CcrUser implements Serializable, UserDetails {
 
     @Override
     public Collection<CcrUserAuthority> getAuthorities() {
-        List<CcrUserAuthority> authorities = new ArrayList<>();
+        Set<CcrUserAuthority> authorities = new HashSet<>();
 
         if (rules==null) {
             return authorities;

@@ -9,6 +9,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.context.request.async.WebAsyncTask;
 
 /**
  * 应用搜索
@@ -26,10 +27,10 @@ public class SearchApplicationController {
             @ApiImplicitParam(name = "type", paramType = "query", allowableValues = "ios,android,web")
     })
     @GetMapping("/center/application/search/" + APIVersion.V1 + "/")
-    public Page<CcrVersionApplication> search(@RequestParam(required = false) String keyword,
-                                              @RequestParam String type,
-                                              @RequestParam(required = false, defaultValue = "0") Integer page,
-                                              @RequestParam(required = false, defaultValue = "10") Integer pageSize) {
-        return applicationCommonService.search(keyword, type, page, pageSize);
+    public WebAsyncTask<Page<CcrVersionApplication>> search(@RequestParam(required = false) String keyword,
+                                                            @RequestParam String type,
+                                                            @RequestParam(required = false, defaultValue = "0") Integer page,
+                                                            @RequestParam(required = false, defaultValue = "10") Integer pageSize) {
+        return new WebAsyncTask<>(() -> applicationCommonService.search(keyword, type, page, pageSize));
     }
 }

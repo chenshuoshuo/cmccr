@@ -10,6 +10,7 @@ weixin:
 cmgis:
   username: free
   password: 123456
+  context-path: cmgis-server
 server:
   port: 8100
   servlet:
@@ -64,6 +65,12 @@ spring:
       hibernate:
         temp:
           use_jdbc_metadata_defaults: false
+        cache:
+          use_second_level_cache: true
+          use_query_cache: true
+          region.factory_class: org.hibernate.cache.jcache.JCacheRegionFactory
+        javax.cache.provider: com.github.benmanes.caffeine.jcache.spi.CaffeineCachingProvider
+        javax.cache.missing_cache_strategy: create
   datasource:
     hikari:
       driver-class-name: org.postgresql.Driver
@@ -71,8 +78,8 @@ spring:
       password: postgres
       auto-commit: true
       pool-name: ccr
-      minimum-idle: 5
-      maximum-pool-size: 20
+      minimum-idle: 4
+      maximum-pool-size: 8
       idle-timeout: 60000
       max-lifetime: 1800000
       connection-timeout: 30000

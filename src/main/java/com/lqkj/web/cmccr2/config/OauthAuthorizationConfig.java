@@ -12,7 +12,9 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.crypto.password.StandardPasswordEncoder;
 import org.springframework.security.jwt.crypto.sign.RsaVerifier;
 import org.springframework.security.oauth2.common.OAuth2AccessToken;
 import org.springframework.security.oauth2.config.annotation.configurers.ClientDetailsServiceConfigurer;
@@ -32,6 +34,7 @@ import org.springframework.security.oauth2.provider.token.store.KeyStoreKeyFacto
 import javax.sql.DataSource;
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -70,6 +73,7 @@ public class OauthAuthorizationConfig extends WebSecurityConfigurerAdapter imple
     public void configure(AuthorizationServerSecurityConfigurer security) {
         security.tokenKeyAccess("permitAll()")
                 .checkTokenAccess("isAuthenticated()")
+                .passwordEncoder(NoOpPasswordEncoder.getInstance())
                 .allowFormAuthenticationForClients();
     }
 
@@ -80,7 +84,7 @@ public class OauthAuthorizationConfig extends WebSecurityConfigurerAdapter imple
                 .scopes("js")
                 .resourceIds("cmccr-server")
                 .authorizedGrantTypes("password", "refresh_token")
-                .secret(passwordEncoder.encode("cmccr-h5"))
+                .secret(NoOpPasswordEncoder.getInstance().encode("cmccr-h5"))
                 .accessTokenValiditySeconds((int) TimeUnit.MINUTES.toSeconds(10))
                 .refreshTokenValiditySeconds((int) TimeUnit.DAYS.toSeconds(7))
                 .and()
@@ -88,7 +92,7 @@ public class OauthAuthorizationConfig extends WebSecurityConfigurerAdapter imple
                 .scopes("js")
                 .resourceIds("cmccr-server")
                 .authorizedGrantTypes("password", "refresh_token")
-                .secret(passwordEncoder.encode("cmips-h5"))
+                .secret(NoOpPasswordEncoder.getInstance().encode("cmips-h5"))
                 .accessTokenValiditySeconds((int) TimeUnit.MINUTES.toSeconds(10))
                 .refreshTokenValiditySeconds((int) TimeUnit.DAYS.toSeconds(7))
                 .and()
@@ -96,7 +100,7 @@ public class OauthAuthorizationConfig extends WebSecurityConfigurerAdapter imple
                 .scopes("guest")
                 .resourceIds("cmccr-server")
                 .authorizedGrantTypes("client_credentials")
-                .secret(passwordEncoder.encode("cmccr-guest"))
+                .secret(NoOpPasswordEncoder.getInstance().encode("cmccr-guest"))
                 .accessTokenValiditySeconds((int) TimeUnit.DAYS.toSeconds(365))
         ;
     }
@@ -112,13 +116,11 @@ public class OauthAuthorizationConfig extends WebSecurityConfigurerAdapter imple
     }
 
     @Bean
-    @Primary
     public TokenStore tokenStore() {
         return new JwtTokenStore(accessTokenConverter());
     }
 
     @Bean
-    @Primary
     public JwtAccessTokenConverter accessTokenConverter() {
         JwtAccessTokenConverter converter = new JwtAccessTokenConverter();
 
@@ -127,14 +129,15 @@ public class OauthAuthorizationConfig extends WebSecurityConfigurerAdapter imple
 
         converter.setKeyPair(keyStoreKeyFactory.getKeyPair("oauth"));
 
+        converter.setAccessTokenConverter(new UserRulesAccessTokenConverter());
+
         return converter;
     }
 
     @Bean
-    @Primary
     public DefaultTokenServices tokenServices() {
         TokenEnhancerChain tokenEnhancerChain = new TokenEnhancerChain();
-        tokenEnhancerChain.setTokenEnhancers(Arrays.asList(accessTokenConverter(), new UserInfoTokenEnhancer()));
+        tokenEnhancerChain.setTokenEnhancers(Collections.singletonList(accessTokenConverter()));
 
         DefaultTokenServices defaultTokenServices = new DefaultTokenServices();
         defaultTokenServices.setTokenStore(tokenStore());
