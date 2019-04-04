@@ -93,7 +93,7 @@ public class RequestRecordService {
     /**
      * 网关地理统计
      */
-    @Cacheable(cacheNames = "locationStatistics", key = "#startTime+'_'+#endTime")
+    //@Cacheable(cacheNames = "locationStatistics", key = "#startTime+'_'+#endTime")
     public List<CcrLocationRecord> locationStatistics(Timestamp startTime, Timestamp endTime) {
         List<Object[]> results = requestRecordRepository.locationRecord(startTime, endTime);
 
@@ -160,7 +160,6 @@ public class RequestRecordService {
     /**
      * 系统状态记录
      */
-    @Cacheable(cacheNames = "systemRecord")
     public Map<String, List<Check.CheckStatus>> systemRecord() {
         Map<String, List<Check.CheckStatus>> statusMap = new HashMap<>();
 
@@ -195,7 +194,6 @@ public class RequestRecordService {
     /**
      * ip访问总数
      */
-    @Cacheable(cacheNames = "ipRecord")
     public Integer ipRecord() {
         return this.requestRecordRepository.ipRecord();
     }

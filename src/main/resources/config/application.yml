@@ -2,7 +2,7 @@ admin:
   #授权码
   code: 6992005
 cas:
-  base: http://192.168.4.240:8884/cas
+  base: http://192.168.4.241:8884/cas
   login: ${cas.base}/login/
 weixin:
   client_id: wxe157e9dc1e7cc817
@@ -25,7 +25,7 @@ server:
     min-spare-threads: 10
     max-http-post-size: 1000MB
     max-swallow-size: 1000MB
-  address: 192.168.4.105
+  address: 192.168.4.12
 logging:
   register-shutdown-hook: true
   file: ./log/ccr.log
@@ -75,7 +75,7 @@ spring:
     hikari:
       driver-class-name: org.postgresql.Driver
       username: postgres
-      password: lqkj007
+      password: postgres
       auto-commit: true
       pool-name: ccr
       minimum-idle: 4
@@ -84,7 +84,7 @@ spring:
       max-lifetime: 1800000
       connection-timeout: 30000
       read-only: false
-    url: jdbc:postgresql://192.168.4.241:5432/cmccr
+    url: jdbc:postgresql://192.168.4.240:5432/cmccr_ceshi
   mvc:
     favicon:
       enabled: true
@@ -95,7 +95,7 @@ spring:
   boot:
     admin:
       client:
-        url: "http://192.168.4.240:7070/admin"
+        url: "http://192.168.4.241:7070/admin"
         instance:
           name: cmccr2
   resources:
@@ -109,7 +109,7 @@ spring:
   cloud:
     consul:
       enabled: true
-      host: 192.168.4.240
+      host: 192.168.4.241
       port: 8500
       discovery:
         enabled: true
