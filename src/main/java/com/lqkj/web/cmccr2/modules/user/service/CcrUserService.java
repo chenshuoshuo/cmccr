@@ -9,6 +9,7 @@ import com.lqkj.web.cmccr2.modules.user.dao.CcrUserRepository;
 import com.lqkj.web.cmccr2.modules.user.dao.CcrUserRuleRepository;
 import com.lqkj.web.cmccr2.modules.user.domain.CcrUser;
 import com.lqkj.web.cmccr2.modules.user.domain.CcrUserRule;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Example;
@@ -225,7 +226,10 @@ public class CcrUserService implements UserDetailsService {
                 userGroupString.append("teacher_staff,");
                 userRuleString.append("2,");
             }
-            executeSql(userString, userGroupString,userRuleString,password);
+            if("".equals(userString)){
+                executeSql(userString, userGroupString,userRuleString,password);
+            }
+
             //
         }
 
@@ -248,7 +252,9 @@ public class CcrUserService implements UserDetailsService {
                 userGroupString.append("student,");
                 userRuleString.append("3,");
             }
-            executeSql(userString, userGroupString,userRuleString,password);
+            if("".equals(userString)){
+                executeSql(userString, userGroupString,userRuleString,password);
+            }
         }
 
     }
