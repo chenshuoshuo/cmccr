@@ -1,5 +1,7 @@
 package com.lqkj.web.cmccr2.modules.store.domain;
 
+import org.springframework.http.MediaType;
+
 import javax.persistence.*;
 
 /**
@@ -20,6 +22,9 @@ public class CcrStoreItem {
     @Column(columnDefinition = " text", nullable = false)
     private String value;
 
+    @Column(name = "content_type")
+    private String contentType;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "store_id")
     private CcrStore store;
@@ -30,6 +35,14 @@ public class CcrStoreItem {
     public CcrStoreItem(String key, String value, CcrStore store) {
         this.key = key;
         this.value = value;
+        this.store = store;
+        this.contentType = MediaType.APPLICATION_JSON_VALUE;
+    }
+
+    public CcrStoreItem(String key, String value, String contentType, CcrStore store) {
+        this.key = key;
+        this.value = value;
+        this.contentType = contentType;
         this.store = store;
     }
 
@@ -63,5 +76,13 @@ public class CcrStoreItem {
 
     public void setStore(CcrStore store) {
         this.store = store;
+    }
+
+    public String getContentType() {
+        return contentType;
+    }
+
+    public void setContentType(String contentType) {
+        this.contentType = contentType;
     }
 }

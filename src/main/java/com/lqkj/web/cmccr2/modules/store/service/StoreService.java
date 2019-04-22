@@ -32,12 +32,12 @@ public class StoreService {
      * @param key       键名
      * @param value     键值
      */
-    public Long put(String storeName, String key, String value) {
+    public Long put(String storeName, String key, String value, String contentType) {
         systemLogService.addLog("k-v储存服务", "put",
                 "插入内容");
 
         CcrStore store = createOrGetStore(storeName);
-        return putStoreItem(store, key, value);
+        return putStoreItem(store, key, value, contentType);
     }
 
     /**
@@ -83,8 +83,8 @@ public class StoreService {
      * @param value 键值
      * @return id
      */
-    private Long putStoreItem(CcrStore store, String key, String value) {
-        CcrStoreItem item = new CcrStoreItem(key, value, store);
+    private Long putStoreItem(CcrStore store, String key, String value, String contentType) {
+        CcrStoreItem item = new CcrStoreItem(key, value, contentType, store);
 
         if (storeItemDao.existsByKeyEqualsAndStoreEquals(key, store)) {
             storeItemDao.deleteByKeyEqualsAndStoreEquals(key, store);
@@ -93,7 +93,7 @@ public class StoreService {
         return storeItemDao.save(item).getId();
     }
 
-    public String get(String storeName, String key) {
-        return storeItemDao.findByNameAndKey(storeName, key).getValue();
+    public CcrStoreItem get(String storeName, String key) {
+        return storeItemDao.findByNameAndKey(storeName, key);
     }
 }
