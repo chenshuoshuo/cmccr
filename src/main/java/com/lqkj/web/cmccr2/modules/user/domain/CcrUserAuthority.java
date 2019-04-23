@@ -69,6 +69,10 @@ public class CcrUserAuthority implements Serializable, GrantedAuthority {
     @Column(name = "http_method", columnDefinition = " text[]")
     private String[] httpMethod;
 
+    @ApiModelProperty(value = "前端文件路径")
+    @Column(name = "file_path")
+    private String filePath;
+
     public CcrUserAuthority() {
     }
 
@@ -149,25 +153,34 @@ public class CcrUserAuthority implements Serializable, GrantedAuthority {
         this.httpMethod = httpMethod;
     }
 
+    public String getFilePath() {
+        return filePath;
+    }
+
+    public void setFilePath(String filePath) {
+        this.filePath = filePath;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this==o) return true;
         if (o==null || getClass()!=o.getClass()) return false;
-        CcrUserAuthority authority = (CcrUserAuthority) o;
-        return Objects.equals(authorityId, authority.authorityId) &&
-                Objects.equals(name, authority.name) &&
-                Objects.equals(content, authority.content) &&
-                Objects.equals(route, authority.route) &&
-                Objects.equals(icon, authority.icon) &&
-                Objects.equals(parentId, authority.parentId) &&
-                type==authority.type &&
-                Objects.equals(enabled, authority.enabled) &&
-                Arrays.equals(httpMethod, authority.httpMethod);
+        CcrUserAuthority that = (CcrUserAuthority) o;
+        return Objects.equals(authorityId, that.authorityId) &&
+                Objects.equals(name, that.name) &&
+                Objects.equals(content, that.content) &&
+                Objects.equals(route, that.route) &&
+                Objects.equals(icon, that.icon) &&
+                Objects.equals(parentId, that.parentId) &&
+                type==that.type &&
+                Objects.equals(enabled, that.enabled) &&
+                Arrays.equals(httpMethod, that.httpMethod) &&
+                Objects.equals(filePath, that.filePath);
     }
 
     @Override
     public int hashCode() {
-        int result = Objects.hash(authorityId, name, content, route, icon, parentId, type, enabled);
+        int result = Objects.hash(authorityId, name, content, route, icon, parentId, type, enabled, filePath);
         result = 31 * result + Arrays.hashCode(httpMethod);
         return result;
     }
@@ -178,6 +191,6 @@ public class CcrUserAuthority implements Serializable, GrantedAuthority {
     }
 
     public enum UserAuthorityType {
-        menu, home_menu, ips_menu, gis_menu, normal, dbe_menu
+        menu, home_menu, ips_menu, gis_menu, normal, dbe_menu, m3820_menu
     }
 }
