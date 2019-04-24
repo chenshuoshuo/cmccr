@@ -1,5 +1,6 @@
 package com.lqkj.web.cmccr2.modules.user.service;
 
+import com.google.common.collect.Lists;
 import com.lqkj.web.cmccr2.modules.log.service.CcrSystemLogService;
 import com.lqkj.web.cmccr2.modules.user.dao.CcrUserAuthorityRepository;
 import com.lqkj.web.cmccr2.modules.user.dao.CcrUserRuleRepository;
@@ -17,6 +18,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Set;
 
 /**
  * 用户权限服务
@@ -98,7 +100,7 @@ public class CcrUserAuthorityService {
         systemLogService.addLog("用户权限服务", "findByRuleId",
                 "根据角色查询权限");
 
-        return userRuleRepository.getOne(ruleId).getAuthorities();
+        return Lists.newArrayList(userRuleRepository.getOne(ruleId).getAuthorities());
     }
 
     public List<CcrUserAuthority> findByType(CcrUserAuthority.UserAuthorityType type) {

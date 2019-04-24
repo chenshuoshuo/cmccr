@@ -7,6 +7,7 @@ import java.io.Serializable;
 import java.sql.Timestamp;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 
 /**
  * 用户角色
@@ -29,7 +30,7 @@ public class CcrUserRule implements Serializable {
             joinColumns = @JoinColumn(name = "rule_id", referencedColumnName = "rule_id"),
             inverseJoinColumns = @JoinColumn(name = "authority_id", referencedColumnName = "authority_id")
     )
-    private List<CcrUserAuthority> authorities;
+    private Set<CcrUserAuthority> authorities;
 
     @UpdateTimestamp
     @Column(name = "update_time")
@@ -44,7 +45,7 @@ public class CcrUserRule implements Serializable {
     public CcrUserRule() {
     }
 
-    public CcrUserRule(List<CcrUserAuthority> authorities, String name, String content) {
+    public CcrUserRule(Set<CcrUserAuthority> authorities, String name, String content) {
         this.authorities = authorities;
         this.name = name;
         this.content = content;
@@ -58,11 +59,11 @@ public class CcrUserRule implements Serializable {
         this.ruleId = ruleId;
     }
 
-    public List<CcrUserAuthority> getAuthorities() {
+    public Set<CcrUserAuthority> getAuthorities() {
         return authorities;
     }
 
-    public void setAuthorities(List<CcrUserAuthority> authorities) {
+    public void setAuthorities(Set<CcrUserAuthority> authorities) {
         this.authorities = authorities;
     }
 

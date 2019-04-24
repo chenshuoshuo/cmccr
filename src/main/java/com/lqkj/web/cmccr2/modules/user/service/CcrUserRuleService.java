@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 
 /**
  * 用户角色服务
@@ -42,7 +43,7 @@ public class CcrUserRuleService {
 
         rule.setName(name);
         rule.setContent(enName);
-        rule.setAuthorities(new ArrayList<>());
+        rule.setAuthorities(new HashSet<>());
 
         for (Long authority : authorities) {
             rule.getAuthorities().add(userAuthorityRepository.getOne(authority));
@@ -87,7 +88,7 @@ public class CcrUserRuleService {
         rule.setContent(enName);
 
         if (rule.getAuthorities()==null) {
-            rule.setAuthorities(new ArrayList<>());
+            rule.setAuthorities(new HashSet<>());
         } else {
             rule.getAuthorities().clear();
         }
