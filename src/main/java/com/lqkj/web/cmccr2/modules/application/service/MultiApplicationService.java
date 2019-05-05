@@ -43,11 +43,32 @@ public class MultiApplicationService {
     private final int QR_CODE_HEIGHT = 200;
     private final int QR_CODE_SCALE = 7;
 
-    @Autowired
-    CcrMultiApplicationRepository multiApplicationDao;
+    private CcrMultiApplicationRepository multiApplicationDao;
 
-    @Autowired
-    CcrSystemLogService systemLogService;
+    private CcrSystemLogService systemLogService;
+
+    public MultiApplicationService(CcrMultiApplicationRepository multiApplicationDao,
+                                   CcrSystemLogService systemLogService) {
+        this.multiApplicationDao = multiApplicationDao;
+        this.systemLogService = systemLogService;
+    }
+
+    /**
+     * 快速创建web地址
+     */
+    public Long quickWebCreate(String webURL) {
+        systemLogService.addLog("组合应用服务", "quickWebCreate"
+                , "快速创建web地址");
+
+        CcrMultiApplication application = multiApplicationDao.findByWebURL(webURL);
+
+        if (application!=null) return application.getId();
+
+        CcrMultiApplication newApplication = new CcrMultiApplication();
+        newApplication.setName("快速创建-" + webURL);
+        newApplication.setWebURL(webURL);
+        return this.multiApplicationDao.save(newApplication).getId();
+    }
 
     /**
      * 创建一个组合应用

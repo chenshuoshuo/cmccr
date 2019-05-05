@@ -27,18 +27,23 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-@Api(tags = {"组合应用"}, description = "组合应用管理")
+@Api(tags = {"组合应用"}, value = "组合应用管理")
 @RestController
 public class MultiApplicationController {
 
-    @Autowired
-    MultiApplicationService multiApplicationService;
+    private MultiApplicationService multiApplicationService;
 
-    @Autowired
-    ApplicationCommonService applicationCommonService;
+    private ApplicationCommonService applicationCommonService;
 
-    @Autowired
-    ObjectMapper objectMapper;
+    private ObjectMapper objectMapper;
+
+    public MultiApplicationController(MultiApplicationService multiApplicationService,
+                                      ApplicationCommonService applicationCommonService,
+                                      ObjectMapper objectMapper) {
+        this.multiApplicationService = multiApplicationService;
+        this.applicationCommonService = applicationCommonService;
+        this.objectMapper = objectMapper;
+    }
 
     @ApiImplicitParams({
             @ApiImplicitParam(name = "application", type = "form", defaultValue = "应用信息")
@@ -124,8 +129,6 @@ public class MultiApplicationController {
         if (webURL!=null) {
             response.sendRedirect(webURL);
         }
-
-        this.applicationCommonService.countPlusOne(id);
     }
 
     @ApiOperation("分页查询组合应用列表")
@@ -151,5 +154,11 @@ public class MultiApplicationController {
                 .ok()
                 .contentType(MediaType.IMAGE_PNG)
                 .body(body);
+    }
+
+    @ApiOperation("快速创建web应用")
+    @GetMapping("/center/application/multi/" + APIVersion.V2 + "/quick/web")
+    public MessageBean<Long> quickWebURL(@RequestParam String webURL) {
+        return MessageBean.ok(multiApplicationService.quickWebCreate(webURL));
     }
 }

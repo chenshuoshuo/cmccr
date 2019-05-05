@@ -8,6 +8,7 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.token.TokenService;
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableResourceServer;
 import org.springframework.security.oauth2.config.annotation.web.configuration.ResourceServerConfigurer;
@@ -20,6 +21,7 @@ import org.springframework.security.oauth2.provider.token.store.JwtAccessTokenCo
 import org.springframework.security.oauth2.provider.token.store.JwtTokenStore;
 import org.springframework.security.oauth2.provider.token.store.KeyStoreKeyFactory;
 
+import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.concurrent.TimeUnit;
@@ -69,7 +71,7 @@ public class OauthResourceConfig implements ResourceServerConfigurer {
                         "/center/record/*/add",
                         "/center/store/*/*/*",
                         "/center/application/pc/*/list"
-                        )
+                )
                 .permitAll()
                 .antMatchers("/center/application/**",
                         "/center/menu/**",
@@ -82,7 +84,7 @@ public class OauthResourceConfig implements ResourceServerConfigurer {
                         "/center/asr/**" // 百度语音API
                 )
                 .authenticated()
-                //.access("#oauth2.hasScope('js')")
+        //.access("#oauth2.hasScope('js')")
         ;
     }
 }
