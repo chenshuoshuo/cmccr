@@ -1,5 +1,6 @@
 package com.lqkj.web.cmccr2.config;
 
+import com.lqkj.web.cmccr2.APIVersion;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -70,7 +71,9 @@ public class OauthResourceConfig implements ResourceServerConfigurer {
                 .antMatchers(HttpMethod.GET, "/center/menu/*/page",
                         "/center/record/*/add",
                         "/center/store/*/*/*",
-                        "/center/application/pc/*/list"
+                        "/center/application/pc/*/list",
+                        "/center/application/multi/" + APIVersion.V2 + "/quick/web",
+                        "/center/application/multi/" + APIVersion.V1 + "/jump/*"
                 )
                 .permitAll()
                 .antMatchers("/center/application/**",

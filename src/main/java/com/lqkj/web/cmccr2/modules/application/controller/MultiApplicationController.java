@@ -21,11 +21,13 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.async.WebAsyncTask;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
+import org.springframework.web.util.UriUtils;
 import springfox.documentation.annotations.ApiIgnore;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.nio.charset.Charset;
 
 @Api(tags = {"组合应用"}, value = "组合应用管理")
 @RestController
@@ -110,7 +112,7 @@ public class MultiApplicationController {
             String androidURL = application.getAndroidURL();
 
             if (androidURL!=null) {
-                response.sendRedirect(androidURL);
+                response.sendRedirect(UriUtils.encodeQuery(androidURL, Charset.forName("utf-8")));
                 return;
             }
         }
@@ -119,7 +121,7 @@ public class MultiApplicationController {
             String iosURL = application.getIosURL();
 
             if (iosURL!=null) {
-                response.sendRedirect(iosURL);
+                response.sendRedirect(UriUtils.encodeQuery(iosURL, Charset.forName("utf-8")));
                 return;
             }
         }
@@ -127,7 +129,7 @@ public class MultiApplicationController {
         String webURL = application.getWebURL();
 
         if (webURL!=null) {
-            response.sendRedirect(webURL);
+            response.sendRedirect(UriUtils.encodeQuery(webURL, Charset.forName("utf-8")));
         }
     }
 
