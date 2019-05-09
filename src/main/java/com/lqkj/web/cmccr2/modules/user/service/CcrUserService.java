@@ -10,6 +10,8 @@ import com.lqkj.web.cmccr2.modules.user.dao.CcrUserRuleRepository;
 import com.lqkj.web.cmccr2.modules.user.domain.CcrUser;
 import com.lqkj.web.cmccr2.modules.user.domain.CcrUserRule;
 import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Example;
@@ -34,7 +36,7 @@ import java.util.Set;
 @Service
 @Transactional
 public class CcrUserService implements UserDetailsService {
-    //private final Logger logger = LoggerFactory.getLogger(this.getClass());
+    private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @Autowired
     CcrUserRepository userRepository;
@@ -226,7 +228,7 @@ public class CcrUserService implements UserDetailsService {
                 userGroupString.append("teacher_staff,");
                 userRuleString.append("2,");
             }
-            if("".equals(userString)){
+            if(StringUtils.isNotBlank(userString.toString())){
                 executeSql(userString, userGroupString,userRuleString,password);
             }
 
@@ -252,7 +254,7 @@ public class CcrUserService implements UserDetailsService {
                 userGroupString.append("student,");
                 userRuleString.append("3,");
             }
-            if("".equals(userString)){
+            if(StringUtils.isNotBlank(userString.toString())){
                 executeSql(userString, userGroupString,userRuleString,password);
             }
         }
@@ -275,7 +277,7 @@ public class CcrUserService implements UserDetailsService {
                 .append("','")
                 .append(password)
                 .append("');");
-        //logger.info(sqlString.toString());
+        logger.info(sqlString.toString());
         ccrUserBatchRepository.bulkMergeUser(sqlString.toString());
     }
 
