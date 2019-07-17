@@ -73,7 +73,8 @@ public class OauthResourceConfig implements ResourceServerConfigurer {
                         "/center/store/*/*/*",
                         "/center/application/pc/*/list",
                         "/center/application/multi/" + APIVersion.V2 + "/quick/web",
-                        "/center/application/multi/" + APIVersion.V1 + "/jump/*"
+                        "/center/application/multi/" + APIVersion.V1 + "/jump/*",
+                        "center/cas/*"
                 )
                 .permitAll()
                 .antMatchers("/center/application/**",
