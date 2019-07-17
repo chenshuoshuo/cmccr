@@ -70,15 +70,19 @@ public class SensitivityWordService {
         this.initSensitivityWords();
     }
 
-    public CcrSensitivityWord update(Long id, String word) throws IOException {
+    public CcrSensitivityWord update(Long id, CcrSensitivityWord sensitivityWord) throws IOException {
         systemLogService.addLog("违禁词服务", "update",
                 "更新一个违禁词");
 
-        CcrSensitivityWord sensitivityWord = sensitivityWordDao.getOne(id);
+        CcrSensitivityWord oldSensitivityWord = sensitivityWordDao.getOne(id);
 
-        sensitivityWord.setWord(word);
+        oldSensitivityWord.setWord(sensitivityWord.getWord());
 
-        CcrSensitivityWord savedWord = this.sensitivityWordDao.save(sensitivityWord);
+        oldSensitivityWord.setReplaceContent(sensitivityWord.getReplaceContent());
+
+        oldSensitivityWord.setHandleType(sensitivityWord.getHandleType());
+
+        CcrSensitivityWord savedWord = this.sensitivityWordDao.save(oldSensitivityWord);
 
         this.initSensitivityWords();
 
@@ -205,5 +209,22 @@ public class SensitivityWordService {
         });
 
         logger.info("分词树构建完成");
+    }
+
+    /**
+     * @Author Wells
+     * @Description //TODO
+     * @Date 11:41 2019/7/17
+     * @Param [ids]
+     * @return void
+     **/
+    public void bulkDelete(Long[] ids) throws IOException {
+        systemLogService.addLog("违禁词服务", "delete",
+                "批量删除违禁词");
+        for (int i = 0; i < ids.length; i++){
+            this.sensitivityWordDao.deleteById(ids[i]);
+        }
+
+        this.initSensitivityWords();
     }
 }
