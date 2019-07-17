@@ -146,8 +146,8 @@ public class HttpUtils {
 		}
 		return null;
     }
-    public Response getRequest(String url, int out_time,Map<String,String> header){
 
+    public Response getRequest(String url, int out_time,Map<String,String> header){
         Headers headers = Headers.of(header);
         Request.Builder builder = new Request.Builder()
                 .url(url)
