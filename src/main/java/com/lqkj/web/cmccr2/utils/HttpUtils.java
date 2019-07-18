@@ -147,14 +147,11 @@ public class HttpUtils {
 		return null;
     }
 
-    public Response getRequest(String url, int out_time,Map<String,String> header){
-        Headers headers = Headers.of(header);
+    public Response getRequest(String url){
         Request.Builder builder = new Request.Builder()
                 .url(url)
                 .get()
-                .headers(headers)
                 .cacheControl(cacheControl);
-
         try {
             return client.newCall(builder.build()).execute();
         } catch (Exception e) {

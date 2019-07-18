@@ -29,7 +29,7 @@ public class CasController {
     @GetMapping("/center/cas/" + APIVersion.V1 + "/getUser/")
     public String casToUser(@ApiParam(name = "casLoginUrl",value = "获取用户信息访问地址",required = true)@RequestParam(required = true)String casLoginUrl){
         try {
-            Response response=HttpUtils.getInstance().getRequest(casLoginUrl,20,null);
+            Response response=HttpUtils.getInstance().getRequest(casLoginUrl);
             return response.body().string();
         }catch (IOException e){
             e.printStackTrace();
