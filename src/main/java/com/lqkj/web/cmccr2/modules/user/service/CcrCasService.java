@@ -44,6 +44,8 @@ public class CcrCasService {
 
         ccrUser.setCasTicket(passwordEncoder.encode(ticket));
 
+        ccrUser.setPassWord(null);
+
         return userRepository.save(ccrUser);
     }
 }
