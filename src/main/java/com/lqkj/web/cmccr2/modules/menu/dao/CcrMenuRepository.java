@@ -23,5 +23,5 @@ public interface CcrMenuRepository extends JpaRepository<CcrMenu, Long> {
     <S extends CcrMenu> Page<S> findAll(Example<S> example, Pageable pageable);
 
     @Query(nativeQuery = true, value = "select m.* from ccr_menu as m where m.name=:name")
-    List<CcrMenu> getMenu(@Param("name") String menuName);
+    List<CcrMenu> nameByMenu(@Param("name") String menuName);
 }

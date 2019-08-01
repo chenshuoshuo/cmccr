@@ -39,7 +39,7 @@ public class MenuService {
         menu.setStatus(Boolean.TRUE);
         //先根据菜单名称查看是否已经存在
         String menuName=menu.getName();
-        Boolean exits=menuDao.getMenu(menuName).isEmpty();
+        Boolean exits=menuDao.nameByMenu(menuName).isEmpty();
         if(!exits){
             return null;
         }
@@ -79,11 +79,7 @@ public class MenuService {
     public CcrMenu update(Long id, CcrMenu menu) {
         systemLogService.addLog("菜单管理服务", "update"
                 , "更新菜单信息");
-        Date date=new Date();
-        SimpleDateFormat simpleDateFormat=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        String time=simpleDateFormat.format(date);
-        Timestamp timestamp=Timestamp.valueOf(time);
-        menu.setUpdateTime(timestamp);
+        menu.setUpdateTime(new Timestamp(new Date().getTime()));
         return menuDao.save(menu);
     }
 

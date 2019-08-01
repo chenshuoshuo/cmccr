@@ -91,13 +91,8 @@ public class CcrUserRuleService {
                 "更新用户角色");
 
         CcrUserRule rule = userRuleRepository.getOne(id);
-        Date date=new Date();
-        SimpleDateFormat simpleDateFormat=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        String time=simpleDateFormat.format(date);
-        Timestamp timestamp=Timestamp.valueOf(time);
-        rule.setName(name);
-        rule.setContent(enName);
-        rule.setUpdateTime(timestamp);
+
+        rule.setUpdateTime(new Timestamp(new Date().getTime()));
 
         if (rule.getAuthorities()==null) {
             rule.setAuthorities(new HashSet<>());

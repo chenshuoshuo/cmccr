@@ -45,7 +45,7 @@ public class CcrUserController {
         if(ccrUserService.registerAdmin(adminCode, user)!=null) {
             return MessageBean.ok(ccrUserService.registerAdmin(adminCode, user));
         }
-        return MessageBean.error("该账号已注册");
+        return MessageBean.error("用户已存在");
     }
 
     @ApiOperation("查询用户信息")

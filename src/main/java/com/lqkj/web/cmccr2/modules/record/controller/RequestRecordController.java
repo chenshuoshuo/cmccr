@@ -71,6 +71,7 @@ public class RequestRecordController {
                     requestRecord.setUserGroup(ccrUser.getUserGroup().toString());
                 }
             }
+            requestRecordService.add(requestRecord);
             return null;
         });
     }
