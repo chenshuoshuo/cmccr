@@ -9,6 +9,10 @@ import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 /**
  * 菜单管理服务
  */
@@ -75,7 +79,11 @@ public class MenuService {
     public CcrMenu update(Long id, CcrMenu menu) {
         systemLogService.addLog("菜单管理服务", "update"
                 , "更新菜单信息");
-
+        Date date=new Date();
+        SimpleDateFormat simpleDateFormat=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        String time=simpleDateFormat.format(date);
+        Timestamp timestamp=Timestamp.valueOf(time);
+        menu.setUpdateTime(timestamp);
         return menuDao.save(menu);
     }
 
