@@ -13,7 +13,10 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashSet;
 
 /**
@@ -39,6 +42,11 @@ public class CcrUserRuleService {
         systemLogService.addLog("用户角色服务", "add",
                 "增加用户角色");
 
+        //判断用户角色名是否存在
+        Boolean exits=userRuleRepository.findByRuleName(name,enName).isEmpty();
+        if(!exits){
+            return null;
+        }
         CcrUserRule rule = new CcrUserRule();
 
         rule.setName(name);
@@ -83,9 +91,13 @@ public class CcrUserRuleService {
                 "更新用户角色");
 
         CcrUserRule rule = userRuleRepository.getOne(id);
-
+        Date date=new Date();
+        SimpleDateFormat simpleDateFormat=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        String time=simpleDateFormat.format(date);
+        Timestamp timestamp=Timestamp.valueOf(time);
         rule.setName(name);
         rule.setContent(enName);
+        rule.setUpdateTime(timestamp);
 
         if (rule.getAuthorities()==null) {
             rule.setAuthorities(new HashSet<>());

@@ -42,7 +42,10 @@ public class CcrUserController {
     @ApiOperation("注册用户")
     @PutMapping("/center/user/register")
     public MessageBean<CcrUser> register(@RequestBody CcrUser user, @RequestParam Integer adminCode) throws Exception {
-        return MessageBean.ok(ccrUserService.registerAdmin(adminCode, user));
+        if(ccrUserService.registerAdmin(adminCode, user)!=null) {
+            return MessageBean.ok(ccrUserService.registerAdmin(adminCode, user));
+        }
+        return MessageBean.error("该账号已注册");
     }
 
     @ApiOperation("查询用户信息")

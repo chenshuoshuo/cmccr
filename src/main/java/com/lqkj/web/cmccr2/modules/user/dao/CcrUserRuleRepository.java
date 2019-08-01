@@ -9,6 +9,8 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 @Repository
 public interface CcrUserRuleRepository extends JpaRepository<CcrUserRule, Long> {
 
@@ -19,4 +21,9 @@ public interface CcrUserRuleRepository extends JpaRepository<CcrUserRule, Long> 
     Page<CcrUserRule> findSupportRules(@Param("username") String username,
                                        @Param("keyword") String keyword,
                                        Pageable pageable);
+
+    //添加角色前，判断是否已经存在角色
+    @Query(nativeQuery = true, value = "select r.* from ccr_user_rule as r where r.name=:name or r.content=:content")
+    List<CcrUserRule> findByRuleName(@Param("name") String name,@Param("content") String content);
+
 }

@@ -63,7 +63,7 @@ public class RequestRecordService {
      * 数据统计
      */
     @Transactional
-//    @Cacheable(cacheNames = "dataStatistics", key = "#startTime+'_'+#endTime+'_'+#frequencyEnum+'_'+#successed")
+    //@Cacheable(cacheNames = "dataStatistics", key = "#startTime+'_'+#endTime+'_'+#frequencyEnum+'_'+#successed")
     public List<Object[]> dataStatistics(Timestamp startTime, Timestamp endTime, CcrStatisticsFrequency frequencyEnum,
                                          Boolean successed) {
         String frequency = enumToFrequency(frequencyEnum);
@@ -79,7 +79,7 @@ public class RequestRecordService {
     /**
      * 网关流量统计
      */
-    @Cacheable(cacheNames = "urlStatistics", key = "#startTime+'_'+#endTime+'_'+#page+'_'+#pageSize")
+   //@Cacheable(cacheNames = "urlStatistics", key = "#startTime+'_'+#endTime+'_'+#page+'_'+#pageSize")
     public Page<Object[]> urlStatistics(Timestamp startTime, Timestamp endTime,
                                         Integer page, Integer pageSize) {
         Page<Object[]> result = requestRecordRepository.urlRecord(startTime, endTime,
@@ -150,7 +150,7 @@ public class RequestRecordService {
     /**
      * 异常列表
      */
-    @Cacheable(cacheNames = "errorRecord", key = "#startTime+'_'+#endTime+'_'+#page+'_'+#pageSize")
+    //@Cacheable(cacheNames = "errorRecord", key = "#startTime+'_'+#endTime+'_'+#page+'_'+#pageSize")
     public Page<CcrRequestRecord> errorRecord(Timestamp startTime, Timestamp endTime,
                                               Integer page, Integer pageSize) {
         return this.requestRecordRepository.errorRecord(startTime, endTime,
@@ -186,7 +186,7 @@ public class RequestRecordService {
     /**
      * 用户详细请求记录
      */
-    @Cacheable(cacheNames = "urlRecordDetail", key = "#startTime+'_'+#endTime+'_'+#name")
+    //@Cacheable(cacheNames = "urlRecordDetail", key = "#startTime+'_'+#endTime+'_'+#name")
     public List<Object[]> urlRecordDetail(Timestamp startTime, Timestamp endTime, String name) {
         return this.requestRecordRepository.urlRecordDetail(startTime, endTime, name);
     }
@@ -201,7 +201,7 @@ public class RequestRecordService {
     /**
      * app访问统计
      */
-    @Cacheable(cacheNames = "appRecord")
+    //@Cacheable(cacheNames = "appRecord")
     public List<Object[]> appRecord() {
         return versionApplicationRepository.downloadRecord();
     }

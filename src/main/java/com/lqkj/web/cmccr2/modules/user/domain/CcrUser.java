@@ -14,7 +14,7 @@ import java.util.*;
 /**
  * 用户
  */
-@Cacheable
+//@Cacheable
 @ApiModel(value = "用户")
 @Entity
 @Table(name = "ccr_user", indexes = {

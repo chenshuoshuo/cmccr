@@ -12,7 +12,7 @@ import java.util.Set;
 /**
  * 用户角色
  */
-@Cacheable
+//@Cacheable
 @Entity
 @Table(name = "ccr_user_rule", indexes = {
         @Index(name = "name_index", columnList = "name", unique = true),

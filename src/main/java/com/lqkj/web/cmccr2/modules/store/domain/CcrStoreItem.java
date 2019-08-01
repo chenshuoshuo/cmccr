@@ -7,7 +7,7 @@ import javax.persistence.*;
 /**
  * k-v详细储存信息
  */
-@Cacheable
+//@Cacheable
 @Entity
 @Table(name = "ccr_store_item")
 public class CcrStoreItem {

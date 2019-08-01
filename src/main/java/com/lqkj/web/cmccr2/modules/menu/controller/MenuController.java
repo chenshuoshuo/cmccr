@@ -24,7 +24,11 @@ public class MenuController {
     @ApiOperation("创建菜单")
     @PutMapping("/center/menu/" + VERSION + "/create")
     public MessageBean<Long> create(CcrMenu CcrMenu) {
-        return MessageBean.ok(menuService.createMenu(CcrMenu));
+        //先判断菜单名称是否重复
+        if(menuService.createMenu(CcrMenu)!=null){
+            return MessageBean.ok(menuService.createMenu(CcrMenu));
+        }
+        return MessageBean.error("存在相同的菜单名称");
     }
 
     @ApiOperation("删除菜单")

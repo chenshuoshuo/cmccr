@@ -28,6 +28,8 @@ import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBo
 
 import javax.servlet.http.HttpServletRequest;
 import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -69,8 +71,6 @@ public class RequestRecordController {
                     requestRecord.setUserGroup(ccrUser.getUserGroup().toString());
                 }
             }
-
-            requestRecordService.add(requestRecord);
             return null;
         });
     }

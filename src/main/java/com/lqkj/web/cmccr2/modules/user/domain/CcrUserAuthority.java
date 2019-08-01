@@ -18,7 +18,7 @@ import java.util.Objects;
 /**
  * 用户权限
  */
-@Cacheable
+//@Cacheable
 @TypeDef(name = "string-array", typeClass = StringArrayType.class)
 @ApiModel(description = "用户权限")
 @Entity

@@ -33,9 +33,15 @@ public class MenuService {
                 , "创建菜单");
 
         menu.setStatus(Boolean.TRUE);
-
+        //先根据菜单名称查看是否已经存在
+        String menuName=menu.getName();
+        Boolean exits=menuDao.getMenu(menuName).isEmpty();
+        if(!exits){
+            return null;
+        }
         return menuDao.save(menu).getMenuId();
     }
+
 
     /**
      * 删除应用

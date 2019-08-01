@@ -42,8 +42,8 @@ public class CcrSystemLogService {
         if (startTime!=null && endTime!=null) {
             return systemLogRepository.pageByTime(startTime, endTime, PageRequest.of(page, pageSize));
         }
-
-        return systemLogRepository.findAll(PageRequest.of(page, pageSize));
+        //根据日志的时间进行排序
+        return systemLogRepository.findAllByTimeDesc(PageRequest.of(page, pageSize));
     }
 
     public void export(Timestamp startTime, Timestamp endTime, OutputStream os) throws IOException {
