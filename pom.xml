@@ -6,7 +6,7 @@
 
 	<groupId>com.lqkj.web.cmccr</groupId>
 	<artifactId>cmccr2</artifactId>
-	<version>0.9.8</version>
+	<version>1.0.5</version>
 	<packaging>jar</packaging>
 
 	<name>cmccr2</name>
