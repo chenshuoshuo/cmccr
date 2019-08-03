@@ -77,17 +77,18 @@ public class CcrUserService implements UserDetailsService {
         if (!adminCode.equals(this.adminCode)) {
             throw new Exception("授权码不正确");
         }
+        if(userRepository.findByUserName(ccrUser.getUsername())!=null){
+            return null;
+        }
         systemLogService.addLog("用户管理服务", "registerAdmin",
                 "用户注册");
 
         ccrUser.setAdmin(Boolean.TRUE);
-        ccrUser.setPassWord(passwordEncoder.encode(ccrUser.getPassword()));
+        ccrUser.setPassWord(passwordEncoder.encode(ccrUser.getPassWord()));
         ccrUser.setUserGroup(CcrUser.CcrUserGroupType.teacher_staff);
         ccrUser.setRules(Sets.newHashSet(ruleRepository.getOne(1L)));
         //先根据用户名进行查询，看是否已经存在该用户
-        if(userRepository.findByUserName(ccrUser.getUsername())!=null){
-            return null;
-        }
+
         return userRepository.save(ccrUser);
     }
 
