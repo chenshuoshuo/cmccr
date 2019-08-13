@@ -65,10 +65,12 @@ public class RequestRecordController {
                 String userCode = authentication.getPrincipal().toString();
                 requestRecord.setUserCode(userCode);
                 CcrUser ccrUser = ccrUserService.findByUserCode(userCode);
-                if(ccrUser.getUserGroup() == null){
-                    requestRecord.setUserGroup("manager");
-                } else {
-                    requestRecord.setUserGroup(ccrUser.getUserGroup().toString());
+                if(ccrUser != null){
+                    if(ccrUser.getUserGroup() == null){
+                        requestRecord.setUserGroup("manager");
+                    } else {
+                        requestRecord.setUserGroup(ccrUser.getUserGroup().toString());
+                    }
                 }
             }
             requestRecordService.add(requestRecord);

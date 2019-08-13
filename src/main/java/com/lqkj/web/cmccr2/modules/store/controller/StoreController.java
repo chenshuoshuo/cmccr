@@ -54,7 +54,7 @@ public class StoreController {
         return new WebAsyncTask<>(() -> {
             CcrStoreItem value = storeService.get(storeName, key);
 
-            if (value.getContentType().equals(MediaType.APPLICATION_JSON_VALUE)) {
+            if (value != null && value.getContentType().equals(MediaType.APPLICATION_JSON_VALUE)) {
                 String digest = DigestUtils.md2Hex(value.getValue());
 
                 return ResponseEntity.ok()
