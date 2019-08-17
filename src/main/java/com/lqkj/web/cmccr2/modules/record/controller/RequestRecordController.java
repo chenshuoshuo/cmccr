@@ -9,12 +9,16 @@ import com.lqkj.web.cmccr2.modules.record.doamin.CcrRequestRecord;
 import com.lqkj.web.cmccr2.modules.record.doamin.CcrStatisticsFrequency;
 import com.lqkj.web.cmccr2.modules.record.serivce.MapSearchServiceApi;
 import com.lqkj.web.cmccr2.modules.record.serivce.RequestRecordService;
+import com.lqkj.web.cmccr2.modules.user.domain.CcrUser;
+import com.lqkj.web.cmccr2.modules.user.service.CcrUserService;
 import com.lqkj.web.cmccr2.utils.ServletUtils;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -24,6 +28,8 @@ import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBo
 
 import javax.servlet.http.HttpServletRequest;
 import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -35,21 +41,47 @@ public class RequestRecordController {
 
     private MapSearchServiceApi searchServiceApi;
 
-    public RequestRecordController(RequestRecordService requestRecordService,
-                                   MapSearchServiceApi searchServiceApi) {
+    @Autowired
+    CcrUserService ccrUserService;
+
+    @Value("${cmgis.context-path}")
+    private String cmgisContextPath;
+
+    public RequestRecordController(RequestRecordService requestRecordService) {
         this.requestRecordService = requestRecordService;
-        this.searchServiceApi = searchServiceApi;
     }
 
     @ApiOperation("增加请求记录")
     @PutMapping("/center/record/" + APIVersion.V1 + "/add")
     public WebAsyncTask<Void> addRecord(CcrRequestRecord requestRecord,
-                                        HttpServletRequest request) {
+                                        HttpServletRequest request,
+                                        Authentication authentication) {
         return new WebAsyncTask<>(() -> {
             requestRecord.setIp(ServletUtils.getIpAddress(request));
+
+            if(authentication == null){
+                requestRecord.setUserGroup("guest");
+            } else {
+                String userCode = authentication.getPrincipal().toString();
+                requestRecord.setUserCode(userCode);
+                CcrUser ccrUser = ccrUserService.findByUserCode(userCode);
+                if(ccrUser != null){
+                    if(ccrUser.getUserGroup() == null){
+                        requestRecord.setUserGroup("manager");
+                    } else {
+                        requestRecord.setUserGroup(ccrUser.getUserGroup().toString());
+                    }
+                }
+            }
             requestRecordService.add(requestRecord);
             return null;
         });
+    }
+
+    @ApiOperation("查询app访问统计")
+    @GetMapping("/center/record/" + APIVersion.V1 + "/app")
+    public MessageBean<List<Object[]>> appRecord() {
+        return MessageBean.ok(requestRecordService.appRecord());
     }
 
     @ApiOperation("查询数据统计结果")
@@ -121,6 +153,22 @@ public class RequestRecordController {
     @ApiOperation("查询地图搜索统计")
     @GetMapping("/center/record/" + APIVersion.V1 + "/map/search")
     public MessageBean<Object[]> searchRecord() {
-        return searchServiceApi.record();
+        return searchServiceApi.record(cmgisContextPath);
     }
+
+    @ApiOperation("查询用户组访问统计")
+    @GetMapping("/center/record/" + APIVersion.V1 + "/userGroup")
+    public MessageBean<List<Object[]>> userGroupStatistic() {
+        return MessageBean.ok(requestRecordService.userGroupStatistic());
+    }
+
+    public MapSearchServiceApi getSearchServiceApi() {
+        return searchServiceApi;
+    }
+
+    @Autowired(required = false)
+    public void setSearchServiceApi(MapSearchServiceApi searchServiceApi) {
+        this.searchServiceApi = searchServiceApi;
+    }
+
 }

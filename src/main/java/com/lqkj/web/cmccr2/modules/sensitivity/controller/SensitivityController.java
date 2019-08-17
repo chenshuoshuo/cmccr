@@ -1,6 +1,7 @@
 package com.lqkj.web.cmccr2.modules.sensitivity.controller;
 
 import com.lqkj.web.cmccr2.APIVersion;
+import com.lqkj.web.cmccr2.message.MessageBaseBean;
 import com.lqkj.web.cmccr2.message.MessageBean;
 import com.lqkj.web.cmccr2.message.MessageListBean;
 import com.lqkj.web.cmccr2.modules.sensitivity.domain.CcrSensitivityRecord;
@@ -41,18 +42,18 @@ public class SensitivityController {
         return MessageBean.ok(sensitivityWordService.add(word, handleType, replaceContent));
     }
 
-    @ApiOperation("删除一个违禁字")
+    @ApiOperation("删除违禁字")
     @DeleteMapping("/center/sensitivity/" + APIVersion.V1 + "/delete/{id}")
-    public MessageBean<Long> delete(@PathVariable Long id) throws IOException {
-        sensitivityWordService.delete(id);
-        return MessageBean.ok(id);
+    public MessageBean<Long> delete(@PathVariable Long[] id) throws IOException {
+        sensitivityWordService.bulkDelete(id);
+        return MessageBean.ok();
     }
 
     @ApiOperation("更新一个违禁字")
     @PostMapping("/center/sensitivity/" + APIVersion.V1 + "/update/{id}")
     public MessageBean<CcrSensitivityWord> update(@RequestBody CcrSensitivityWord sensitivityWord,
                                                   @PathVariable Long id) throws IOException {
-        return MessageBean.ok(sensitivityWordService.update(id, sensitivityWord.getWord()));
+        return MessageBean.ok(sensitivityWordService.update(id, sensitivityWord));
     }
 
     @ApiOperation("查询一个违禁字信息")

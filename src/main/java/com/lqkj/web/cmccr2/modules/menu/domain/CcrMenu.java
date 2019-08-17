@@ -10,6 +10,7 @@ import java.util.Objects;
 /**
  * 菜单
  */
+//@Cacheable
 @Entity
 @Table(name = "ccr_menu", indexes = {
         @Index(name = "name_index", columnList = "name", unique = true)

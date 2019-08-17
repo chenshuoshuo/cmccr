@@ -9,6 +9,10 @@ import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 /**
  * 菜单管理服务
  */
@@ -33,9 +37,15 @@ public class MenuService {
                 , "创建菜单");
 
         menu.setStatus(Boolean.TRUE);
-
+        //先根据菜单名称查看是否已经存在
+        String menuName=menu.getName();
+        Boolean exits=menuDao.nameByMenu(menuName).isEmpty();
+        if(!exits){
+            return null;
+        }
         return menuDao.save(menu).getMenuId();
     }
+
 
     /**
      * 删除应用
@@ -69,7 +79,7 @@ public class MenuService {
     public CcrMenu update(Long id, CcrMenu menu) {
         systemLogService.addLog("菜单管理服务", "update"
                 , "更新菜单信息");
-
+        menu.setUpdateTime(new Timestamp(new Date().getTime()));
         return menuDao.save(menu);
     }
 

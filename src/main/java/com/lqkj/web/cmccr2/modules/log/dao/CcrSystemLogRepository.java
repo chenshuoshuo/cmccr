@@ -16,7 +16,7 @@ import java.util.stream.Stream;
 @Repository
 public interface CcrSystemLogRepository extends JpaRepository<CcrSystemLog, UUID> {
 
-    @Query("select log from CcrSystemLog log where log.createTime>:startTime and log.createTime<:endTime")
+    @Query("select log from CcrSystemLog log where log.createTime>:startTime and log.createTime<:endTime order by log.createTime desc")
     Page<CcrSystemLog> pageByTime(@Param("startTime")Timestamp startTime,
                                   @Param("endTime") Timestamp endTime,
                                   Pageable pageable);
@@ -24,4 +24,7 @@ public interface CcrSystemLogRepository extends JpaRepository<CcrSystemLog, UUID
     @Query("select log from CcrSystemLog log where log.createTime>:startTime and log.createTime<:endTime")
     List<CcrSystemLog> findAllByTime(@Param("startTime")Timestamp startTime,
                                        @Param("endTime") Timestamp endTime);
+
+    @Query("select log from CcrSystemLog log order by log.createTime desc")
+    Page<CcrSystemLog> findAllByTimeDesc(Pageable pageable);
 }

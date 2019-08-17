@@ -36,6 +36,7 @@ public class AndroidApplicationService {
     public Long createAndroidApplication(CcrAndroidApplication application) {
         systemLogService.addLog("android应用管理", "createAndroidApplication",
                 "创建android应用");
+        application.setDownloadCount(0L);
         return androidApplicationDao.save(application).getId();
     }
 
@@ -120,8 +121,6 @@ public class AndroidApplicationService {
 
         CcrAndroidApplication application = androidApplicationDao.getOne(id);
 
-        application.setDownloadCount(application.getDownloadCount() + 1);
-
         androidApplicationDao.save(application);
 
         File apkFile = new File(application.getApkPath());
@@ -136,7 +135,6 @@ public class AndroidApplicationService {
         CcrAndroidApplication androidApplication = androidApplicationDao.findById(id).get();
 
         return androidApplication.getVersionCode() > versionCode ? Boolean.TRUE : Boolean.FALSE;
-
     }
 
     /**

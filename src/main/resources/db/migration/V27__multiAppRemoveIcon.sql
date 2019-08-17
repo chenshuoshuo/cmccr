@@ -1,0 +1,1 @@
+alter table ccr_multi_application alter column icon_path drop not null;

@@ -4,6 +4,7 @@ import com.ecwid.consul.v1.ConsulClient;
 import com.ecwid.consul.v1.QueryParams;
 import com.ecwid.consul.v1.Response;
 import com.ecwid.consul.v1.health.model.Check;
+import com.lqkj.web.cmccr2.modules.application.dao.CcrVersionApplicationRepository;
 import com.lqkj.web.cmccr2.modules.record.dao.CcrRequestRecordRepository;
 import com.lqkj.web.cmccr2.modules.record.doamin.CcrLocationRecord;
 import com.lqkj.web.cmccr2.modules.record.doamin.CcrRequestRecord;
@@ -17,6 +18,7 @@ import org.lionsoul.ip2region.DbSearcher;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.repository.query.Param;
@@ -50,6 +52,9 @@ public class RequestRecordService {
     @Autowired
     DbSearcher dbSearcher;
 
+    @Autowired
+    CcrVersionApplicationRepository versionApplicationRepository;
+
     public void add(CcrRequestRecord requestRecord) {
         requestRecordRepository.save(requestRecord);
     }
@@ -58,6 +63,7 @@ public class RequestRecordService {
      * 数据统计
      */
     @Transactional
+    //@Cacheable(cacheNames = "dataStatistics", key = "#startTime+'_'+#endTime+'_'+#frequencyEnum+'_'+#successed")
     public List<Object[]> dataStatistics(Timestamp startTime, Timestamp endTime, CcrStatisticsFrequency frequencyEnum,
                                          Boolean successed) {
         String frequency = enumToFrequency(frequencyEnum);
@@ -73,6 +79,7 @@ public class RequestRecordService {
     /**
      * 网关流量统计
      */
+   //@Cacheable(cacheNames = "urlStatistics", key = "#startTime+'_'+#endTime+'_'+#page+'_'+#pageSize")
     public Page<Object[]> urlStatistics(Timestamp startTime, Timestamp endTime,
                                         Integer page, Integer pageSize) {
         Page<Object[]> result = requestRecordRepository.urlRecord(startTime, endTime,
@@ -86,6 +93,7 @@ public class RequestRecordService {
     /**
      * 网关地理统计
      */
+    //@Cacheable(cacheNames = "locationStatistics", key = "#startTime+'_'+#endTime")
     public List<CcrLocationRecord> locationStatistics(Timestamp startTime, Timestamp endTime) {
         List<Object[]> results = requestRecordRepository.locationRecord(startTime, endTime);
 
@@ -142,6 +150,7 @@ public class RequestRecordService {
     /**
      * 异常列表
      */
+    //@Cacheable(cacheNames = "errorRecord", key = "#startTime+'_'+#endTime+'_'+#page+'_'+#pageSize")
     public Page<CcrRequestRecord> errorRecord(Timestamp startTime, Timestamp endTime,
                                               Integer page, Integer pageSize) {
         return this.requestRecordRepository.errorRecord(startTime, endTime,
@@ -159,7 +168,7 @@ public class RequestRecordService {
 
         for (String serviceName : services.getValue().keySet()) {
             if (serviceName.equals("consul")) continue;
-
+            if (serviceName.indexOf("cmccr") != -1) continue;
             Response<List<Check>> check = consulClient
                     .getHealthChecksForService(serviceName, QueryParams.DEFAULT);
 
@@ -177,6 +186,7 @@ public class RequestRecordService {
     /**
      * 用户详细请求记录
      */
+    //@Cacheable(cacheNames = "urlRecordDetail", key = "#startTime+'_'+#endTime+'_'+#name")
     public List<Object[]> urlRecordDetail(Timestamp startTime, Timestamp endTime, String name) {
         return this.requestRecordRepository.urlRecordDetail(startTime, endTime, name);
     }
@@ -188,13 +198,28 @@ public class RequestRecordService {
         return this.requestRecordRepository.ipRecord();
     }
 
+    /**
+     * app访问统计
+     */
+    //@Cacheable(cacheNames = "appRecord")
+    public List<Object[]> appRecord() {
+        return versionApplicationRepository.downloadRecord();
+    }
+
+    /**
+     * 用户组使用次数统计
+     */
+    public List<Object[]> userGroupStatistic(){
+        return requestRecordRepository.userGroupStatistic();
+    }
+
     private String enumToFrequency(CcrStatisticsFrequency frequencyEnum) {
         if (frequencyEnum.equals(CcrStatisticsFrequency.one_day)) {
-            return "YYYY-MM-DD";
+            return "create_date";
         } else if (frequencyEnum.equals(CcrStatisticsFrequency.one_hour)) {
-            return "YYYY-MM-DD HH24";
+            return "create_hour";
         } else {
-            return "YYYY-MM";
+            return "create_hour";
         }
     }
 }

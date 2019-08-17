@@ -28,6 +28,8 @@ public class IOSApplicationService {
         systemLogService.addLog("ios应用管理","createApplication",
                 "创建ios应用");
 
+        application.setDownloadCount(0L);
+
         return iosApplicationDao.save(application).getId();
     }
 

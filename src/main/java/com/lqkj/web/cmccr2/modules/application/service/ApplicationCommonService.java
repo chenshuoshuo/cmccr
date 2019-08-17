@@ -35,7 +35,7 @@ public class ApplicationCommonService {
     public String saveUploadFile(MultipartFile file, String... supportFormats) throws Exception {
         String format = Objects.requireNonNull(file.getOriginalFilename()).split("\\.")[1];
 
-        if (supportFormats.length != 0 && !Lists.newArrayList(supportFormats).contains(format)) {
+        if (supportFormats.length!=0 && !Lists.newArrayList(supportFormats).contains(format)) {
             throw new Exception("格式不支持:" + format);
         }
 
@@ -52,7 +52,7 @@ public class ApplicationCommonService {
 
             FileUtils.copyInputStreamToFile(is, outPutFile);
         } finally {
-            if (is != null) {
+            if (is!=null) {
                 try {
                     is.close();
                 } catch (IOException e) {
@@ -78,7 +78,7 @@ public class ApplicationCommonService {
      * 设置应用图片访问地址
      */
     public CcrVersionApplication setIconURL(CcrVersionApplication application) {
-        if (application.getIconPath() != null) {
+        if (application.getIconPath()!=null) {
             String url = application.getIconPath()
                     .replace("./upload/", "/upload/");
 
@@ -102,5 +102,16 @@ public class ApplicationCommonService {
 
         return this.managerApplicationDao.findAll(Example.of(versionApplication, matcher),
                 PageRequest.of(page, pageSize));
+    }
+
+    /**
+     * 增加应用计数
+     */
+    public void countPlusOne(Long id) {
+        CcrVersionApplication application = this.managerApplicationDao.getOne(id);
+
+        application.setDownloadCount(application.getDownloadCount() + 1L);
+
+        this.managerApplicationDao.save(application);
     }
 }

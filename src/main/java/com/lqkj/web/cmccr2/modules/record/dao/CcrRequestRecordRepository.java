@@ -15,7 +15,8 @@ import java.util.UUID;
 @Repository
 public interface CcrRequestRecordRepository extends JpaRepository<CcrRequestRecord, UUID> {
 
-    @Query(nativeQuery = true, value = "select to_char(r.create_time,:frequency) as t,count(r) from ccr_request_record r " +
+    @Query(nativeQuery = true, value = "select case when 'create_month' = :frequency then create_month" +
+            " when 'create_date' = :frequency then create_date else create_hour end as t,count(r) from ccr_request_record r " +
             "where r.create_time>:startTime and r.create_time<:endTime and r.successed=:successed " +
             "group by t order by t")
     List<Object[]> dataRecord(@Param("startTime") Timestamp startTime,
@@ -54,4 +55,10 @@ public interface CcrRequestRecordRepository extends JpaRepository<CcrRequestReco
 
     @Query(nativeQuery = true, value = "select count(t) from (select r.ip from ccr_request_record r group by r.ip) t")
     Integer ipRecord();
+
+    @Query(nativeQuery = true, value = "select t.user_group, count(*) _count" +
+            " from ccr_request_record t" +
+            " group by t.user_group" +
+            " order by t.user_group")
+    List<Object[]> userGroupStatistic();
 }

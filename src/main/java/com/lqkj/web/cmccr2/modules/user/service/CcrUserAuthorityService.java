@@ -1,10 +1,12 @@
 package com.lqkj.web.cmccr2.modules.user.service;
 
+import com.google.common.collect.Lists;
 import com.lqkj.web.cmccr2.modules.log.service.CcrSystemLogService;
 import com.lqkj.web.cmccr2.modules.user.dao.CcrUserAuthorityRepository;
 import com.lqkj.web.cmccr2.modules.user.dao.CcrUserRuleRepository;
 import com.lqkj.web.cmccr2.modules.user.domain.CcrUser;
 import com.lqkj.web.cmccr2.modules.user.domain.CcrUserAuthority;
+import com.lqkj.web.cmccr2.modules.user.domain.CcrUserRule;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Example;
@@ -16,6 +18,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Set;
 
 /**
  * 用户权限服务
@@ -24,22 +27,32 @@ import java.util.List;
 @Transactional
 public class CcrUserAuthorityService {
 
-    @Autowired
-    CcrUserAuthorityRepository userAuthorityRepository;
+    private CcrUserAuthorityRepository userAuthorityRepository;
 
-    @Autowired
-    CcrUserRuleRepository userRuleRepository;
+    private CcrUserRuleRepository userRuleRepository;
 
-    @Autowired
-    CcrSystemLogService systemLogService;
+    private CcrSystemLogService systemLogService;
+
+    public CcrUserAuthorityService(CcrUserAuthorityRepository userAuthorityRepository,
+                                   CcrUserRuleRepository userRuleRepository,
+                                   CcrSystemLogService systemLogService) {
+        this.userAuthorityRepository = userAuthorityRepository;
+        this.userRuleRepository = userRuleRepository;
+        this.systemLogService = systemLogService;
+    }
 
     public CcrUserAuthority add(CcrUserAuthority authority) {
         systemLogService.addLog("用户权限服务", "add",
                 "增加一个用户权限");
 
         authority.setEnabled(Boolean.TRUE);
+        CcrUserAuthority saveAuthority = userAuthorityRepository.save(authority);
 
-        return userAuthorityRepository.save(authority);
+        CcrUserRule saveRule = userRuleRepository.getOne(1L);
+        saveRule.getAuthorities().add(saveAuthority);
+        userRuleRepository.save(saveRule);
+
+        return saveAuthority;
     }
 
     public void delete(Long[] id) {
@@ -87,7 +100,7 @@ public class CcrUserAuthorityService {
         systemLogService.addLog("用户权限服务", "findByRuleId",
                 "根据角色查询权限");
 
-        return userRuleRepository.getOne(ruleId).getAuthorities();
+        return Lists.newArrayList(userRuleRepository.getOne(ruleId).getAuthorities());
     }
 
     public List<CcrUserAuthority> findByType(CcrUserAuthority.UserAuthorityType type) {

@@ -23,7 +23,11 @@ public class CcrUserRuleController {
     public MessageBean<CcrUserRule> add(@RequestParam String name,
                                         @RequestParam String enName,
                                         @RequestParam Long[] authorities) {
-        return MessageBean.ok(ruleService.add(name, enName, authorities));
+        Object object=ruleService.add(name, enName, authorities);
+        if(object!=null){
+            return MessageBean.ok((CcrUserRule) object);
+        }
+        return MessageBean.error("存在相同角色名");
     }
 
     @ApiOperation("删除角色")

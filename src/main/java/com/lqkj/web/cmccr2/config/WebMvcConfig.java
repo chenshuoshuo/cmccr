@@ -20,10 +20,8 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
-import org.springframework.web.servlet.config.annotation.AsyncSupportConfigurer;
-import org.springframework.web.servlet.config.annotation.CorsRegistry;
-import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+import org.springframework.web.servlet.config.annotation.*;
+import org.springframework.web.servlet.mvc.WebContentInterceptor;
 
 import java.util.TimeZone;
 import java.util.concurrent.TimeUnit;
@@ -67,11 +65,22 @@ public class WebMvcConfig implements WebMvcConfigurer {
         CorsConfiguration corsConfiguration = new CorsConfiguration();
         corsConfiguration.setAllowCredentials(true);
         corsConfiguration.addAllowedOrigin("*");
-        corsConfiguration.setAllowedHeaders(Lists.newArrayList("accept", "authorization", "content-type"));
+        corsConfiguration.setAllowedHeaders(Lists.newArrayList("accept", "authorization", "content-type", "cache-control"));
         corsConfiguration.setAllowedMethods(Lists.newArrayList("POST", "GET", "PUT", "OPTIONS", "DELETE"));
         UrlBasedCorsConfigurationSource urlBasedCorsConfigurationSource = new UrlBasedCorsConfigurationSource();
         urlBasedCorsConfigurationSource.registerCorsConfiguration("/**", corsConfiguration);
         return new CorsFilter(urlBasedCorsConfigurationSource);
+    }
+
+    @Override
+    public void addInterceptors(InterceptorRegistry registry) {
+        WebContentInterceptor contentInterceptor = new WebContentInterceptor();
+        contentInterceptor.setCacheSeconds(100);
+        contentInterceptor.setUseExpiresHeader(true);
+        contentInterceptor.setUseCacheControlNoStore(false);
+        contentInterceptor.setUseCacheControlHeader(true);
+        contentInterceptor.setUseCacheControlNoStore(false);
+        registry.addInterceptor(contentInterceptor);
     }
 
     /**

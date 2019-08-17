@@ -18,6 +18,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.security.core.Authentication;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.context.request.async.WebAsyncTask;
 import springfox.documentation.annotations.ApiIgnore;
 
 import javax.servlet.http.HttpServletRequest;
@@ -41,7 +42,10 @@ public class CcrUserController {
     @ApiOperation("注册用户")
     @PutMapping("/center/user/register")
     public MessageBean<CcrUser> register(@RequestBody CcrUser user, @RequestParam Integer adminCode) throws Exception {
-        return MessageBean.ok(ccrUserService.registerAdmin(adminCode, user));
+        if(ccrUserService.registerAdmin(adminCode, user)!=null) {
+            return MessageBean.ok(ccrUserService.registerAdmin(adminCode, user));
+        }
+        return MessageBean.error("用户已存在");
     }
 
     @ApiOperation("查询用户信息")
@@ -129,5 +133,16 @@ public class CcrUserController {
     public MessageBean loginout(@PathVariable Long userId) {
         this.ccrUserService.loginout(userId);
         return MessageBean.ok();
+    }
+
+    @ApiOperation("从CMDBE更新用户信息")
+    @PostMapping("/center/user/updateFromCmdbe")
+    public MessageBean updateFromCmdbe() {
+        ccrUserService.updateUserFromCmdbe();
+        return MessageBean.ok();
+//        return new WebAsyncTask<>(() -> {
+//            this.ccrUserService.updateUserFromCmdbe();
+//            return null;
+//        });
     }
 }

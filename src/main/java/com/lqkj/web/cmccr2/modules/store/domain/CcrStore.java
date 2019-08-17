@@ -6,6 +6,7 @@ import java.util.List;
 /**
  * k-v储存
  */
+//@Cacheable
 @Entity
 @Table(name = "ccr_store")
 public class CcrStore {
