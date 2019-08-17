@@ -85,6 +85,7 @@ public class RecommendedApplicationController {
         application.setStartTime(start);
         application.setEndTime(end);
         application.setAppId(appId);
+        application.setAppUrl(appUrl);
         return MessageBean.ok(applicationService.createRecommendedApplication(application));
     }
 
