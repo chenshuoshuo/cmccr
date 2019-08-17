@@ -23,8 +23,8 @@ public class RecommendedApplicationController {
     public RecommendedApplicationService applicationService;
 
 
-    @ApiOperation("创建推荐应用")
-    @PostMapping("/center/application/recommend/" + APIVersion.V1 + "/create/")
+//    @ApiOperation("创建推荐应用")
+//    @PostMapping("/center/application/recommend/" + APIVersion.V1 + "/create/")
     public MessageBean<CcrRecommendedApplication> create(@ApiParam(value = "应用信息") CcrRecommendedApplication application) throws Exception {
         String appId = UUIDUtils.getUUID();
         application.setAppId(appId);
