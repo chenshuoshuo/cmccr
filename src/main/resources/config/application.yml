@@ -11,7 +11,7 @@ cmgis:
   username: free
   password: 123456
 server:
-  port: 8100
+  port: 8080
   servlet:
     context-path: /cmccr
   error:
@@ -24,7 +24,7 @@ server:
     min-spare-threads: 10
     max-http-post-size: 1000MB
     max-swallow-size: 1000MB
-  address: 192.168.4.105
+  address: 192.168.4.102
 logging:
   register-shutdown-hook: true
   file: ./log/ccr.log
