@@ -2,6 +2,7 @@ package com.lqkj.web.cmccr2.modules.application.controller;
 
 import com.lqkj.web.cmccr2.APIVersion;
 import com.lqkj.web.cmccr2.message.MessageBean;
+import com.lqkj.web.cmccr2.message.MessageListBean;
 import com.lqkj.web.cmccr2.modules.application.domain.CcrRecommendedApplication;
 import com.lqkj.web.cmccr2.modules.application.domain.RecommendedApplicationVO;
 import com.lqkj.web.cmccr2.modules.application.service.RecommendedApplicationService;
@@ -138,18 +139,19 @@ public class RecommendedApplicationController {
 
     @ApiOperation("H5查询推荐应用列表")
     @GetMapping("/center/application/recommend/" + APIVersion.V1 + "/list")
-    public List<CcrRecommendedApplication> list() throws Exception{
+    public MessageListBean<CcrRecommendedApplication> list() throws Exception{
 
         SimpleDateFormat sdf  = new SimpleDateFormat("yyyy-MM-dd HH");
         String time = sdf.format(new Date());
         Timestamp systemTime = new Timestamp(sdf.parse(time).getTime());
-        return applicationService.queryList(systemTime);
+        return MessageListBean.ok(applicationService.queryList(systemTime));
     }
 
     @ApiOperation("PC推荐应用列表")
     @GetMapping("/center/application/recommend/" + APIVersion.V1 + "/listQuery")
-    public List<CcrRecommendedApplication> listQuery() throws Exception{
-        return applicationService.queryAllList();
+    public MessageListBean<CcrRecommendedApplication> listQuery() throws Exception{
+        List<CcrRecommendedApplication> list = applicationService.queryAllList();
+        return MessageListBean.ok(list);
     }
 
 }
