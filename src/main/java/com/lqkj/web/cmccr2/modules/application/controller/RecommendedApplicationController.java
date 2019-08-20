@@ -136,7 +136,7 @@ public class RecommendedApplicationController {
         return MessageBean.ok(applicationService.getRecommendedApplicationById(id));
     }
 
-    @ApiOperation("查询推荐应用列表")
+    @ApiOperation("H5查询推荐应用列表")
     @GetMapping("/center/application/recommend/" + APIVersion.V1 + "/list")
     public List<CcrRecommendedApplication> list() throws Exception{
 
@@ -144,6 +144,12 @@ public class RecommendedApplicationController {
         String time = sdf.format(new Date());
         Timestamp systemTime = new Timestamp(sdf.parse(time).getTime());
         return applicationService.queryList(systemTime);
+    }
+
+    @ApiOperation("PC推荐应用列表")
+    @GetMapping("/center/application/recommend/" + APIVersion.V1 + "/listQuery")
+    public List<CcrRecommendedApplication> listQuery() throws Exception{
+        return applicationService.queryAllList();
     }
 
 }
