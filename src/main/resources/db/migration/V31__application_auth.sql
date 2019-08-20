@@ -8,4 +8,4 @@ INSERT INTO public.ccr_user_authority (authority_id, content, name, route, paren
 INSERT INTO public.ccr_user_authority (authority_id, content, name, route, parent_id, type, icon, enabled, http_method) VALUES (95, 'migration', '迁徙图区域配置', '/maintenanceCenter/migration', 24, 'menu', null, true, null);
 
 INSERT INTO public.ccr_rule_to_authority
-select 1, generate_series(88,95);
+select 1, generate_series(87,95);
