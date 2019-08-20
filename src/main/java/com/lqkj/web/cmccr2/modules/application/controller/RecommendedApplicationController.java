@@ -3,6 +3,7 @@ package com.lqkj.web.cmccr2.modules.application.controller;
 import com.lqkj.web.cmccr2.APIVersion;
 import com.lqkj.web.cmccr2.message.MessageBean;
 import com.lqkj.web.cmccr2.modules.application.domain.CcrRecommendedApplication;
+import com.lqkj.web.cmccr2.modules.application.domain.RecommendedApplicationVO;
 import com.lqkj.web.cmccr2.modules.application.service.RecommendedApplicationService;
 import com.lqkj.web.cmccr2.utils.UUIDUtils;
 import io.swagger.annotations.*;
@@ -91,46 +92,7 @@ public class RecommendedApplicationController {
 
     @ApiOperation("批量创建推荐应用")
     @PostMapping("/center/application/recommend/" + APIVersion.V1 + "/createBatch/")
-    public MessageBean<List<CcrRecommendedApplication>> create(@ApiParam(value = "应用信息") @RequestBody List<CcrRecommendedApplication> applicationList) throws Exception {
-        List<CcrRecommendedApplication> list = applicationService.queryAllList();
-        for(CcrRecommendedApplication application:applicationList){
-            String appId = UUIDUtils.getUUID();
-            application.setAppId(appId);
-            if(list.size() > 0){
-                if(application.getOrderId() == null){
-                    for(int i = 0; i < list.size();i++){
-                        list.get(i).setOrderId(i+1);
-                        applicationService.createRecommendedApplication(list.get(i));
-                    }
-                    application.setOrderId(list.size()+1);
-                }
-                if(1 == application.getOrderId()){
-                    for(int i = 0; i < list.size();i++){
-                        list.get(i).setOrderId(i+2);
-                        applicationService.createRecommendedApplication(list.get(i));
-                    }
-                }
-                if(application.getOrderId() > 1 && application.getOrderId() <= list.size()){
-                    for(int i = 0; i < application.getOrderId()-1;i++){
-                        list.get(i).setOrderId(i+1);
-                        applicationService.createRecommendedApplication(list.get(i));
-                    }
-                    for(int i = application.getOrderId()-1; i < list.size();i++){
-                        list.get(i).setOrderId(i+2);
-                        applicationService.createRecommendedApplication(list.get(i));
-                    }
-                }
-                if(application.getOrderId() > list.size()){
-                    for(int i = 0; i < list.size();i++){
-                        list.get(i).setOrderId(i+1);
-                        applicationService.createRecommendedApplication(list.get(i));
-                    }
-                    application.setOrderId(list.size()+1);
-                }
-            }else{
-                application.setOrderId(1);
-            }
-        }
+    public MessageBean<List<CcrRecommendedApplication>> create(@ApiParam(value = "应用信息") @RequestBody List<RecommendedApplicationVO> applicationList) throws Exception {
         return MessageBean.ok(applicationService.createBatchRecommendedApplication(applicationList));
     }
 
