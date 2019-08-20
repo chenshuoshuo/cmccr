@@ -51,8 +51,8 @@ public class RecommendedApplicationService {
         systemLogService.addLog("推荐应用管理", "createBulkRecommendedApplication",
                 "批量创建推荐应用");
         List<CcrRecommendedApplication> applications = new ArrayList<>();
-        List<CcrRecommendedApplication> list = recommendedApplicationDao.findAll();
         for(RecommendedApplicationVO applicationVO:applicationList){
+            List<CcrRecommendedApplication> list = recommendedApplicationDao.findAll();
             CcrRecommendedApplication application = new CcrRecommendedApplication();
             Timestamp start = new Timestamp(new SimpleDateFormat("yyyy-MM-dd HH").parse(applicationVO.getStartTime()).getTime());
             Timestamp end = new Timestamp(new SimpleDateFormat("yyyy-MM-dd HH").parse(applicationVO.getEndTime()).getTime());
@@ -105,9 +105,10 @@ public class RecommendedApplicationService {
             }else{
                 application.setOrderId(1);
             }
+            recommendedApplicationDao.save(application);
             applications.add(application);
         }
-        return recommendedApplicationDao.saveAll(applications);
+        return applications;
     }
 
     /**
