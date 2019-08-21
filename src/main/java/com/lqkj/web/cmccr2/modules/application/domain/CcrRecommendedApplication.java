@@ -1,5 +1,6 @@
 package com.lqkj.web.cmccr2.modules.application.domain;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
@@ -36,10 +37,12 @@ public class CcrRecommendedApplication implements Serializable {
     private String appUrl;
 
     @ApiModelProperty(value = "推荐开始时间,格式：年月日时", required = true)
+    @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss")
     @Column(name = "start_time",nullable = false)
     private Timestamp startTime;
 
     @ApiModelProperty(value = "推荐结束时间，格式：年月日时", required = true)
+    @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss")
     @Column(name = "end_time",nullable = false)
     private Timestamp endTime;
 
