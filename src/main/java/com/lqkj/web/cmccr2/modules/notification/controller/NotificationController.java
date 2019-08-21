@@ -12,6 +12,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.async.WebAsyncTask;
 
+import java.util.List;
+
 @Api(tags = "消息通知")
 @RestController
 public class NotificationController {
@@ -31,7 +33,7 @@ public class NotificationController {
     @ApiOperation("删除消息")
     @ApiImplicitParam(name = "id", value = "消息id")
     @DeleteMapping("/center/notification/" + VERSION + "/delete/{id}")
-    public MessageBean<Object> delete(@PathVariable("id") Integer id) throws Exception {
+    public MessageBean<Object> delete(@PathVariable(name = "id") Integer id) throws Exception {
         notificationService.delete(id);
         return MessageBean.ok();
     }
@@ -44,43 +46,43 @@ public class NotificationController {
         return MessageBean.ok();
     }
 
-//    @ApiOperation("更新菜单项")
-//    @PostMapping("/center/menu/" + VERSION + "/update/{id}")
-//    public MessageBean<CcrNotification> update(@PathVariable Long id,
-//                                               @RequestBody CcrNotification CcrNotification) {
-//        return MessageBean.ok(notificationService.update(id, CcrNotification));
-//    }
-
-//    @ApiOperation("搜索菜单项")
-//    @GetMapping("/center/menu/" + VERSION + "/query")
-//    @ApiImplicitParams({
-//            @ApiImplicitParam(name = "keyword", paramType = "query", value = "关键字")
-//    })
-//    public WebAsyncTask<MessageBean<Page<CcrNotification>>> search(String keyword, Integer page, Integer pageSize) {
-//        return new WebAsyncTask<>(() -> MessageBean.ok(notificationService.page(keyword, page, pageSize)));
-//    }
 
     @ApiOperation("PC端根据主键查询消息")
     @ApiImplicitParam(name = "id", value = "消息ID")
     @GetMapping("/center/notification/" + VERSION + "/infoForPC/{id}")
-    public MessageBean<CcrNotification> infoForPC(@PathVariable("id") Integer id) {
+    public MessageBean<CcrNotification> infoForPC(@PathVariable(name = "id") Integer id) {
         return  MessageBean.ok(notificationService.infoForPC(id));
     }
 
     @ApiOperation("H5页面根据主键查询消息")
-    @ApiImplicitParam(name = "id", value = "消息ID")
-    @GetMapping("/center/notification/" + VERSION + "/infoForH5/{id}{userCode}")
-    public MessageBean<CcrNotification> infoForH5(@PathVariable("id") Integer id,@PathVariable("userCode") String userCode) {
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "id", value = "消息ID"),
+            @ApiImplicitParam(name = "userCode", value = "用户CODE")
+    })
+    @GetMapping("/center/notification/" + VERSION + "/infoForH5/{id}/{userCode}")
+    public MessageBean<CcrNotification> infoForH5(@PathVariable(name = "id") Integer id,@PathVariable(name = "userCode") String userCode) {
         return  MessageBean.ok(notificationService.infoForH5(id,userCode));
     }
 
-//    @ApiOperation("按照类型分页查询菜单列表")
-//    @GetMapping(value = {"/center/menu/" + VERSION + "/page/{type}/",
-//            "/center/menu/" + VERSION + "/page"})
-//    public WebAsyncTask<MessageBean<Page<CcrNotification>>> typePage(@RequestParam Integer page,
-//                                                                     @RequestParam Integer pageSize,
-//                                                                     @RequestParam(required = false) String keyword,
-//                                                                     @PathVariable(required = false) CcrNotification.IpsMenuType type) {
-//        return new WebAsyncTask<>(() -> MessageBean.ok(notificationService.typePage(type, keyword, page, pageSize)));
-//    }
+    @ApiOperation("按照标题和权限分页查询")
+    @GetMapping("/center/notification/" + VERSION + "/page")
+    public MessageBean<Page<CcrNotification>> pageQuery(@RequestParam Integer page,
+                                                                     @RequestParam Integer pageSize,
+                                                                     @RequestParam(required = false) String title,
+                                                                     @RequestParam(required = true) String auth) {
+        Page<CcrNotification> pageList = notificationService.page(title, auth, page, pageSize);
+//        List<CcrNotification> list = pageList.getContent();
+//        if(list.size()>0){
+//            for(CcrNotification notification:list){
+//                if(notification.getTargetUserRole().toString().contains("游客")){
+//                    notification.setAuth("游客");
+//                }
+//                if(notification.getSpecifyUserId() != null){
+//                    notification.setAuth("指定用户");
+//                }
+//            }
+//        }
+        //System.out.println(list);
+        return MessageBean.ok(pageList);
+    }
 }

@@ -7,6 +7,7 @@ import com.lqkj.web.cmccr2.modules.log.service.CcrSystemLogService;
 import com.lqkj.web.cmccr2.modules.notification.dao.CcrNotificationRepository;
 import com.lqkj.web.cmccr2.modules.notification.domain.CcrNotification;
 import com.lqkj.web.cmccr2.modules.notification.domain.CcrNotificationRead;
+import io.swagger.annotations.ApiImplicitParam;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.*;
@@ -14,9 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.Timestamp;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -28,6 +27,8 @@ public class NotificationService {
 
     @Autowired
     CcrNotificationRepository notificationRepository;
+    @Autowired
+    NotificationReadService readService;
 
     @Autowired
     CcrSystemLogService systemLogService;
@@ -36,7 +37,8 @@ public class NotificationService {
     public CcrNotification add(CcrNotification notification) {
         systemLogService.addLog("消息通知", "add",
                 "增加消息通知配置");
-
+        Timestamp postTime = new Timestamp(new Date().getTime());
+        notification.setPostTime(postTime);
         return notificationRepository.save(notification);
     }
 
@@ -59,14 +61,6 @@ public class NotificationService {
         }
     }
 
-//    public CcrNotification update(Integer id, CcrNotification notification) {
-//        systemLogService.addLog("消息通知", "update",
-//                "更新消息通知配置");
-//
-//        CcrNotification savedApp = notificationRepository.getOne(id);
-//
-//        return applicationRepository.save(savedApp);
-//    }
 
     /**
      * H5根据主键查询
@@ -81,6 +75,7 @@ public class NotificationService {
         notificationRead.setInfoId(id);
         notificationRead.setUserCode(userCode);
         notificationRead.setReadTime(readTime);
+        readService.add(notificationRead);
         return notificationRepository.findById(id).get();
     }
     /**
@@ -106,6 +101,26 @@ public class NotificationService {
                 "查询所有pc应用");
 
         return notificationRepository.findAll();
+    }
+
+    /**
+     * 分页查询
+     */
+    public Page<CcrNotification> page(String title,String auth,Integer page,Integer pageSize) {
+        systemLogService.addLog("pc应用管理", "info",
+                "查询所有pc应用");
+//        Map<String,Integer> map = new HashMap<>();
+//        if("全部".equals(auth)){
+//            map.put("全部",0);
+//        }
+//        if("公开".equals(auth)){
+//            map.put("公开",1);
+//        }
+//        if("指定用户".equals(auth)){
+//            map.put("指定用户",2);
+//        }
+        Pageable pageable = PageRequest.of(page,pageSize);
+        return notificationRepository.page(title,auth,pageable);
     }
 
 }
