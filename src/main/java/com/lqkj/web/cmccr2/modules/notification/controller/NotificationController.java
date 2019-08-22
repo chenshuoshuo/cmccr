@@ -1,18 +1,28 @@
 package com.lqkj.web.cmccr2.modules.notification.controller;
 
+import com.alibaba.fastjson.JSON;
+import com.lqkj.web.cmccr2.APIVersion;
 import com.lqkj.web.cmccr2.message.MessageBean;
 import com.lqkj.web.cmccr2.modules.notification.domain.CcrNotification;
+import com.lqkj.web.cmccr2.modules.notification.domain.CcrNotificationVO;
 import com.lqkj.web.cmccr2.modules.notification.service.NotificationService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.InputStreamResource;
 import org.springframework.data.domain.Page;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.async.WebAsyncTask;
+import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 
+import java.io.IOException;
+import java.sql.Timestamp;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 @Api(tags = "消息通知")
 @RestController
@@ -66,23 +76,31 @@ public class NotificationController {
 
     @ApiOperation("按照标题和权限分页查询")
     @GetMapping("/center/notification/" + VERSION + "/page")
-    public MessageBean<Page<CcrNotification>> pageQuery(@RequestParam Integer page,
+    public String pageQuery(@RequestParam Integer page,
                                                                      @RequestParam Integer pageSize,
                                                                      @RequestParam(required = false) String title,
                                                                      @RequestParam(required = true) String auth) {
         Page<CcrNotification> pageList = notificationService.page(title, auth, page, pageSize);
-//        List<CcrNotification> list = pageList.getContent();
-//        if(list.size()>0){
-//            for(CcrNotification notification:list){
-//                if(notification.getTargetUserRole().toString().contains("游客")){
-//                    notification.setAuth("游客");
-//                }
-//                if(notification.getSpecifyUserId() != null){
-//                    notification.setAuth("指定用户");
-//                }
-//            }
-//        }
-        //System.out.println(list);
-        return MessageBean.ok(pageList);
+        return JSON.toJSONString(MessageBean.ok(pageList));
+    }
+
+    @ApiOperation("H5获取登录用户消息通知列表")
+    @ApiImplicitParams({
+        @ApiImplicitParam(name = "userId", value = "用户ID"),
+            @ApiImplicitParam(name = "roles", value = "用户角色,多个以逗号隔开")
+    })
+    @GetMapping("/center/notification/" + VERSION + "/listForH5")
+    public String listQuery(
+                            @RequestParam(required = false) String userId,
+                            @RequestParam(required = false) String roles) {
+        List<Map<String,Object>> list = notificationService.listForH5(userId,roles);
+        return JSON.toJSONString(MessageBean.ok(list));
+    }
+
+    @GetMapping("/center/notification/" + APIVersion.V1 + "/export")
+    @ApiOperation("导出消息通知")
+    public ResponseEntity<InputStreamResource> export(@RequestParam(required = false) String title,
+                                                      @RequestParam(required = true) String auth) throws IOException {
+        return notificationService.download(title, auth);
     }
 }

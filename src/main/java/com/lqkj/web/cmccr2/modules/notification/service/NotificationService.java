@@ -1,21 +1,36 @@
 package com.lqkj.web.cmccr2.modules.notification.service;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.lqkj.web.cmccr2.modules.application.dao.CcrVersionApplicationRepository;
 import com.lqkj.web.cmccr2.modules.application.domain.CcrApplicationHasUsers;
 import com.lqkj.web.cmccr2.modules.application.domain.CcrPcApplication;
+import com.lqkj.web.cmccr2.modules.log.domain.CcrSystemLog;
 import com.lqkj.web.cmccr2.modules.log.service.CcrSystemLogService;
 import com.lqkj.web.cmccr2.modules.notification.dao.CcrNotificationRepository;
 import com.lqkj.web.cmccr2.modules.notification.domain.CcrNotification;
 import com.lqkj.web.cmccr2.modules.notification.domain.CcrNotificationRead;
+import com.lqkj.web.cmccr2.modules.notification.domain.CcrNotificationVO;
+import com.lqkj.web.cmccr2.modules.user.domain.CcrUser;
+import com.lqkj.web.cmccr2.modules.user.service.CcrUserService;
+import com.lqkj.web.cmccr2.utils.ExcelUtils;
 import io.swagger.annotations.ApiImplicitParam;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.InputStreamResource;
 import org.springframework.data.domain.*;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.IOException;
+import java.io.OutputStream;
 import java.sql.Timestamp;
 import java.util.*;
+import java.util.function.UnaryOperator;
 import java.util.stream.Collectors;
 
 /**
@@ -29,6 +44,8 @@ public class NotificationService {
     CcrNotificationRepository notificationRepository;
     @Autowired
     NotificationReadService readService;
+    @Autowired
+    CcrUserService userService;
 
     @Autowired
     CcrSystemLogService systemLogService;
@@ -96,31 +113,104 @@ public class NotificationService {
      * H5获取登录用户消息通知列表
      * @return
      */
-    public List<CcrNotification> all(String userCode) {
-        systemLogService.addLog("pc应用管理", "info",
-                "查询所有pc应用");
-
-        return notificationRepository.findAll();
+    public List<Map<String,Object>> listForH5(String userId, String roles) {
+        systemLogService.addLog("消息通知", "listForH5",
+                "查询消息通知列表");
+        if(userId == null){
+            userId = "";
+        }
+        return notificationRepository.listQuery(userId,roles);
     }
 
     /**
      * 分页查询
      */
     public Page<CcrNotification> page(String title,String auth,Integer page,Integer pageSize) {
-        systemLogService.addLog("pc应用管理", "info",
-                "查询所有pc应用");
-//        Map<String,Integer> map = new HashMap<>();
-//        if("全部".equals(auth)){
-//            map.put("全部",0);
-//        }
-//        if("公开".equals(auth)){
-//            map.put("公开",1);
-//        }
-//        if("指定用户".equals(auth)){
-//            map.put("指定用户",2);
-//        }
+        systemLogService.addLog("消息通知", "page",
+                "分页查询消息通知列表");
         Pageable pageable = PageRequest.of(page,pageSize);
-        return notificationRepository.page(title,auth,pageable);
+        Page<CcrNotification> pageList = notificationRepository.page(title,auth,pageable);
+        List<CcrNotification> list = pageList.getContent();
+        if(list.size()>0){
+            for(CcrNotification notification:list){
+                String[] userRole = notification.getTargetUserRole();
+                StringBuffer setAuth = new StringBuffer();
+                if(userRole.length == 1){
+                    if(userRole[0].equals("public")){
+                        notification.setAuth(setAuth.append("游客").toString());
+                    }
+                    if(userRole[0].equals("teacher")){
+                        notification.setAuth(setAuth.append("教职工").toString());
+                        if(notification.getSpecifyUserId() != null){
+                            notification.setAuth(setAuth.append("、指定用户").toString());
+                        }
+                    }
+                    if(userRole[0].equals("student")){
+                        notification.setAuth(setAuth.append("学生").toString());
+                        if(notification.getSpecifyUserId() != null){
+                            notification.setAuth(setAuth.append("、指定用户").toString());
+                        }
+                    }
+                }else if(userRole.length > 1){
+                    if(Arrays.asList(userRole).contains("teacher") && Arrays.asList(userRole).contains("student")){
+                        notification.setAuth(setAuth.append("教职工、学生").toString());
+                        if(notification.getSpecifyUserId() != null){
+                            notification.setAuth(setAuth.append("、指定用户").toString());
+                        }
+                    }
+                }else {
+                    notification.setAuth(setAuth.append("指定用户").toString());
+                }
+            }
+        }
+        return pageList;
+    }
+
+    /**
+     * 导出
+     * @throws IOException
+     */
+    public ResponseEntity<InputStreamResource> download(String title,String auth) throws IOException {
+        List<CcrNotification> notificationList = notificationRepository.list(title,auth);
+        List<CcrNotification> notifications = setAuth(notificationList);
+        List<CcrNotification> list = JSON.parseArray(JSON.toJSONString(notifications), CcrNotification.class);
+        return ExcelUtils.downloadOneSheetExcel(CcrNotification.class, list, "notification", "notification.xlsx");
+    }
+
+    public List<CcrNotification> setAuth(List<CcrNotification> notificationList){
+        if(notificationList.size()>0){
+            for(CcrNotification notification:notificationList){
+                String[] userRole = notification.getTargetUserRole();
+                StringBuffer setAuth = new StringBuffer();
+                if(userRole.length == 1){
+                    if(userRole[0].equals("public")){
+                        notification.setAuth(setAuth.append("游客").toString());
+                    }
+                    if(userRole[0].equals("teacher")){
+                        notification.setAuth(setAuth.append("教职工").toString());
+                        if(notification.getSpecifyUserId() != null){
+                            notification.setAuth(setAuth.append("、指定用户").toString());
+                        }
+                    }
+                    if(userRole[0].equals("student")){
+                        notification.setAuth(setAuth.append("学生").toString());
+                        if(notification.getSpecifyUserId() != null){
+                            notification.setAuth(setAuth.append("、指定用户").toString());
+                        }
+                    }
+                }else if(userRole.length > 1){
+                    if(Arrays.asList(userRole).contains("teacher") && Arrays.asList(userRole).contains("student")){
+                        notification.setAuth(setAuth.append("教职工、学生").toString());
+                        if(notification.getSpecifyUserId() != null){
+                            notification.setAuth(setAuth.append("、指定用户").toString());
+                        }
+                    }
+                }else {
+                    notification.setAuth(setAuth.append("指定用户").toString());
+                }
+            }
+        }
+        return notificationList;
     }
 
 }

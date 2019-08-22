@@ -1,5 +1,7 @@
 package com.lqkj.web.cmccr2.modules.notification.domain;
 
+import com.alibaba.excel.annotation.ExcelProperty;
+import com.alibaba.excel.metadata.BaseRowModel;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.vladmihalcea.hibernate.type.array.StringArrayType;
 import io.swagger.annotations.ApiModelProperty;
@@ -20,7 +22,7 @@ import java.util.Objects;
 @TypeDef(name = "string-array", typeClass = StringArrayType.class)
 @Entity
 @Table(name = "ccr_notification")
-public class CcrNotification implements Serializable {
+public class CcrNotification extends BaseRowModel implements Serializable  {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -30,10 +32,12 @@ public class CcrNotification implements Serializable {
 
     @Column(name = "title")
     @ApiModelProperty(value = "标题", required = true)
+    @ExcelProperty(value = {"标题"}, index = 0)
     private String title;
 
     @Column(name = "content")
     @ApiModelProperty(value = "内容", required = true)
+    @ExcelProperty(value = {"正文"}, index = 1)
     private String content;
 
     @Column(name = "target_user_role", columnDefinition = " string[]")
@@ -43,19 +47,22 @@ public class CcrNotification implements Serializable {
 
     @Column(name = "specify_user_id", columnDefinition = " string[]")
     @Type(type = "string-array")
-    @ApiModelProperty(value = "指定用户，可添加多个", required = false)
+    @ApiModelProperty(value = "指定用户ID，可添加多个", required = false)
     private String[] specifyUserId;
 
     @Column(name = "author_id")
     @ApiModelProperty(value = "发布用户", required = true)
+    @ExcelProperty(value = {"发布者"}, index = 3)
     private String authorId;
 
     @Column(name = "post_time")
     @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss")
     @ApiModelProperty(value = "发布时间，添加时可不填", required = false)
+    @ExcelProperty(value = {"更新时间"}, index = 4)
     private Timestamp postTime;
 
     @Transient
+    @ExcelProperty(value = {"权限"}, index = 2)
     private String auth;
 
     public Integer getInfoId() {
@@ -122,6 +129,7 @@ public class CcrNotification implements Serializable {
     public void setAuth(String auth) {
         this.auth = auth;
     }
+
 
     @Override
     public boolean equals(Object o) {
