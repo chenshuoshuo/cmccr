@@ -11,7 +11,6 @@ import org.springframework.cloud.openfeign.EnableFeignClients;
 @EnableFeignClients
 @EnableCaching
 public class CMCCRApplication {
-
     public static void main(String[] args) {
         SpringApplication.run(CMCCRApplication.class, args);
     }
