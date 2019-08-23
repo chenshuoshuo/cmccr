@@ -33,9 +33,9 @@ public class CcrUserRuleController {
     @ApiOperation("删除角色")
     @DeleteMapping("/center/user/rule/{id}")
     public MessageBean<Long[]> delete(@PathVariable Long[] id) {
-        try {
+       try {
             ruleService.delete(id);
-        }catch (Exception e){
+       }catch (Exception e){
             return MessageBean.error("当前角色下,存在用户,请先删除角色下的用户！");
         }
         return MessageBean.ok(id);
