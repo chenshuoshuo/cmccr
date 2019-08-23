@@ -13,11 +13,13 @@ import org.springframework.data.domain.Example;
 import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -121,5 +123,12 @@ public class CcrUserAuthorityService {
 
             userAuthorityRepository.save(userAuthority);
         }
+    }
+
+    public List<CcrUserAuthority> findByRoleAndUserId(String userId, String roles) {
+        systemLogService.addLog("用户权限服务", "findByRoleAndUserId",
+                "查询更新权限状态列表");
+        String id = userId ==null ? "" : userId;
+        return userAuthorityRepository.listQuery(id,roles);
     }
 }

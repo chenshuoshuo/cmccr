@@ -28,8 +28,7 @@ public interface CcrNotificationRepository extends JpaRepository<CcrNotification
     Page<CcrNotification> page(String title, String auth, Pageable pageable);
 
     @Query(value = "select cn.info_id,cn.title,cn.content,cnr.user_code is not null check_read from (select * from ccr_notification where " +
-            "(target_user_role && ARRAY[?2] \\:\\:varchar[] and specify_user_id && ARRAY[?1] \\:\\:varchar[])" +
-            "or target_user_role && ARRAY['public'] \\:\\:varchar[] order by post_time) cn \n" +
+            "target_user_role && ARRAY[?2,'public'] \\:\\:varchar[] or specify_user_id && ARRAY[?1] \\:\\:varchar[] order by post_time) cn \n" +
             "left join ccr_notification_read cnr on cn.info_id = cnr.info_id and cnr.user_code = ?1",nativeQuery = true)
     List<Map<String,Object>> listQuery(String userId, String roles);
 

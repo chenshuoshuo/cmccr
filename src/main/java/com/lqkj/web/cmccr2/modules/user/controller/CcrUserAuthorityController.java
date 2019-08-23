@@ -8,8 +8,12 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.security.core.Authentication;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.Map;
 
 @Api(tags = "用户权限")
 @RestController
@@ -71,5 +75,14 @@ public class CcrUserAuthorityController {
                                           @RequestParam Boolean enabled) {
         this.authorityService.batchUpdateEnabled(authorities, enabled);
         return MessageBean.ok();
+    }
+
+    @ApiOperation("获取权限状态列表")
+    @PostMapping("/center/user/authority/list")
+    public MessageBean<List<CcrUserAuthority>> findByRoleAndUserId(@RequestParam(required = false) String userId,
+                                                                   @RequestParam(required = false) String roles,
+                                                                   Authentication authentication) {
+        System.out.println(authentication);
+        return MessageBean.ok(authorityService.findByRoleAndUserId(userId, roles));
     }
 }
