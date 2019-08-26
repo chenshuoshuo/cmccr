@@ -339,7 +339,7 @@ public class CcrUserService implements UserDetailsService {
     public CcrUser setIconURL(CcrUser user) {
         if (user.getHeadPath()!=null) {
             String url = user.getHeadPath()
-                    .replace("./upload/","/upload/");
+                    .replace(".\\upload\\user\\","/upload/user/");
 
             user.setHeadUrl(url);
         }

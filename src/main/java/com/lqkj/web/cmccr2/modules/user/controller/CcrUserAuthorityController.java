@@ -94,19 +94,13 @@ public class CcrUserAuthorityController {
     @ApiOperation("获取权限状态列表")
     @PostMapping("/center/user/authority/list")
     public MessageBean<List<CcrUserAuthority>> findByRoleAndUserId(Authentication authentication,
-                                                              @RequestParam(required = false) String userId ) {
+                                                                   @RequestParam(required = false) String userId,
+                                                                   @RequestParam(required = false) String[] roles ) {
 
 
 
         System.out.println(authentication);
-//        authentication.getAuthorities().stream().filter(GrantedAuthority.getAuthority().startsWith("rules"))
-        String[] roles = authentication.getAuthorities()
-                .stream()
-                .filter(v -> v.getAuthority().startsWith("cmccr-rules"))
-                .map(v -> v.getAuthority().substring(12))
-                .collect(Collectors.joining(","))
-                .split(",")
-                ;
+
         return MessageBean.ok(authorityService.findByRoleAndUserId(userId, roles));
     }
 }
