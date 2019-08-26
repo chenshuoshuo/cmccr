@@ -1,19 +1,33 @@
 package com.lqkj.web.cmccr2.modules.user.controller;
 
+import com.lqkj.web.cmccr2.config.GrantedAuthoritiesExtractor;
 import com.lqkj.web.cmccr2.message.MessageBean;
 import com.lqkj.web.cmccr2.message.MessageListBean;
 import com.lqkj.web.cmccr2.modules.user.domain.CcrUserAuthority;
 import com.lqkj.web.cmccr2.modules.user.service.CcrUserAuthorityService;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.JwtParser;
+import io.jsonwebtoken.Jwts;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.security.oauth2.resource.OAuth2ResourceServerProperties;
 import org.springframework.data.domain.Page;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.oauth2.jwt.Jwt;
+import org.springframework.security.oauth2.jwt.JwtClaimAccessor;
+import org.springframework.security.oauth2.jwt.JwtClaimNames;
+import org.springframework.security.oauth2.jwt.JwtDecoder;
+import org.springframework.security.oauth2.provider.token.store.JwtAccessTokenConverter;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 @Api(tags = "用户权限")
 @RestController
@@ -79,10 +93,20 @@ public class CcrUserAuthorityController {
 
     @ApiOperation("获取权限状态列表")
     @PostMapping("/center/user/authority/list")
-    public MessageBean<List<CcrUserAuthority>> findByRoleAndUserId(@RequestParam(required = false) String userId,
-                                                                   @RequestParam(required = false) String roles,
-                                                                   Authentication authentication) {
+    public MessageBean<List<CcrUserAuthority>> findByRoleAndUserId(Authentication authentication,
+                                                              @RequestParam(required = false) String userId ) {
+
+
+
         System.out.println(authentication);
+//        authentication.getAuthorities().stream().filter(GrantedAuthority.getAuthority().startsWith("rules"))
+        String[] roles = authentication.getAuthorities()
+                .stream()
+                .filter(v -> v.getAuthority().startsWith("cmccr-rules"))
+                .map(v -> v.getAuthority().substring(12))
+                .collect(Collectors.joining(","))
+                .split(",")
+                ;
         return MessageBean.ok(authorityService.findByRoleAndUserId(userId, roles));
     }
 }

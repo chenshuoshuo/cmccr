@@ -69,6 +69,13 @@ public class CcrUser implements Serializable, UserDetails {
     @Column(name = "is_admin")
     private Boolean isAdmin;
 
+    @ApiModelProperty("头像保存路径")
+    @Column(name = "head_path")
+    private String headPath;
+
+    @ApiModelProperty("头像保存路径")
+    private String headUrl;
+
     public CcrUserGroupType getUserGroup() {
         return userGroup;
     }
@@ -141,10 +148,26 @@ public class CcrUser implements Serializable, UserDetails {
         isAdmin = admin;
     }
 
+    public String getHeadPath() {
+        return headPath;
+    }
+
+    public void setHeadPath(String headPath) {
+        this.headPath = headPath;
+    }
+
+    public String getHeadUrl() {
+        return headUrl;
+    }
+
+    public void setHeadUrl(String headUrl) {
+        this.headUrl = headUrl;
+    }
+
     @Override
     public boolean equals(Object o) {
-        if (this==o) return true;
-        if (o==null || getClass()!=o.getClass()) return false;
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
         CcrUser user = (CcrUser) o;
         return Objects.equals(userId, user.userId) &&
                 Objects.equals(userCode, user.userCode) &&
@@ -152,14 +175,16 @@ public class CcrUser implements Serializable, UserDetails {
                 Objects.equals(openId, user.openId) &&
                 Objects.equals(casTicket, user.casTicket) &&
                 Objects.equals(rules, user.rules) &&
-                userGroup==user.userGroup &&
+                userGroup == user.userGroup &&
                 Objects.equals(updateTime, user.updateTime) &&
-                Objects.equals(isAdmin, user.isAdmin);
+                Objects.equals(isAdmin, user.isAdmin) &&
+                Objects.equals(headPath, user.headPath) &&
+                Objects.equals(headUrl, user.headUrl);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(userId, userCode, passWord, openId, casTicket, rules, userGroup, updateTime, isAdmin);
+        return Objects.hash(userId, userCode, passWord, openId, casTicket, rules, userGroup, updateTime, isAdmin, headPath, headUrl);
     }
 
     @Override

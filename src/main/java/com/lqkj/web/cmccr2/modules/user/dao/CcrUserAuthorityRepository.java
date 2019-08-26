@@ -38,5 +38,5 @@ public interface CcrUserAuthorityRepository extends JpaRepository<CcrUserAuthori
                                                 Pageable pageable);
 
     @Query(value = "select * from ccr_user_authority where target_user_role && ARRAY[?2,'public'] \\:\\:varchar[] or specify_user_id && ARRAY[?1] \\:\\:varchar[] group by authority_id",nativeQuery = true)
-    List<CcrUserAuthority> listQuery(String userId, String roles);
+    List<CcrUserAuthority> listQuery(String userId, String[] roles);
 }

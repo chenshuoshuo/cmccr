@@ -2,13 +2,17 @@ package com.lqkj.web.cmccr2.modules.user.service;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
+import com.lqkj.web.cmccr2.modules.application.domain.CcrVersionApplication;
 import com.lqkj.web.cmccr2.modules.log.service.CcrSystemLogService;
 import com.lqkj.web.cmccr2.modules.user.dao.CcrUserBatchRepository;
 import com.lqkj.web.cmccr2.modules.user.dao.CcrUserRepository;
 import com.lqkj.web.cmccr2.modules.user.dao.CcrUserRuleRepository;
 import com.lqkj.web.cmccr2.modules.user.domain.CcrUser;
 import com.lqkj.web.cmccr2.modules.user.domain.CcrUserRule;
+import org.apache.commons.codec.digest.DigestUtils;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,9 +29,14 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 
 /**
@@ -37,6 +46,7 @@ import java.util.Set;
 @Transactional
 public class CcrUserService implements UserDetailsService {
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
+    public static final String UPLOAD_FILE_PATH = "./upload/user/";
 
     @Autowired
     CcrUserRepository userRepository;
@@ -99,24 +109,25 @@ public class CcrUserService implements UserDetailsService {
         systemLogService.addLog("用户管理服务", "info",
                 "用户信息查询");
 
-        return userRepository.findById(id).get();
+        return this.setIconURL(userRepository.findById(id).get());
     }
 
     /**
-     * 更新用户密码
+     * 更新用户密码和头像
      */
-    public String update(Long id, String password, Boolean admin) {
+    public CcrUser update(Long id, String password, Boolean admin,String headPath) {
         systemLogService.addLog("用户管理服务", "update",
-                "更新用户密码");
+                "更新用户密码和头像");
 
         CcrUser user = userRepository.getOne(id);
 
         if (password!=null) user.setPassWord(passwordEncoder.encode(password));
         if (admin!=null) user.setAdmin(admin);
+        if(headPath!=null)user.setHeadPath(headPath);
 
         userRepository.save(user);
 
-        return password;
+        return this.setIconURL(user);
     }
 
     /**
@@ -142,9 +153,9 @@ public class CcrUserService implements UserDetailsService {
         ExampleMatcher exampleMatcher = ExampleMatcher.matching()
                 .withMatcher("userCode", ExampleMatcher.GenericPropertyMatchers.contains())
                 .withIgnorePaths("userId");
-
-        return userRepository.findAll(Example.of(ccrUser, exampleMatcher),
+        Page<CcrUser> result = userRepository.findAll(Example.of(ccrUser, exampleMatcher),
                 PageRequest.of(page, pageSize));
+        return result.map(v -> (CcrUser)this.setIconURL(v));
     }
 
     /**
@@ -204,7 +215,7 @@ public class CcrUserService implements UserDetailsService {
      * @return
      */
     public CcrUser findByUserCode(String userCode){
-        return userRepository.findByUserName(userCode);
+        return this.setIconURL(userRepository.findByUserName(userCode));
     }
 
     /**
@@ -283,6 +294,56 @@ public class CcrUserService implements UserDetailsService {
                 .append("');");
         logger.info(sqlString.toString());
         ccrUserBatchRepository.bulkMergeUser(sqlString.toString());
+    }
+
+    /**
+     * 保存上传的文件
+     *
+     * @return 保存的路径
+     */
+    public String saveUploadFile(MultipartFile file, String... supportFormats) throws Exception {
+        String format = Objects.requireNonNull(file.getOriginalFilename()).split("\\.")[1];
+
+        if (supportFormats.length!=0 && !Lists.newArrayList(supportFormats).contains(format)) {
+            throw new Exception("格式不支持:" + format);
+        }
+
+        File outPutFile = new File(new StringBuilder().append(UPLOAD_FILE_PATH)
+                .append(DigestUtils.md2Hex(String.valueOf(System.currentTimeMillis())))
+                .append(".")
+                .append(format)
+                .toString());
+
+        InputStream is = null;
+
+        try {
+            is = file.getInputStream();
+
+            FileUtils.copyInputStreamToFile(is, outPutFile);
+        } finally {
+            if (is!=null) {
+                try {
+                    is.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+        return outPutFile.getPath();
+    }
+
+    /**
+     * 设置图片访问地址
+     */
+    public CcrUser setIconURL(CcrUser user) {
+        if (user.getHeadPath()!=null) {
+            String url = user.getHeadPath()
+                    .replace("./upload/","/upload/");
+
+            user.setHeadUrl(url);
+        }
+        return user;
     }
 
 }

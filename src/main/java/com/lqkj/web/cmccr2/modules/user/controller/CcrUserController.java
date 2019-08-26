@@ -9,16 +9,14 @@ import com.lqkj.web.cmccr2.modules.user.domain.CcrUserRule;
 import com.lqkj.web.cmccr2.modules.user.service.CcrUserService;
 import com.lqkj.web.cmccr2.modules.user.service.WeiXinOAuthService;
 import com.lqkj.web.cmccr2.utils.ServletUtils;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiImplicitParam;
-import io.swagger.annotations.ApiImplicitParams;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.security.core.Authentication;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.async.WebAsyncTask;
+import org.springframework.web.multipart.MultipartFile;
 import springfox.documentation.annotations.ApiIgnore;
 
 import javax.servlet.http.HttpServletRequest;
@@ -60,12 +58,14 @@ public class CcrUserController {
         return MessageBean.ok((CcrUser) ccrUserService.loadUserByUsername(username));
     }
 
-    @ApiOperation("更新用户密码")
+    @ApiOperation("更新用户密码和头像")
     @PostMapping("/center/user/{id}")
-    public MessageBean<String> update(@RequestParam(required = false) String password,
+    public MessageBean<CcrUser> update(@RequestParam(required = false) String password,
                                       @RequestParam(required = false) Boolean admin,
-                                      @PathVariable Long id) {
-        return MessageBean.ok(ccrUserService.update(id, password, admin));
+                                      @PathVariable Long id,
+                                      @ApiParam(value = "头像文件") MultipartFile headFile) throws Exception{
+        String headPath = ccrUserService.saveUploadFile(headFile,"png", "jpg");
+        return MessageBean.ok(ccrUserService.update(id, password, admin,headPath));
     }
 
     @ApiOperation("根据用户id删除用户")
