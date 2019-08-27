@@ -125,10 +125,9 @@ public class CcrUserAuthorityService {
         }
     }
 
-    public List<CcrUserAuthority> findByRoleAndUserId(String userId, String[] roles) {
+    public List<CcrUserAuthority> findByRoleAndUserId(String userId,String roles) {
         systemLogService.addLog("用户权限服务", "findByRoleAndUserId",
                 "查询更新权限状态列表");
-        String id = userId ==null ? "" : userId;
-        return userAuthorityRepository.listQuery(id,roles);
+        return userAuthorityRepository.listQuery(userId,roles);
     }
 }

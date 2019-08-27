@@ -1,6 +1,7 @@
 package com.lqkj.web.cmccr2.modules.notification.controller;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.lqkj.web.cmccr2.APIVersion;
 import com.lqkj.web.cmccr2.message.MessageBean;
 import com.lqkj.web.cmccr2.modules.notification.domain.CcrNotification;
@@ -10,10 +11,14 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
+import net.minidev.json.JSONArray;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.async.WebAsyncTask;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
@@ -90,10 +95,18 @@ public class NotificationController {
             @ApiImplicitParam(name = "roles", value = "用户角色,多个以逗号隔开")
     })
     @GetMapping("/center/notification/" + VERSION + "/listForH5")
-    public String listQuery(
-                            @RequestParam(required = false) String userId,
-                            @RequestParam(required = false) String roles) {
-        List<Map<String,Object>> list = notificationService.listForH5(userId,roles);
+    public String listQuery(Authentication authentication) {
+        String[] rules = new String[]{""};
+        String[] userCode = new String[]{""};
+        // String userCode = "";
+        if(authentication != null){
+            Jwt jwt =(Jwt)authentication.getPrincipal();
+            JSONArray jsonArray = (JSONArray)jwt.getClaims().get("rules");
+            List<String> list  = JSONObject.parseArray(jsonArray.toJSONString(),String.class);
+            rules = StringUtils.join(list,",").split(",");
+            userCode = ((String)jwt.getClaims().get("user_name")).split(",");
+        }
+        List<Map<String,Object>> list = notificationService.listForH5(userCode,rules);
         return JSON.toJSONString(MessageBean.ok(list));
     }
 

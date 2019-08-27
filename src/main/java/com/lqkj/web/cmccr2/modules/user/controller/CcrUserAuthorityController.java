@@ -1,33 +1,22 @@
 package com.lqkj.web.cmccr2.modules.user.controller;
 
-import com.lqkj.web.cmccr2.config.GrantedAuthoritiesExtractor;
+import com.alibaba.fastjson.JSONObject;
 import com.lqkj.web.cmccr2.message.MessageBean;
 import com.lqkj.web.cmccr2.message.MessageListBean;
 import com.lqkj.web.cmccr2.modules.user.domain.CcrUserAuthority;
 import com.lqkj.web.cmccr2.modules.user.service.CcrUserAuthorityService;
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.JwtParser;
-import io.jsonwebtoken.Jwts;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import net.minidev.json.JSONArray;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.security.oauth2.resource.OAuth2ResourceServerProperties;
 import org.springframework.data.domain.Page;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.oauth2.jwt.Jwt;
-import org.springframework.security.oauth2.jwt.JwtClaimAccessor;
-import org.springframework.security.oauth2.jwt.JwtClaimNames;
-import org.springframework.security.oauth2.jwt.JwtDecoder;
-import org.springframework.security.oauth2.provider.token.store.JwtAccessTokenConverter;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
+import java.util.*;
 
 @Api(tags = "用户权限")
 @RestController
@@ -93,14 +82,25 @@ public class CcrUserAuthorityController {
 
     @ApiOperation("获取权限状态列表")
     @PostMapping("/center/user/authority/list")
-    public MessageBean<List<CcrUserAuthority>> findByRoleAndUserId(Authentication authentication,
-                                                                   @RequestParam(required = false) String userId,
-                                                                   @RequestParam(required = false) String[] roles ) {
-
-
-
-        System.out.println(authentication);
-
-        return MessageBean.ok(authorityService.findByRoleAndUserId(userId, roles));
+    public MessageBean<List<CcrUserAuthority>> findByRoleAndUserId(Authentication authentication) {
+        StringBuffer sb = new StringBuffer();
+        String rules = "";
+        String userCode = "";
+        if(authentication != null){
+            Jwt jwt =(Jwt)authentication.getPrincipal();
+            JSONArray jsonArray = (JSONArray)jwt.getClaims().get("rules");
+            List<String> list  = JSONObject.parseArray(jsonArray.toJSONString(),String.class);
+//            for (int i=0;i<list.size();i++) {
+//                if(i==0){
+//                    sb.append(list.get(i));
+//                }else {
+//                    sb.append(",").append(list.get(i));
+//                }
+//            }
+            sb.append(list.get(1)).append(",'").append(list.get(3));
+            rules = sb.toString();
+            userCode = (String)jwt.getClaims().get("user_name");
+        }
+        return MessageBean.ok(authorityService.findByRoleAndUserId(userCode, rules));
     }
 }

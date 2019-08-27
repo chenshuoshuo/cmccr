@@ -9,6 +9,7 @@ import io.swagger.annotations.ApiOperation;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -22,6 +23,7 @@ public class JwkController {
     @ApiOperation("获取证书")
     @GetMapping("/jwk/" + APIVersion.V1 + "/keys")
     public ResponseEntity<String> jws() throws Exception {
+       // System.out.println(authentication);
         return ResponseEntity.ok()
                 .contentType(MediaType.APPLICATION_JSON_UTF8)
                 .body(jwkString());
