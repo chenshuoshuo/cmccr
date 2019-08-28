@@ -15,6 +15,9 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 
 import java.sql.Timestamp;
+import java.util.Date;
+
+import static com.lqkj.web.cmccr2.modules.application.domain.CcrPcApplication.IpsApplicationPlatform.system;
 
 /**
  * 系统日志api
@@ -45,5 +48,10 @@ public class CcrSystemLogController {
         return ResponseEntity.ok()
                 .header("Content-Disposition", "attachment;filename=logs.xlsx")
                 .body(body);
+    }
+
+    public static void main(String[] args) {
+        Date date=new Date();
+        System.out.println(date.getTime());
     }
 }
