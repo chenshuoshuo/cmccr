@@ -30,7 +30,7 @@ public interface CcrNotificationRepository extends JpaRepository<CcrNotification
     @Query(value = "select cn.info_id,cn.title,cn.content,cnr.user_code is not null check_read from (select * from ccr_notification where " +
             "target_user_role && ARRAY[?2,'public'] \\:\\:varchar[] or specify_user_id && ARRAY[?1] \\:\\:varchar[] order by post_time) cn \n" +
             "left join ccr_notification_read cnr on cn.info_id = cnr.info_id and cnr.user_code = ?1",nativeQuery = true)
-    List<Map<String,Object>> listQuery(String[] userId, String[] roles);
+    List<Map<String,Object>> listQuery(String userId, String roles);
 
     @Query(value = "SELECT * FROM ccr_notification WHERE 1=1 and " +
             "CASE WHEN ?1 is not null THEN title like concat('%',?1,'%') ELSE 1=1 END AND " +

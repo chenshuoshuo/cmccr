@@ -83,22 +83,13 @@ public class CcrUserAuthorityController {
     @ApiOperation("获取权限状态列表")
     @PostMapping("/center/user/authority/list")
     public MessageBean<List<CcrUserAuthority>> findByRoleAndUserId(Authentication authentication) {
-        StringBuffer sb = new StringBuffer();
         String rules = "";
         String userCode = "";
         if(authentication != null){
             Jwt jwt =(Jwt)authentication.getPrincipal();
             JSONArray jsonArray = (JSONArray)jwt.getClaims().get("rules");
             List<String> list  = JSONObject.parseArray(jsonArray.toJSONString(),String.class);
-//            for (int i=0;i<list.size();i++) {
-//                if(i==0){
-//                    sb.append(list.get(i));
-//                }else {
-//                    sb.append(",").append(list.get(i));
-//                }
-//            }
-            sb.append(list.get(1)).append(",'").append(list.get(3));
-            rules = sb.toString();
+            rules = StringUtils.join(list,",");
             userCode = (String)jwt.getClaims().get("user_name");
         }
         return MessageBean.ok(authorityService.findByRoleAndUserId(userCode, rules));

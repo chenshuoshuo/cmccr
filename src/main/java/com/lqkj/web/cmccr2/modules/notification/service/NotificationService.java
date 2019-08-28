@@ -113,7 +113,7 @@ public class NotificationService {
      * H5获取登录用户消息通知列表
      * @return
      */
-    public List<Map<String,Object>> listForH5(String[] userId, String[] roles) {
+    public List<Map<String,Object>> listForH5(String userId, String roles) {
         systemLogService.addLog("消息通知", "listForH5",
                 "查询消息通知列表");
         return notificationRepository.listQuery(userId,roles);

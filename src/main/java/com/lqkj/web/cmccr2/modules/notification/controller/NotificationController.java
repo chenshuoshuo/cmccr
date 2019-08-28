@@ -96,15 +96,14 @@ public class NotificationController {
     })
     @GetMapping("/center/notification/" + VERSION + "/listForH5")
     public String listQuery(Authentication authentication) {
-        String[] rules = new String[]{""};
-        String[] userCode = new String[]{""};
-        // String userCode = "";
+        String rules = "";
+        String userCode = "";
         if(authentication != null){
             Jwt jwt =(Jwt)authentication.getPrincipal();
             JSONArray jsonArray = (JSONArray)jwt.getClaims().get("rules");
             List<String> list  = JSONObject.parseArray(jsonArray.toJSONString(),String.class);
-            rules = StringUtils.join(list,",").split(",");
-            userCode = ((String)jwt.getClaims().get("user_name")).split(",");
+            rules = StringUtils.join(list,",");
+            userCode = (String)jwt.getClaims().get("user_name");
         }
         List<Map<String,Object>> list = notificationService.listForH5(userCode,rules);
         return JSON.toJSONString(MessageBean.ok(list));
