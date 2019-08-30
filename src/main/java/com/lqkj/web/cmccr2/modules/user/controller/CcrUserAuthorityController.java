@@ -17,6 +17,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Api(tags = "用户权限")
 @RestController
@@ -89,7 +90,9 @@ public class CcrUserAuthorityController {
             Jwt jwt =(Jwt)authentication.getPrincipal();
             JSONArray jsonArray = (JSONArray)jwt.getClaims().get("rules");
             List<String> list  = JSONObject.parseArray(jsonArray.toJSONString(),String.class);
-            rules = StringUtils.join(list,",");
+            rules = "'" + list
+                    .stream()
+                    .collect(Collectors.joining("','")) + "'";
             userCode = (String)jwt.getClaims().get("user_name");
         }
         return MessageBean.ok(authorityService.findByRoleAndUserId(userCode, rules));

@@ -51,7 +51,7 @@ public class CcrNotification extends BaseRowModel implements Serializable  {
     private String[] specifyUserId;
 
     @Column(name = "author_id")
-    @ApiModelProperty(value = "发布用户", required = true)
+    @ApiModelProperty(value = "发布用户名称", required = true)
     @ExcelProperty(value = {"发布者"}, index = 3)
     private String authorId;
 

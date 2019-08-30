@@ -28,6 +28,7 @@ import java.sql.Timestamp;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Api(tags = "消息通知")
 @RestController
@@ -90,10 +91,6 @@ public class NotificationController {
     }
 
     @ApiOperation("H5获取登录用户消息通知列表")
-    @ApiImplicitParams({
-        @ApiImplicitParam(name = "userId", value = "用户ID"),
-            @ApiImplicitParam(name = "roles", value = "用户角色,多个以逗号隔开")
-    })
     @GetMapping("/center/notification/" + VERSION + "/listForH5")
     public String listQuery(Authentication authentication) {
         String rules = "";
@@ -102,17 +99,25 @@ public class NotificationController {
             Jwt jwt =(Jwt)authentication.getPrincipal();
             JSONArray jsonArray = (JSONArray)jwt.getClaims().get("rules");
             List<String> list  = JSONObject.parseArray(jsonArray.toJSONString(),String.class);
-            rules = StringUtils.join(list,",");
+            rules = "'" + list
+                    .stream()
+                    .collect(Collectors.joining("','")) + "'";
             userCode = (String)jwt.getClaims().get("user_name");
         }
+
         List<Map<String,Object>> list = notificationService.listForH5(userCode,rules);
         return JSON.toJSONString(MessageBean.ok(list));
     }
 
     @GetMapping("/center/notification/" + APIVersion.V1 + "/export")
     @ApiOperation("导出消息通知")
-    public ResponseEntity<InputStreamResource> export(@RequestParam(required = false) String title,
-                                                      @RequestParam(required = true) String auth) throws IOException {
-        return notificationService.download(title, auth);
+    public ResponseEntity<StreamingResponseBody> export(@RequestParam(required = false) String title,
+                                                      @RequestParam(required = true) String auth){
+        StreamingResponseBody body = outputStream -> {
+            notificationService.export(title, auth, outputStream);
+        };
+        return ResponseEntity.ok()
+                .header("Content-Disposition", "attachment;filename=notification.xlsx")
+                .body(body);
     }
 }

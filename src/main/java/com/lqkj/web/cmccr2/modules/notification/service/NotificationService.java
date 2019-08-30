@@ -163,6 +163,38 @@ public class NotificationService {
         return pageList;
     }
 
+    public void export(String title,String auth, OutputStream os) throws IOException {
+        List<CcrNotification> notificationList = notificationRepository.list(title,auth);
+        List<CcrNotification> notifications = setAuth(notificationList);
+        SXSSFWorkbook workbook = new SXSSFWorkbook(10);
+
+        Sheet sheet = workbook.createSheet();
+
+        //设置头
+        Row rootRow = sheet.createRow(0);
+        rootRow.createCell(0).setCellValue("标题");
+        rootRow.createCell(1).setCellValue("内容");
+        rootRow.createCell(2).setCellValue("权限");
+        rootRow.createCell(3).setCellValue("发布者");
+        rootRow.createCell(4).setCellValue("更新时间");
+
+        for (int i = 0; i < notifications.size(); i++) {
+            CcrNotification notification = notifications.get(i);
+
+            Row dataRow = sheet.createRow(i + 1);
+
+            dataRow.createCell(0).setCellValue(notification.getTitle());
+            dataRow.createCell(1).setCellValue(notification.getContent());
+            dataRow.createCell(2).setCellValue(notification.getAuth());
+            dataRow.createCell(3).setCellValue(notification.getAuthorId());
+            dataRow.createCell(4).setCellValue(notification.getPostTime());
+        }
+
+        workbook.write(os);
+
+        workbook.dispose();
+    }
+
     /**
      * 导出
      * @throws IOException
