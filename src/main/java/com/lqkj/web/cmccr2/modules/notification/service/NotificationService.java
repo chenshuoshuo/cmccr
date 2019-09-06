@@ -8,6 +8,7 @@ import com.lqkj.web.cmccr2.modules.application.domain.CcrPcApplication;
 import com.lqkj.web.cmccr2.modules.log.domain.CcrSystemLog;
 import com.lqkj.web.cmccr2.modules.log.service.CcrSystemLogService;
 import com.lqkj.web.cmccr2.modules.notification.dao.CcrNotificationRepository;
+import com.lqkj.web.cmccr2.modules.notification.dao.CcrNotificationSQLDao;
 import com.lqkj.web.cmccr2.modules.notification.domain.CcrNotification;
 import com.lqkj.web.cmccr2.modules.notification.domain.CcrNotificationRead;
 import com.lqkj.web.cmccr2.modules.notification.domain.CcrNotificationVO;
@@ -46,6 +47,8 @@ public class NotificationService {
     NotificationReadService readService;
     @Autowired
     CcrUserService userService;
+    @Autowired
+    CcrNotificationSQLDao notificationSQLDao;
 
     @Autowired
     CcrSystemLogService systemLogService;
@@ -116,7 +119,12 @@ public class NotificationService {
     public List<Map<String,Object>> listForH5(String userId, String roles) {
         systemLogService.addLog("消息通知", "listForH5",
                 "查询消息通知列表");
-        return notificationRepository.listQuery(userId,roles);
+
+        String sql = "select cn.info_id,cn.title,cn.content,cnr.user_code is not null check_read from (select * from ccr_notification where " +
+        "target_user_role && ARRAY["+roles+",'public'] \\:\\:varchar[] or specify_user_id && ARRAY['"+userId+"'] \\:\\:varchar[] order by post_time) cn \n" +
+                "left join ccr_notification_read cnr on cn.info_id = cnr.info_id and cnr.user_code = " + userId;
+
+        return notificationSQLDao.executeMapSql(sql);
     }
 
     /**

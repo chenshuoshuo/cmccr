@@ -3,6 +3,7 @@ package com.lqkj.web.cmccr2.modules.user.service;
 import com.google.common.collect.Lists;
 import com.lqkj.web.cmccr2.modules.log.service.CcrSystemLogService;
 import com.lqkj.web.cmccr2.modules.user.dao.CcrUserAuthorityRepository;
+import com.lqkj.web.cmccr2.modules.user.dao.CcrUserAuthoritySQLDao;
 import com.lqkj.web.cmccr2.modules.user.dao.CcrUserRuleRepository;
 import com.lqkj.web.cmccr2.modules.user.domain.CcrUser;
 import com.lqkj.web.cmccr2.modules.user.domain.CcrUserAuthority;
@@ -28,6 +29,9 @@ import java.util.Set;
 @Service
 @Transactional
 public class CcrUserAuthorityService {
+
+    @Autowired
+    private CcrUserAuthoritySQLDao userAuthoritySQLDao;
 
     private CcrUserAuthorityRepository userAuthorityRepository;
 
@@ -128,6 +132,14 @@ public class CcrUserAuthorityService {
     public List<CcrUserAuthority> findByRoleAndUserId(String userId,String roles) {
         systemLogService.addLog("用户权限服务", "findByRoleAndUserId",
                 "查询更新权限状态列表");
-        return userAuthorityRepository.listQuery(userId,roles);
+
+        String sql = "select * from ccr_user_authority " +
+                " where 1 = 1";
+
+        if(userId != null && roles != null){
+            sql += " and target_user_role && ARRAY[" + roles + ",'public'] \\:\\:varchar[] or specify_user_id && ARRAY['"+ userId +"'] \\:\\:varchar[] group by authority_id";
+        }
+
+        return  userAuthoritySQLDao.executeSql(sql,CcrUserAuthority.class);
     }
 }
