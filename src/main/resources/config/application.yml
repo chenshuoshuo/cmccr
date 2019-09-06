@@ -25,7 +25,7 @@ server:
     min-spare-threads: 10
     max-http-post-size: 1000MB
     max-swallow-size: 1000MB
-  address: 192.168.4.178
+  address: 192.168.4.102
 logging:
   register-shutdown-hook: true
   file: ./log/ccr.log
