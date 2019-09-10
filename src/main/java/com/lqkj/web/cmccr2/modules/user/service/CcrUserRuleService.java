@@ -1,6 +1,7 @@
 package com.lqkj.web.cmccr2.modules.user.service;
 
 import com.lqkj.web.cmccr2.modules.log.service.CcrSystemLogService;
+import com.lqkj.web.cmccr2.modules.user.dao.CcrRuleAuthorityRepository;
 import com.lqkj.web.cmccr2.modules.user.dao.CcrUserAuthorityRepository;
 import com.lqkj.web.cmccr2.modules.user.dao.CcrUserRepository;
 import com.lqkj.web.cmccr2.modules.user.dao.CcrUserRuleRepository;
@@ -13,9 +14,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.annotation.Resource;
 import java.sql.Timestamp;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
 
@@ -34,6 +34,9 @@ public class CcrUserRuleService {
 
     @Autowired
     CcrUserAuthorityRepository userAuthorityRepository;
+
+    @Resource
+    CcrRuleAuthorityRepository ruleAuthorityRepository;
 
     @Autowired
     CcrSystemLogService systemLogService;
@@ -77,11 +80,14 @@ public class CcrUserRuleService {
         userRepository.save(ccrUser);
     }
 
+    @Transactional
     public void delete(Long[] id) {
         systemLogService.addLog("用户角色服务", "delete",
                 "删除用户角色");
 
         for (Long i : id) {
+            //先删除权限与角色的关联
+            ruleAuthorityRepository.deleteByRuleId(i);
             userRuleRepository.deleteById(i);
         }
     }
