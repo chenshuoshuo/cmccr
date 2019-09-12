@@ -120,15 +120,13 @@ public class CcrUserRuleService {
         return userRuleRepository.findById(id).get();
     }
 
-    public Page<CcrUserRule> page(String keyword, Integer page, Integer pageSize) {
+    public Page<CcrUserRule> page(String userName,String keyword, Integer page, Integer pageSize) {
         systemLogService.addLog("用户角色服务", "add",
                 "分页查询用户角色");
 
         String k = keyword==null ? "" : keyword;
 
-        String username = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-
-        return userRuleRepository.findSupportRules(username, "%" + k + "%",
+        return userRuleRepository.findSupportRules(userName, "%" + k + "%",
                 PageRequest.of(page, pageSize));
     }
 }
