@@ -34,6 +34,9 @@ public class CcrSystemLog implements Serializable {
     @Column
     private String description;
 
+    @Column
+    private String rule;
+
     @CreationTimestamp
     @Column(name = "create_time")
     private Timestamp createTime;
@@ -97,21 +100,30 @@ public class CcrSystemLog implements Serializable {
         this.createTime = createTime;
     }
 
+    public String getRule() {
+        return rule;
+    }
+
+    public void setRule(String rule) {
+        this.rule = rule;
+    }
+
     @Override
     public boolean equals(Object o) {
-        if (this==o) return true;
-        if (o==null || getClass()!=o.getClass()) return false;
-        CcrSystemLog systemLog = (CcrSystemLog) o;
-        return Objects.equals(logId, systemLog.logId) &&
-                Objects.equals(userName, systemLog.userName) &&
-                Objects.equals(source, systemLog.source) &&
-                Objects.equals(method, systemLog.method) &&
-                Objects.equals(description, systemLog.description) &&
-                Objects.equals(createTime, systemLog.createTime);
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        CcrSystemLog that = (CcrSystemLog) o;
+        return Objects.equals(logId, that.logId) &&
+                Objects.equals(userName, that.userName) &&
+                Objects.equals(source, that.source) &&
+                Objects.equals(method, that.method) &&
+                Objects.equals(description, that.description) &&
+                Objects.equals(rule, that.rule) &&
+                Objects.equals(createTime, that.createTime);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(logId, userName, source, method, description, createTime);
+        return Objects.hash(logId, userName, source, method, description, rule, createTime);
     }
 }

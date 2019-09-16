@@ -2,6 +2,11 @@ package com.lqkj.web.cmccr2.modules.log.service;
 
 import com.lqkj.web.cmccr2.modules.log.dao.CcrSystemLogRepository;
 import com.lqkj.web.cmccr2.modules.log.domain.CcrSystemLog;
+import com.lqkj.web.cmccr2.modules.user.dao.CcrUserRepository;
+import com.lqkj.web.cmccr2.modules.user.domain.CcrUser;
+import com.lqkj.web.cmccr2.modules.user.domain.CcrUserRule;
+import com.lqkj.web.cmccr2.modules.user.service.CcrUserService;
+import org.apache.commons.lang.StringUtils;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
@@ -10,27 +15,44 @@ import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.scheduling.annotation.Async;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.io.OutputStream;
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 @Service
 public class CcrSystemLogService {
 
     @Autowired
     CcrSystemLogRepository systemLogRepository;
+    @Autowired
+    CcrUserRepository userRepository;
 
     /**
      * 增加一条日志记录
      */
     public void addLog(String source, String method, String description) {
         CcrSystemLog systemLog = new CcrSystemLog(source, method, description);
-        systemLog.setUserName(SecurityContextHolder.getContext().getAuthentication().getName());
-
+        String userName = SecurityContextHolder.getContext().getAuthentication().getName();
+        CcrUser ccrUser = userRepository.findByUserName(userName);
+        List<String> list = new ArrayList<>();
+        if(ccrUser != null){
+            Set<CcrUserRule> rules = ccrUser.getRules();
+            if(rules.size() > 0){
+                for(CcrUserRule rule :rules){
+                   list.add(rule.getName());
+                }
+                String rule = StringUtils.join(list,",");
+                systemLog.setRule(rule);
+            }
+        }
+        systemLog.setUserName(userName);
         systemLogRepository.save(systemLog);
     }
 
@@ -49,7 +71,7 @@ public class CcrSystemLogService {
     public void export(Timestamp startTime, Timestamp endTime, OutputStream os) throws IOException {
         List<CcrSystemLog> logs = systemLogRepository.findAllByTime(startTime, endTime);
 
-        SXSSFWorkbook workbook = new SXSSFWorkbook(10);
+        SXSSFWorkbook workbook = new SXSSFWorkbook(11);
 
         Sheet sheet = workbook.createSheet();
 
@@ -61,6 +83,7 @@ public class CcrSystemLogService {
         rootRow.createCell(3).setCellValue("执行方法");
         rootRow.createCell(4).setCellValue("来源");
         rootRow.createCell(5).setCellValue("执行者用户名");
+        rootRow.createCell(6).setCellValue("执行者角色");
 
         for (int i = 0; i < logs.size(); i++) {
             CcrSystemLog log = logs.get(i);
@@ -73,6 +96,7 @@ public class CcrSystemLogService {
             dataRow.createCell(3).setCellValue(log.getMethod());
             dataRow.createCell(4).setCellValue(log.getSource());
             dataRow.createCell(5).setCellValue(log.getUserName());
+            dataRow.createCell(6).setCellValue(log.getRule());
         }
 
         workbook.write(os);
