@@ -57,8 +57,14 @@ public class CcrUserAuthorityController {
     @GetMapping("/center/user/authority/page")
     public MessageBean<Page<CcrUserAuthority>> page(String keyword,
                                                     @RequestParam Integer page,
-                                                    @RequestParam Integer pageSize) {
-        return MessageBean.ok(authorityService.page(keyword, page, pageSize));
+                                                    @RequestParam Integer pageSize,
+                                                     Authentication authentication) {
+        String userCode = "";
+        if(authentication != null){
+            Jwt jwt =(Jwt)authentication.getPrincipal();
+            userCode = (String)jwt.getClaims().get("user_name");
+        }
+        return MessageBean.ok(authorityService.page(userCode,keyword, page, pageSize));
     }
 
     @ApiOperation("根据角色id查询权限")

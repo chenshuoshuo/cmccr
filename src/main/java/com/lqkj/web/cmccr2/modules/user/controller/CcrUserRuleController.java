@@ -1,14 +1,21 @@
 package com.lqkj.web.cmccr2.modules.user.controller;
 
+import com.alibaba.fastjson.JSONObject;
 import com.lqkj.web.cmccr2.message.MessageBean;
 import com.lqkj.web.cmccr2.modules.user.domain.CcrUserRule;
 import com.lqkj.web.cmccr2.modules.user.service.CcrUserRuleService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import net.minidev.json.JSONArray;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Api(tags = "用户角色")
 @RestController
@@ -60,7 +67,13 @@ public class CcrUserRuleController {
     @GetMapping("/center/user/rule")
     public MessageBean<Page<CcrUserRule>> page(@RequestParam(required = false) String keyword,
                                                @RequestParam Integer page,
-                                               @RequestParam Integer pageSize) {
-        return MessageBean.ok(ruleService.page(keyword, page, pageSize));
+                                               @RequestParam Integer pageSize,
+                                                Authentication authentication) {
+        String userCode = "";
+        if(authentication != null){
+            Jwt jwt =(Jwt)authentication.getPrincipal();
+            userCode = (String)jwt.getClaims().get("user_name");
+        }
+        return MessageBean.ok(ruleService.page(userCode,keyword, page, pageSize));
     }
 }

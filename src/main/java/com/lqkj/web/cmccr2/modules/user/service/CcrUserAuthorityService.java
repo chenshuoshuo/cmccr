@@ -90,12 +90,9 @@ public class CcrUserAuthorityService {
         return userAuthorityRepository.findById(id).get();
     }
 
-    public Page<CcrUserAuthority> page(String keyword, Integer page, Integer pageSize) {
+    public Page<CcrUserAuthority> page(String name, String keyword, Integer page, Integer pageSize) {
         systemLogService.addLog("用户权限服务", "page",
                 "分页查询用户权限");
-
-        String name = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-
         String k = keyword==null ? "" : keyword;
 
         return userAuthorityRepository.findSupportAuthority(name, "%" + k + "%",
