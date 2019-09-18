@@ -80,6 +80,12 @@ public class CcrUserService implements UserDetailsService {
         return userRepository.findByUserName(username);
     }
 
+    public CcrUser findByUserName(String userName){
+        systemLogService.addLog("用户管理服务", "findByUserName",
+                "普通用户查询");
+        return userRepository.findByUserName(userName);
+    }
+
     /**
      * 注册管理员用户
      */

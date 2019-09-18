@@ -1,6 +1,7 @@
 package com.lqkj.web.cmccr2.modules.menu.service;
 
 import com.lqkj.web.cmccr2.modules.log.service.CcrSystemLogService;
+import com.lqkj.web.cmccr2.modules.menu.dao.CcrMenuSQLDao;
 import com.lqkj.web.cmccr2.modules.menu.domain.CcrMenu;
 import com.lqkj.web.cmccr2.modules.application.dao.CcrVersionApplicationRepository;
 import com.lqkj.web.cmccr2.modules.menu.dao.CcrMenuRepository;
@@ -28,6 +29,9 @@ public class MenuService {
 
     @Autowired
     CcrSystemLogService systemLogService;
+
+    @Autowired
+    CcrMenuSQLDao menuSQLDao;
 
     /**
      * 装机菜单
@@ -86,41 +90,71 @@ public class MenuService {
     /**
      * 分页查询
      */
-    public Page<CcrMenu> page(String keyword, Integer page, Integer pageSize) {
+    public Page<CcrMenu> page(String keyword, String roles,String userCode,Integer page, Integer pageSize) {
         systemLogService.addLog("菜单管理服务", "page"
                 , "分页查询菜单信息");
+        String sql = "select * from ccr_menu where 1=1 ";
 
-        CcrMenu menu = new CcrMenu();
-        menu.setName(keyword);
+        if(keyword != null ){
+            sql += "and name like '%" + keyword + "%' ";
+        }
 
-        ExampleMatcher matcher = ExampleMatcher.matching()
-                .withMatcher("name", ExampleMatcher.GenericPropertyMatchers.contains())
-                .withIgnorePaths("id");
+        if(userCode != null && roles != null){
+            sql += " and (target_user_role && ARRAY[" + roles + ",'public'] \\:\\:varchar[] or specify_user_id && ARRAY['"+ userCode +"'] \\:\\:varchar[]) ";
+        }
 
-        return menuDao.findAll(Example.of(menu, matcher),
-                PageRequest.of(page, pageSize, Sort.by("sort")));
+        Pageable pageable = PageRequest.of(page,pageSize,Sort.by("sort"));
+
+        return menuSQLDao.execQuerySqlPage(pageable,sql,null,CcrMenu.class);
+
+//        CcrMenu menu = new CcrMenu();
+//        menu.setName(keyword);
+//
+//        ExampleMatcher matcher = ExampleMatcher.matching()
+//                .withMatcher("name", ExampleMatcher.GenericPropertyMatchers.contains())
+//                .withIgnorePaths("id");
+//
+//        return menuDao.findAll(Example.of(menu, matcher),
+//                PageRequest.of(page, pageSize, Sort.by("sort")));
     }
 
     /**
      * 按照类型分页查询
      */
-    public Page<CcrMenu> typePage(CcrMenu.IpsMenuType type, String keyword, Integer page, Integer pageSize) {
+    public Page<CcrMenu> typePage(CcrMenu.IpsMenuType type, String keyword, String roles,String userCode,Integer page, Integer pageSize) {
         systemLogService.addLog("菜单管理服务", "typePage"
                 , "按照类型分页查询菜单信息");
 
-        CcrMenu menu = new CcrMenu();
-        menu.setType(type);
-        menu.setName(keyword);
+        String sql = "select * from ccr_menu where 1=1 ";
 
-        ExampleMatcher matcher = ExampleMatcher.matching()
-                .withMatcher("name", ExampleMatcher.GenericPropertyMatchers.contains())
-                .withIgnorePaths("id");
-
-        if (type!=null) {
-            matcher.withMatcher("type", ExampleMatcher.GenericPropertyMatchers.exact());
+        if(keyword != null ){
+            sql += "and name like '%" + keyword + "%' ";
         }
 
-        return menuDao.findAll(Example.of(menu, matcher),
-                PageRequest.of(page, pageSize, Sort.by("sort")));
+        if(type != null){
+            sql += " and type = '" + type + "' ";
+        }
+
+        if(userCode != null && roles != null){
+            sql += " and (target_user_role && ARRAY[" + roles + ",'public'] \\:\\:varchar[] or specify_user_id && ARRAY['"+ userCode +"'] \\:\\:varchar[]) ";
+        }
+
+        Pageable pageable = PageRequest.of(page,pageSize,Sort.by("sort"));
+
+        return menuSQLDao.execQuerySqlPage(pageable,sql,null,CcrMenu.class);
+//        CcrMenu menu = new CcrMenu();
+//        menu.setType(type);
+//        menu.setName(keyword);
+//
+//        ExampleMatcher matcher = ExampleMatcher.matching()
+//                .withMatcher("name", ExampleMatcher.GenericPropertyMatchers.contains())
+//                .withIgnorePaths("id");
+//
+//        if (type!=null) {
+//            matcher.withMatcher("type", ExampleMatcher.GenericPropertyMatchers.exact());
+//        }
+//
+//        return menuDao.findAll(Example.of(menu, matcher),
+//                PageRequest.of(page, pageSize, Sort.by("sort")));
     }
 }

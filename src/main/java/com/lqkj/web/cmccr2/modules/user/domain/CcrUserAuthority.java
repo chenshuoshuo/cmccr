@@ -73,10 +73,12 @@ public class CcrUserAuthority implements Serializable, GrantedAuthority {
     @Column(name = "file_path")
     private String filePath;
 
+    @ApiModelProperty(value = "面向角色")
     @Column(name = "target_user_role", columnDefinition = " string[]")
     @Type(type = "string-array")
     private String[] targetUserRole;
 
+    @ApiModelProperty(value = "指定用户")
     @Column(name = "specify_user_id", columnDefinition = " string[]")
     @Type(type = "string-array")
     private String[] specifyUserId;
