@@ -87,6 +87,16 @@ public class CcrUserController {
         return MessageListBean.ok(new ArrayList<>(ccrUserService.findRulesByUserId(id)));
     }
 
+    @ApiOperation("查询当前登录的用户信息")
+    @GetMapping("/center/user/oauth")
+    public MessageBean<CcrUser> oauth(@ApiIgnore Authentication authentication) {
+
+        CcrUser user = (CcrUser) authentication.getPrincipal();
+
+        return MessageBean.ok(user);
+
+    }
+
     @ApiImplicitParams({
             @ApiImplicitParam(name = "platform", allowableValues = "weixin")
     })
