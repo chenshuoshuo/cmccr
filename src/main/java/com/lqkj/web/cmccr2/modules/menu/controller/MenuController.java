@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.lqkj.web.cmccr2.message.MessageBean;
 import com.lqkj.web.cmccr2.modules.menu.domain.CcrMenu;
 import com.lqkj.web.cmccr2.modules.menu.service.MenuService;
+import com.lqkj.web.cmccr2.modules.user.domain.CcrUserRule;
 import com.lqkj.web.cmccr2.modules.user.service.CcrUserService;
 import io.swagger.annotations.*;
 import net.minidev.json.JSONArray;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.async.WebAsyncTask;
 
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Api(tags = "菜单")
@@ -87,21 +89,31 @@ public class MenuController {
         String roles = "";
         String userCode = "";
         if(authentication != null) {
+
             Jwt jwt = (Jwt) authentication.getPrincipal();
-            JSONArray jsonArray = (JSONArray) jwt.getClaims().get("rules");
-            if(jsonArray.size() > 0){
-                List<String> list = JSONObject.parseArray(jsonArray.toJSONString(), String.class);
-                roles = "'" + list
-                        .stream()
-                        .collect(Collectors.joining("','")) + "'";
-            }
+
             String userName = (String) jwt.getClaims().get("user_name");
             if(userName != null){
                 userCode = userService.findByUserName(userName).getUserId().toString();
             }
-            userRole[0] = roles;
-            userRole[1] = userCode;
+
+            JSONArray jsonArray = (JSONArray) jwt.getClaims().get("rules");
+            if(jsonArray != null && jsonArray.size() > 0){
+                List<String> list = JSONObject.parseArray(jsonArray.toJSONString(), String.class);
+                if(list.size() > 0 && !"".equals(list.get(0))){
+                    roles = "'" + list
+                            .stream()
+                            .collect(Collectors.joining("','")) + "'";
+                }
+            }else {
+                roles  = "'" + userService.findByUserName(userName).getRules().stream()
+                        .map(CcrUserRule::getContent)
+                        .collect(Collectors.joining("','")) + "'";
+            }
         }
+        userRole[0] = roles;
+        userRole[1] = userCode;
+
         return userRole;
     }
 }
