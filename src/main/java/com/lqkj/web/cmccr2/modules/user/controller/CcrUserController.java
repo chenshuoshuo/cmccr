@@ -16,6 +16,7 @@ import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.async.WebAsyncTask;
@@ -91,9 +92,9 @@ public class CcrUserController {
     @GetMapping("/center/user/oauth")
     public MessageBean<CcrUser> oauth(@ApiIgnore Authentication authentication) {
 
-        CcrUser user = (CcrUser) authentication.getPrincipal();
+        String userCode = SecurityContextHolder.getContext().getAuthentication().getName();
 
-        return MessageBean.ok(user);
+        return MessageBean.ok((CcrUser) ccrUserService.loadUserByUsername(userCode));
 
     }
 
