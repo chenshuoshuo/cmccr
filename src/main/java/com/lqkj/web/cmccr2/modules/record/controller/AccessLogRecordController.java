@@ -125,7 +125,7 @@ public class AccessLogRecordController {
 
             //用户组使用统计
             List<KeyValueVO> useGroupCount = keyValueVOService.userGroupCount();
-            useGroupCount.add(useAllCount);
+            //useGroupCount.add(useAllCount);
             ccrAccessLogVO.setUserGroupCountList(useGroupCount);
             return MessageBean.ok(ccrAccessLogVO);
         } catch (Exception e) {

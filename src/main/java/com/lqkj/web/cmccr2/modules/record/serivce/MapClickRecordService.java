@@ -23,4 +23,11 @@ public class MapClickRecordService {
     public List<Object[]> clickRecord() {
         return clickRecordRepository.clickRecord();
     }
+
+    /**
+     * 根据用户组查询地图点击次数
+     */
+    public List<Object[]> clickRecordByGroup(String userGroup){
+        return clickRecordRepository.clickRecordByGroup(userGroup);
+    }
 }
