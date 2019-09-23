@@ -29,8 +29,16 @@ public class CcrUserRuleController {
     @PutMapping("/center/user/rule")
     public MessageBean<CcrUserRule> add(@RequestParam String name,
                                         @RequestParam String enName,
-                                        @RequestParam Long[] authorities) {
-        Object object=ruleService.add(name, enName, authorities);
+                                        @RequestParam Long[] authorities,
+                                        Authentication authentication ) {
+
+        String userCode = "";
+        if(authentication != null){
+            Jwt jwt =(Jwt)authentication.getPrincipal();
+            userCode = (String)jwt.getClaims().get("user_name");
+        }
+
+        Object object=ruleService.add(name, enName, authorities,userCode);
         if(object!=null){
             return MessageBean.ok((CcrUserRule) object);
         }
