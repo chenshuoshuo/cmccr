@@ -101,7 +101,8 @@ public class RequestRecordService {
 
         for (Object[] r : results) {
             try {
-                DataBlock block = dbSearcher.memorySearch((String) r[0]);
+                String ip = String.valueOf(r[0]).split(",")[0];
+                DataBlock block = dbSearcher.memorySearch(ip);
                 locationRecords.add(new CcrLocationRecord(block.getRegion(), block.getCityId(),
                         ((BigInteger) r[1]).intValue()));
             } catch (Exception e) {

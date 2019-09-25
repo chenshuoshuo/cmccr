@@ -13,6 +13,7 @@ import io.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.async.WebAsyncTask;
@@ -85,6 +86,16 @@ public class CcrUserController {
     @GetMapping("/center/user/{id}/rules")
     public MessageListBean<CcrUserRule> ruleByUserId(@PathVariable Long id) {
         return MessageListBean.ok(new ArrayList<>(ccrUserService.findRulesByUserId(id)));
+    }
+
+    @ApiOperation("查询当前登录的用户信息")
+    @GetMapping("/center/user/oauth")
+    public MessageBean<CcrUser> oauth(@ApiIgnore Authentication authentication) {
+
+        String userCode = SecurityContextHolder.getContext().getAuthentication().getName();
+
+        return MessageBean.ok((CcrUser) ccrUserService.loadUserByUsername(userCode));
+
     }
 
     @ApiImplicitParams({
