@@ -25,6 +25,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import sun.misc.BASE64Decoder;
 
 import java.util.Iterator;
 import java.util.List;
@@ -66,9 +67,15 @@ public class CcrUserService implements UserDetailsService {
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         systemLogService.addLog("用户管理服务", "loadClientByClientId",
                 "普通用户查询");
+        try {
+            String name = new String(decryptBASE64(new String(decryptBASE64(username))));
+            return userRepository.findByUserName(name);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return null;
 
-        return userRepository.findByUserName(username);
-    }
+}
 
     /**
      * 注册管理员用户
@@ -105,13 +112,17 @@ public class CcrUserService implements UserDetailsService {
     /**
      * 更新用户密码
      */
-    public String update(Long id, String password, Boolean admin) {
+    public String update(Long id, String password,String oldPassword ,Boolean admin) {
         systemLogService.addLog("用户管理服务", "update",
                 "更新用户密码");
 
         CcrUser user = userRepository.getOne(id);
 
-        if (password!=null) user.setPassWord(passwordEncoder.encode(password));
+        //密码验证
+        if (password!=null && passwordEncoder.encode(oldPassword).equals(user.getPassWord())) {
+            user.setPassWord(passwordEncoder.encode(password));
+        }
+
         if (admin!=null) user.setAdmin(admin);
 
         userRepository.save(user);
@@ -285,4 +296,11 @@ public class CcrUserService implements UserDetailsService {
         ccrUserBatchRepository.bulkMergeUser(sqlString.toString());
     }
 
+    /**
+     * BASE64解密
+     * @throws Exception
+     */
+    private byte[] decryptBASE64(String key) throws Exception {
+        return (new BASE64Decoder()).decodeBuffer(key);
+    }
 }
