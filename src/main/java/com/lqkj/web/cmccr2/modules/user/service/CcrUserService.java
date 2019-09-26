@@ -67,13 +67,8 @@ public class CcrUserService implements UserDetailsService {
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         systemLogService.addLog("用户管理服务", "loadClientByClientId",
                 "普通用户查询");
-        try {
-            String name = new String(decryptBASE64(new String(decryptBASE64(username))));
-            return userRepository.findByUserName(name);
-        }catch (Exception e){
-            e.printStackTrace();
-        }
-        return null;
+
+            return userRepository.findByUserName(username);
 
 }
 
@@ -296,11 +291,5 @@ public class CcrUserService implements UserDetailsService {
         ccrUserBatchRepository.bulkMergeUser(sqlString.toString());
     }
 
-    /**
-     * BASE64解密
-     * @throws Exception
-     */
-    private byte[] decryptBASE64(String key) throws Exception {
-        return (new BASE64Decoder()).decodeBuffer(key);
-    }
+
 }

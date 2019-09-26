@@ -20,6 +20,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.async.WebAsyncTask;
 import springfox.documentation.annotations.ApiIgnore;
+import sun.misc.BASE64Decoder;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
@@ -56,8 +57,9 @@ public class CcrUserController {
 
     @ApiOperation("根据用户名查询用户信息")
     @GetMapping("/center/user/name/{username}")
-    public MessageBean<CcrUser> info(@PathVariable String username) {
-        return MessageBean.ok((CcrUser) ccrUserService.loadUserByUsername(username));
+    public MessageBean<CcrUser> info(@PathVariable String username) throws Exception {
+        String name = new String(decryptBASE64(new String(decryptBASE64(username))));
+        return MessageBean.ok((CcrUser) ccrUserService.loadUserByUsername(name));
     }
 
     @ApiOperation("更新用户密码")
@@ -145,5 +147,13 @@ public class CcrUserController {
 //            this.ccrUserService.updateUserFromCmdbe();
 //            return null;
 //        });
+    }
+
+    /**
+     * BASE64解密
+     * @throws Exception
+     */
+    private byte[] decryptBASE64(String key) throws Exception {
+        return (new BASE64Decoder()).decodeBuffer(key);
     }
 }
