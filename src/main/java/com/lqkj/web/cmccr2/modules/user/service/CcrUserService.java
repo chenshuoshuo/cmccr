@@ -67,7 +67,6 @@ public class CcrUserService implements UserDetailsService {
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         systemLogService.addLog("用户管理服务", "loadClientByClientId",
                 "普通用户查询");
-
             return userRepository.findByUserName(username);
 
 }
