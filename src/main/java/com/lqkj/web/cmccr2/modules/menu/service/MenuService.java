@@ -132,13 +132,7 @@ public class MenuService {
         }
 
         if(userCode != null && roles != null){
-            if("".equals(roles)){
-                sql += " and (target_user_role && ARRAY['','public'] \\:\\:varchar[] or specify_user_id && ARRAY['"+ userCode +"'] \\:\\:varchar[]) ";
-            }else {
-                sql += " and (target_user_role && ARRAY[" + roles + ",'public'] \\:\\:varchar[] or specify_user_id && ARRAY['"+ userCode +"'] \\:\\:varchar[]) ";
-            }
-        }else{
-            sql += " and (target_user_role && ARRAY['','public'] \\:\\:varchar[] or specify_user_id && ARRAY[''] \\:\\:varchar[]) ";
+            sql += " and (target_user_role && ARRAY[" + roles + ",'public'] \\:\\:varchar[] or specify_user_id && ARRAY['"+ userCode +"'] \\:\\:varchar[]) ";
         }
 
         Pageable pageable = PageRequest.of(page,pageSize,Sort.by("sort"));

@@ -15,6 +15,7 @@ import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.async.WebAsyncTask;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -61,8 +62,9 @@ public class MenuController {
             @ApiImplicitParam(name = "keyword", paramType = "query", value = "关键字")
     })
     public WebAsyncTask<MessageBean<Page<CcrMenu>>> search(String keyword, Integer page, Integer pageSize,Authentication authentication) {
-        String[] userRole = getRolesAndCode(authentication);
-        return new WebAsyncTask<>(() ->MessageBean.ok(menuService.page(keyword,userRole[0],userRole[1], page, pageSize)));
+       // String[] userRole = new String[]{"",""};
+        List<String> userRole = getRolesAndCode(authentication);
+        return new WebAsyncTask<>(() ->MessageBean.ok(menuService.page(keyword,userRole.get(0),userRole.get(1), page, pageSize)));
     }
 
     @ApiOperation("查询菜单项信息")
@@ -80,12 +82,12 @@ public class MenuController {
                                                              @RequestParam(required = false) String keyword,
                                                              @PathVariable(required = false) CcrMenu.IpsMenuType type,
                                                              @ApiParam(hidden = true) Authentication authentication) {
-        String[] userRole = getRolesAndCode(authentication);
-        return new WebAsyncTask<>(() -> MessageBean.ok(menuService.typePage(type, keyword,userRole[0],userRole[1], page, pageSize)));
+        List<String> userRole = getRolesAndCode(authentication);
+        return new WebAsyncTask<>(() -> MessageBean.ok(menuService.typePage(type, keyword,userRole.get(0),userRole.get(1), page, pageSize)));
     }
 
-    private String[] getRolesAndCode(Authentication authentication){
-        String[] userRole = new String[2];
+    private List<String> getRolesAndCode(Authentication authentication){
+        List<String> userRole = new ArrayList<>();
         String roles = "";
         String userCode = "";
         if(authentication != null) {
@@ -93,6 +95,7 @@ public class MenuController {
             Jwt jwt = (Jwt) authentication.getPrincipal();
 
             String userName = (String) jwt.getClaims().get("user_name");
+            //String userName = null;
             if(userName != null){
                 userCode = userService.findByUserName(userName).getUserId().toString();
             }
@@ -111,8 +114,8 @@ public class MenuController {
                         .collect(Collectors.joining("','")) + "'";
             }
         }
-        userRole[0] = roles;
-        userRole[1] = userCode;
+        userRole.add(roles);
+        userRole.add(userCode);
 
         return userRole;
     }
