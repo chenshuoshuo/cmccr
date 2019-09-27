@@ -137,6 +137,8 @@ public class MenuService {
             }else {
                 sql += " and (target_user_role && ARRAY[" + roles + ",'public'] \\:\\:varchar[] or specify_user_id && ARRAY['"+ userCode +"'] \\:\\:varchar[]) ";
             }
+        }else{
+            sql += " and (target_user_role && ARRAY['','public'] \\:\\:varchar[] or specify_user_id && ARRAY[''] \\:\\:varchar[]) ";
         }
 
         Pageable pageable = PageRequest.of(page,pageSize,Sort.by("sort"));
