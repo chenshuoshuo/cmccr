@@ -18,7 +18,7 @@ public interface CcrAccessLogRecordRepository extends JpaRepository<CcrAccessLog
     int useCountAll();
 
     @Query(value = "SELECT count(ip.*) from (SELECT COUNT(DISTINCT ip_address) FROM ccr_access_log GROUP BY ip_address) ip",nativeQuery = true)
-    int countByIpAddress();
+    Integer countByIpAddress();
 
     @Modifying
     @Query(value = "delete from ccr_access_log ar where ar.log_time >= to_timestamp(?1,'yyyy-mm-dd hh24:mi:ss') and log_time <= to_timestamp(?2,'yyyy-mm-dd hh24:mi:ss')",nativeQuery = true)
