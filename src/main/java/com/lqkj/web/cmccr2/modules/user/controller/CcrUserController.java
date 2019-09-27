@@ -71,7 +71,13 @@ public class CcrUserController {
                                       @RequestParam(required = false) Boolean admin,
                                       @RequestParam(required = false) String oldPassword,
                                       @PathVariable Long id) {
-        return MessageBean.ok(ccrUserService.update(id, password,oldPassword, admin));
+        String update = ccrUserService.update(id, password, oldPassword, admin);
+        if(update != null){
+            return MessageBean.ok(update);
+        }else {
+            return MessageBean.error("密码修改失败");
+        }
+
     }
 
     @ApiOperation("根据用户id删除用户")

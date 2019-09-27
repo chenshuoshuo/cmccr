@@ -110,18 +110,18 @@ public class CcrUserService implements UserDetailsService {
         systemLogService.addLog("用户管理服务", "update",
                 "更新用户密码");
 
-        CcrUser user = userRepository.getOne(id);
-
+        CcrUser user = userRepository.findById(id).get();
         //密码验证
-        if (password!=null && passwordEncoder.encode(oldPassword).equals(user.getPassWord())) {
+        if (password!=null && passwordEncoder.matches(oldPassword,user.getPassWord())) {
             user.setPassWord(passwordEncoder.encode(password));
+
+            if (admin!=null) user.setAdmin(admin);
+
+            userRepository.save(user);
+
+            return password;
         }
-
-        if (admin!=null) user.setAdmin(admin);
-
-        userRepository.save(user);
-
-        return password;
+        return null;
     }
 
     /**
