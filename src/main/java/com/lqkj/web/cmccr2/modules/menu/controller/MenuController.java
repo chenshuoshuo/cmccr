@@ -109,9 +109,11 @@ public class MenuController {
                             .collect(Collectors.joining("','")) + "'";
                 }
             }else {
-                roles  = "'" + userService.findByUserName(userName).getRules().stream()
-                        .map(CcrUserRule::getContent)
-                        .collect(Collectors.joining("','")) + "'";
+                if(userName != null){
+                    roles  = "'" + userService.findByUserName(userName).getRules().stream()
+                            .map(CcrUserRule::getContent)
+                            .collect(Collectors.joining("','")) + "'";
+                }
             }
         }
         userRole.add(roles);
