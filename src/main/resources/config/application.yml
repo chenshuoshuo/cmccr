@@ -75,7 +75,7 @@ spring:
     hikari:
       driver-class-name: org.postgresql.Driver
       username: postgres
-      password: lqkj007
+      password: 6992005Ych
       auto-commit: true
       pool-name: ccr
       minimum-idle: 4
@@ -84,7 +84,7 @@ spring:
       max-lifetime: 1800000
       connection-timeout: 30000
       read-only: false
-    url: jdbc:postgresql://192.168.4.241:5432/cmccr
+    url: jdbc:postgresql://211.149.141.72:5432/test_cmccr2
   mvc:
     favicon:
       enabled: true
