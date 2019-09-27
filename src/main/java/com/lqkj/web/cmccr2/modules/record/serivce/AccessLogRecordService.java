@@ -26,7 +26,7 @@ public class AccessLogRecordService {
 
     public int useCountAll(){ return accessLogRecordRepository.useCountAll();}
 
-    public int ipCount(){return accessLogRecordRepository.countByIpAddress();}
+    public Integer ipCount(){return accessLogRecordRepository.countByIpAddress();}
 
     public void deleteAllByLogTime(String startDate, String endDate){accessLogRecordRepository.deleteAllByLogTime(startDate,endDate);}
 
