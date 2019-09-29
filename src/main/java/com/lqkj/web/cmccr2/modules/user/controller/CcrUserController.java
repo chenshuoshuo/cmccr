@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.async.WebAsyncTask;
@@ -55,18 +56,28 @@ public class CcrUserController {
 
     @ApiOperation("根据用户名查询用户信息")
     @GetMapping("/center/user/name/{username}")
-    public MessageBean<CcrUser> info(@PathVariable String username) {
-        return MessageBean.ok((CcrUser) ccrUserService.loadUserByUsername(username));
+    public MessageBean<CcrUser> info(@PathVariable String username,@ApiIgnore Authentication authentication) throws Exception {
+
+        //String name = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String name = "";
+        if(authentication != null){
+            Jwt jwt =(Jwt)authentication.getPrincipal();
+            name = (String)jwt.getClaims().get("user_name");
+        }
+
+        return MessageBean.ok((CcrUser) ccrUserService.loadUserByUsername(name));
     }
 
-    @ApiOperation("更新用户密码和头像")
+    @ApiOperation("更新用户密码")
     @PostMapping("/center/user/{id}")
     public MessageBean<CcrUser> update(@RequestParam(required = false) String password,
                                       @RequestParam(required = false) Boolean admin,
+                                      @RequestParam(required = false) String oldPassword,
                                       @PathVariable Long id,
-                                      @ApiParam(value = "头像文件") MultipartFile headFile) throws Exception{
+                                      @ApiParam(value = "头像文件") MultipartFile headFile)throws Exception{
+
         String headPath = ccrUserService.saveUploadFile(headFile,"png", "jpg");
-        return MessageBean.ok(ccrUserService.update(id, password, admin,headPath));
+        return MessageBean.ok(ccrUserService.update(id,password,oldPassword,admin,headPath));
     }
 
     @ApiOperation("根据用户id删除用户")
@@ -86,16 +97,6 @@ public class CcrUserController {
     @GetMapping("/center/user/{id}/rules")
     public MessageListBean<CcrUserRule> ruleByUserId(@PathVariable Long id) {
         return MessageListBean.ok(new ArrayList<>(ccrUserService.findRulesByUserId(id)));
-    }
-
-    @ApiOperation("查询当前登录的用户信息")
-    @GetMapping("/center/user/oauth")
-    public MessageBean<CcrUser> oauth(@ApiIgnore Authentication authentication) {
-
-        String userCode = SecurityContextHolder.getContext().getAuthentication().getName();
-
-        return MessageBean.ok((CcrUser) ccrUserService.loadUserByUsername(userCode));
-
     }
 
     @ApiImplicitParams({

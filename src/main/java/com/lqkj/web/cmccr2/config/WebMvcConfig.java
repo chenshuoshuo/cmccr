@@ -60,7 +60,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
     /**
      * 跨域配置
      */
-    @Bean
+   // @Bean
     public CorsFilter corsFilter() {
         CorsConfiguration corsConfiguration = new CorsConfiguration();
         corsConfiguration.setAllowCredentials(true);
