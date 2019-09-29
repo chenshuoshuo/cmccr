@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
-import com.lqkj.web.cmccr2.modules.application.domain.CcrVersionApplication;
 import com.lqkj.web.cmccr2.modules.log.service.CcrSystemLogService;
 import com.lqkj.web.cmccr2.modules.user.dao.CcrUserBatchRepository;
 import com.lqkj.web.cmccr2.modules.user.dao.CcrUserRepository;
@@ -76,9 +75,9 @@ public class CcrUserService implements UserDetailsService {
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         systemLogService.addLog("用户管理服务", "loadClientByClientId",
                 "普通用户查询");
+            return userRepository.findByUserName(username);
 
-        return userRepository.findByUserName(username);
-    }
+}
 
     public CcrUser findByUserName(String userName){
         systemLogService.addLog("用户管理服务", "findByUserName",
@@ -121,19 +120,22 @@ public class CcrUserService implements UserDetailsService {
     /**
      * 更新用户密码和头像
      */
-    public CcrUser update(Long id, String password, Boolean admin,String headPath) {
+    public CcrUser update(Long id, String password,String oldPassword ,Boolean admin,String headPath) {
         systemLogService.addLog("用户管理服务", "update",
                 "更新用户密码和头像");
 
-        CcrUser user = userRepository.getOne(id);
+        CcrUser user = userRepository.findById(id).get();
+        //密码验证
+        if (password!=null && passwordEncoder.matches(oldPassword,user.getPassWord())) {
+            user.setPassWord(passwordEncoder.encode(password));
 
-        if (password!=null) user.setPassWord(passwordEncoder.encode(password));
-        if (admin!=null) user.setAdmin(admin);
-        if(headPath!=null)user.setHeadPath(headPath);
+            if (admin!=null) user.setAdmin(admin);
+            if(headPath!=null)user.setHeadPath(headPath);
 
-        userRepository.save(user);
-
-        return this.setIconURL(user);
+            userRepository.save(user);
+            return this.setIconURL(user);
+        }
+       return  null;
     }
 
     /**
@@ -351,5 +353,6 @@ public class CcrUserService implements UserDetailsService {
         }
         return user;
     }
+
 
 }

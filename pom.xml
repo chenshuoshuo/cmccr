@@ -6,7 +6,7 @@
 
 	<groupId>com.lqkj.web.cmccr</groupId>
 	<artifactId>cmccr2</artifactId>
-	<version>1.0.5</version>
+	<version>1.0.6.1</version>
 	<packaging>jar</packaging>
 
 	<name>cmccr2</name>
@@ -233,7 +233,7 @@
 			<groupId>com.github.ben-manes.caffeine</groupId>
 			<artifactId>jcache</artifactId>
 		</dependency>
-
+		<!--cookie过滤器 -->
 		<!--定时器-->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
