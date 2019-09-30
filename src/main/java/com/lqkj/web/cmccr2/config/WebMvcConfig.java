@@ -60,8 +60,8 @@ public class WebMvcConfig implements WebMvcConfigurer {
     /**
      * 跨域配置
      */
-   // @Bean
-   /* public CorsFilter corsFilter() {
+    @Bean
+    public CorsFilter corsFilter() {
         CorsConfiguration corsConfiguration = new CorsConfiguration();
         corsConfiguration.setAllowCredentials(true);
         corsConfiguration.addAllowedOrigin("*");
@@ -70,7 +70,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
         UrlBasedCorsConfigurationSource urlBasedCorsConfigurationSource = new UrlBasedCorsConfigurationSource();
         urlBasedCorsConfigurationSource.registerCorsConfiguration("/**", corsConfiguration);
         return new CorsFilter(urlBasedCorsConfigurationSource);
-    }*/
+    }
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
