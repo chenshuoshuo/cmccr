@@ -75,7 +75,7 @@ spring:
     hikari:
       driver-class-name: org.postgresql.Driver
       username: postgres
-      password: lqkj07
+      password: lqkj007
       auto-commit: true
       pool-name: ccr
       minimum-idle: 4
