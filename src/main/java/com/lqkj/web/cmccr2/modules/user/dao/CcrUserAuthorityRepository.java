@@ -11,6 +11,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Map;
 
 @Repository
 public interface CcrUserAuthorityRepository extends JpaRepository<CcrUserAuthority, Long> {
@@ -35,4 +36,9 @@ public interface CcrUserAuthorityRepository extends JpaRepository<CcrUserAuthori
     Page<CcrUserAuthority> findSupportAuthority(@Param("userName") String userName,
                                                 @Param("keyword") String keyword,
                                                 Pageable pageable);
+
+//    @Query(value = "select * from ccr_user_authority where target_user_role && ARRAY[?2,'public'] \\:\\:varchar[] or specify_user_id && ARRAY[?1] \\:\\:varchar[] group by authority_id",nativeQuery = true)
+//   // @Query("select ua from CcrUserAuthority ua where ua.targetUserRole in ?2 or ua.specifyUserId in ?1 group by ua.authorityId")
+//    List<CcrUserAuthority> listQuery(String userId,String roles);
 }
+

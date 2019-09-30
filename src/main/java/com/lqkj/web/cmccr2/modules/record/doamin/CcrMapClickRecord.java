@@ -27,6 +27,12 @@ public class CcrMapClickRecord implements Serializable {
     @Column(name = "node_id")
     private Long nodeId;
 
+    /**
+     * 用户组
+     */
+    @Column(name = "user_group")
+    private String userGroup;
+
     @Column
     private String name;
 
@@ -64,5 +70,13 @@ public class CcrMapClickRecord implements Serializable {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getUserGroup() {
+        return userGroup;
+    }
+
+    public void setUserGroup(String userGroup) {
+        this.userGroup = userGroup;
     }
 }

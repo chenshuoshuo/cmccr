@@ -3,6 +3,7 @@ package com.lqkj.web.cmccr2.modules.user.service;
 import com.google.common.collect.Lists;
 import com.lqkj.web.cmccr2.modules.log.service.CcrSystemLogService;
 import com.lqkj.web.cmccr2.modules.user.dao.CcrUserAuthorityRepository;
+import com.lqkj.web.cmccr2.modules.user.dao.CcrUserAuthoritySQLDao;
 import com.lqkj.web.cmccr2.modules.user.dao.CcrUserRuleRepository;
 import com.lqkj.web.cmccr2.modules.user.domain.CcrUser;
 import com.lqkj.web.cmccr2.modules.user.domain.CcrUserAuthority;
@@ -13,11 +14,13 @@ import org.springframework.data.domain.Example;
 import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -26,6 +29,9 @@ import java.util.Set;
 @Service
 @Transactional
 public class CcrUserAuthorityService {
+
+    @Autowired
+    private CcrUserAuthoritySQLDao userAuthoritySQLDao;
 
     private CcrUserAuthorityRepository userAuthorityRepository;
 
@@ -84,12 +90,9 @@ public class CcrUserAuthorityService {
         return userAuthorityRepository.findById(id).get();
     }
 
-    public Page<CcrUserAuthority> page(String keyword, Integer page, Integer pageSize) {
+    public Page<CcrUserAuthority> page(String name, String keyword, Integer page, Integer pageSize) {
         systemLogService.addLog("用户权限服务", "page",
                 "分页查询用户权限");
-
-        String name = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-
         String k = keyword==null ? "" : keyword;
 
         return userAuthorityRepository.findSupportAuthority(name, "%" + k + "%",
@@ -121,5 +124,19 @@ public class CcrUserAuthorityService {
 
             userAuthorityRepository.save(userAuthority);
         }
+    }
+
+    public List<CcrUserAuthority> findByRoleAndUserId(String userId,String roles) {
+        systemLogService.addLog("用户权限服务", "findByRoleAndUserId",
+                "查询更新权限状态列表");
+
+        String sql = "select * from ccr_user_authority " +
+                " where 1 = 1";
+
+        if(userId != null && roles != null){
+            sql += " and target_user_role && ARRAY[" + roles + ",'public'] \\:\\:varchar[] or specify_user_id && ARRAY['"+ userId +"'] \\:\\:varchar[] group by authority_id";
+        }
+
+        return  userAuthoritySQLDao.executeSql(sql,CcrUserAuthority.class);
     }
 }

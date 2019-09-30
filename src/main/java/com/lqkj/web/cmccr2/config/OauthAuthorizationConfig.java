@@ -19,6 +19,7 @@ import org.springframework.security.jwt.crypto.sign.RsaVerifier;
 import org.springframework.security.oauth2.common.OAuth2AccessToken;
 import org.springframework.security.oauth2.config.annotation.configurers.ClientDetailsServiceConfigurer;
 import org.springframework.security.oauth2.config.annotation.web.configuration.AuthorizationServerConfigurer;
+import org.springframework.security.oauth2.config.annotation.web.configuration.AuthorizationServerConfigurerAdapter;
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableAuthorizationServer;
 import org.springframework.security.oauth2.config.annotation.web.configurers.AuthorizationServerEndpointsConfigurer;
 import org.springframework.security.oauth2.config.annotation.web.configurers.AuthorizationServerSecurityConfigurer;
@@ -55,7 +56,7 @@ import java.util.concurrent.TimeUnit;
 @Configuration
 @EnableAuthorizationServer
 @EnableWebSecurity
-public class OauthAuthorizationConfig extends WebSecurityConfigurerAdapter implements AuthorizationServerConfigurer {
+public class OauthAuthorizationConfig extends WebSecurityConfigurerAdapter  implements AuthorizationServerConfigurer {
 
     @Autowired
     CcrUserService userService;
@@ -110,6 +111,7 @@ public class OauthAuthorizationConfig extends WebSecurityConfigurerAdapter imple
         endpoints
                 .allowedTokenEndpointRequestMethods(HttpMethod.GET, HttpMethod.POST, HttpMethod.OPTIONS)
                 .tokenStore(tokenStore())
+                .accessTokenConverter(accessTokenConverter())
                 .tokenServices(tokenServices())
                 .userDetailsService(userService)
                 .authenticationManager(authenticationManager);

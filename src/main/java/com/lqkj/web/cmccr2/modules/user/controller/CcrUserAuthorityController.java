@@ -1,15 +1,23 @@
 package com.lqkj.web.cmccr2.modules.user.controller;
 
+import com.alibaba.fastjson.JSONObject;
 import com.lqkj.web.cmccr2.message.MessageBean;
 import com.lqkj.web.cmccr2.message.MessageListBean;
 import com.lqkj.web.cmccr2.modules.user.domain.CcrUserAuthority;
 import com.lqkj.web.cmccr2.modules.user.service.CcrUserAuthorityService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import net.minidev.json.JSONArray;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Api(tags = "用户权限")
 @RestController
@@ -49,8 +57,14 @@ public class CcrUserAuthorityController {
     @GetMapping("/center/user/authority/page")
     public MessageBean<Page<CcrUserAuthority>> page(String keyword,
                                                     @RequestParam Integer page,
-                                                    @RequestParam Integer pageSize) {
-        return MessageBean.ok(authorityService.page(keyword, page, pageSize));
+                                                    @RequestParam Integer pageSize,
+                                                     Authentication authentication) {
+        String userCode = "";
+        if(authentication != null){
+            Jwt jwt =(Jwt)authentication.getPrincipal();
+            userCode = (String)jwt.getClaims().get("user_name");
+        }
+        return MessageBean.ok(authorityService.page(userCode,keyword, page, pageSize));
     }
 
     @ApiOperation("根据角色id查询权限")
@@ -71,5 +85,22 @@ public class CcrUserAuthorityController {
                                           @RequestParam Boolean enabled) {
         this.authorityService.batchUpdateEnabled(authorities, enabled);
         return MessageBean.ok();
+    }
+
+    @ApiOperation("获取权限状态列表")
+    @PostMapping("/center/user/authority/list")
+    public MessageBean<List<CcrUserAuthority>> findByRoleAndUserId(Authentication authentication) {
+        String rules = "";
+        String userCode = "";
+        if(authentication != null){
+            Jwt jwt =(Jwt)authentication.getPrincipal();
+            JSONArray jsonArray = (JSONArray)jwt.getClaims().get("rules");
+            List<String> list  = JSONObject.parseArray(jsonArray.toJSONString(),String.class);
+            rules = "'" + list
+                    .stream()
+                    .collect(Collectors.joining("','")) + "'";
+            userCode = (String)jwt.getClaims().get("user_name");
+        }
+        return MessageBean.ok(authorityService.findByRoleAndUserId(userCode, rules));
     }
 }

@@ -80,6 +80,23 @@
 			<artifactId>spring-security-jwt</artifactId>
 			<version>1.0.9.RELEASE</version>
 		</dependency>
+		<dependency>
+			<groupId>io.jsonwebtoken</groupId>
+			<artifactId>jjwt</artifactId>
+			<version>0.9.0</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-oauth2-jose</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-oauth2-resource-server</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-oauth2-client</artifactId>
+		</dependency>
 		<!--web服务-->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -216,7 +233,7 @@
 			<groupId>com.github.ben-manes.caffeine</groupId>
 			<artifactId>jcache</artifactId>
 		</dependency>
-
+		<!--cookie过滤器 -->
 		<!--定时器-->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -228,6 +245,20 @@
 			<groupId>com.squareup.okhttp3</groupId>
 			<artifactId>okhttp</artifactId>
 			<version>4.0.1</version>
+		</dependency>
+
+		<!-- fastjson-->
+		<dependency>
+			<groupId>com.alibaba</groupId>
+			<artifactId>fastjson</artifactId>
+			<version>1.2.54</version>
+		</dependency>
+
+		<!-- https://github.com/alibaba/easyexcel -->
+		<dependency>
+			<groupId>com.alibaba</groupId>
+			<artifactId>easyexcel</artifactId>
+			<version>1.1.2-beta4</version>
 		</dependency>
 
 	</dependencies>

@@ -1,16 +1,24 @@
 package com.lqkj.web.cmccr2.modules.menu.controller;
 
+import com.alibaba.fastjson.JSONObject;
 import com.lqkj.web.cmccr2.message.MessageBean;
 import com.lqkj.web.cmccr2.modules.menu.domain.CcrMenu;
 import com.lqkj.web.cmccr2.modules.menu.service.MenuService;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiImplicitParam;
-import io.swagger.annotations.ApiImplicitParams;
-import io.swagger.annotations.ApiOperation;
+import com.lqkj.web.cmccr2.modules.user.domain.CcrUserRule;
+import com.lqkj.web.cmccr2.modules.user.service.CcrUserService;
+import io.swagger.annotations.*;
+import net.minidev.json.JSONArray;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.async.WebAsyncTask;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Api(tags = "菜单")
 @RestController
@@ -20,13 +28,15 @@ public class MenuController {
 
     @Autowired
     MenuService menuService;
+    @Autowired
+    CcrUserService userService;
 
     @ApiOperation("创建菜单")
     @PutMapping("/center/menu/" + VERSION + "/create")
-    public MessageBean<Long> create(CcrMenu CcrMenu) {
+    public MessageBean<Long> create(@RequestBody CcrMenu ccrMenu) {
         //先判断菜单名称是否重复
-        if(menuService.createMenu(CcrMenu)!=null){
-            return MessageBean.ok(menuService.createMenu(CcrMenu));
+        if(menuService.createMenu(ccrMenu)!=null){
+            return MessageBean.ok(menuService.createMenu(ccrMenu));
         }
         return MessageBean.error("存在相同的菜单名称");
     }
@@ -51,8 +61,10 @@ public class MenuController {
     @ApiImplicitParams({
             @ApiImplicitParam(name = "keyword", paramType = "query", value = "关键字")
     })
-    public WebAsyncTask<MessageBean<Page<CcrMenu>>> search(String keyword, Integer page, Integer pageSize) {
-        return new WebAsyncTask<>(() -> MessageBean.ok(menuService.page(keyword, page, pageSize)));
+    public WebAsyncTask<MessageBean<Page<CcrMenu>>> search(String keyword, Integer page, Integer pageSize,Authentication authentication) {
+       // String[] userRole = new String[]{"",""};
+        List<String> userRole = getRolesAndCode(authentication);
+        return new WebAsyncTask<>(() ->MessageBean.ok(menuService.page(keyword,userRole.get(0),userRole.get(1), page, pageSize)));
     }
 
     @ApiOperation("查询菜单项信息")
@@ -68,7 +80,45 @@ public class MenuController {
     public WebAsyncTask<MessageBean<Page<CcrMenu>>> typePage(@RequestParam Integer page,
                                                              @RequestParam Integer pageSize,
                                                              @RequestParam(required = false) String keyword,
-                                                             @PathVariable(required = false) CcrMenu.IpsMenuType type) {
-        return new WebAsyncTask<>(() -> MessageBean.ok(menuService.typePage(type, keyword, page, pageSize)));
+                                                             @PathVariable(required = false) CcrMenu.IpsMenuType type,
+                                                             @ApiParam(hidden = true) Authentication authentication) {
+        List<String> userRole = getRolesAndCode(authentication);
+        return new WebAsyncTask<>(() -> MessageBean.ok(menuService.typePage(type, keyword,userRole.get(0),userRole.get(1), page, pageSize)));
+    }
+
+    private List<String> getRolesAndCode(Authentication authentication){
+        List<String> userRole = new ArrayList<>();
+        String roles = "";
+        String userCode = "";
+        if(authentication != null) {
+
+            Jwt jwt = (Jwt) authentication.getPrincipal();
+
+            String userName = (String) jwt.getClaims().get("user_name");
+            //String userName = null;
+            if(userName != null){
+                userCode = userService.findByUserName(userName).getUserId().toString();
+            }
+
+            JSONArray jsonArray = (JSONArray) jwt.getClaims().get("rules");
+            if(jsonArray != null && jsonArray.size() > 0){
+                List<String> list = JSONObject.parseArray(jsonArray.toJSONString(), String.class);
+                if(list.size() > 0 && !"".equals(list.get(0))){
+                    roles = "'" + list
+                            .stream()
+                            .collect(Collectors.joining("','")) + "'";
+                }
+            }else {
+                if(userName != null){
+                    roles  = "'" + userService.findByUserName(userName).getRules().stream()
+                            .map(CcrUserRule::getContent)
+                            .collect(Collectors.joining("','")) + "'";
+                }
+            }
+        }
+        userRole.add(roles);
+        userRole.add(userCode);
+
+        return userRole;
     }
 }

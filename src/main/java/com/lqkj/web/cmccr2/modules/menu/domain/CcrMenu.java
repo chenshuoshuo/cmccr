@@ -1,10 +1,13 @@
 package com.lqkj.web.cmccr2.modules.menu.domain;
 
+import io.swagger.annotations.ApiModelProperty;
+import org.hibernate.annotations.Type;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.*;
 import java.io.Serializable;
 import java.sql.Timestamp;
+import java.util.Arrays;
 import java.util.Objects;
 
 /**
@@ -44,6 +47,14 @@ public class CcrMenu implements Serializable {
     @UpdateTimestamp
     @Column(name = "update_time")
     private Timestamp updateTime;
+
+    @Column(name = "target_user_role", columnDefinition = " string[]")
+    @Type(type = "string-array")
+    private String[] targetUserRole;
+
+    @Column(name = "specify_user_id", columnDefinition = " string[]")
+    @Type(type = "string-array")
+    private String[] specifyUserId;
 
     public Long getMenuId() {
         return menuId;
@@ -109,6 +120,22 @@ public class CcrMenu implements Serializable {
         this.url = url;
     }
 
+    public String[] getTargetUserRole() {
+        return targetUserRole;
+    }
+
+    public void setTargetUserRole(String[] targetUserRole) {
+        this.targetUserRole = targetUserRole;
+    }
+
+    public String[] getSpecifyUserId() {
+        return specifyUserId;
+    }
+
+    public void setSpecifyUserId(String[] specifyUserId) {
+        this.specifyUserId = specifyUserId;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -121,15 +148,20 @@ public class CcrMenu implements Serializable {
                 Objects.equals(sort, ccrMenu.sort) &&
                 Objects.equals(status, ccrMenu.status) &&
                 Objects.equals(url, ccrMenu.url) &&
-                Objects.equals(updateTime, ccrMenu.updateTime);
+                Objects.equals(updateTime, ccrMenu.updateTime) &&
+                Arrays.equals(targetUserRole, ccrMenu.targetUserRole) &&
+                Arrays.equals(specifyUserId, ccrMenu.specifyUserId);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(menuId, name, icon, type, sort, status, url, updateTime);
+        int result = Objects.hash(menuId, name, icon, type, sort, status, url, updateTime);
+        result = 31 * result + Arrays.hashCode(targetUserRole);
+        result = 31 * result + Arrays.hashCode(specifyUserId);
+        return result;
     }
 
     public enum IpsMenuType {
-        embed, url, extend, application
+        embed, url, extend, application, internal
     }
 }

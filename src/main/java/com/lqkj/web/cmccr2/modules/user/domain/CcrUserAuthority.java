@@ -73,6 +73,16 @@ public class CcrUserAuthority implements Serializable, GrantedAuthority {
     @Column(name = "file_path")
     private String filePath;
 
+    @ApiModelProperty(value = "面向角色")
+    @Column(name = "target_user_role", columnDefinition = " string[]")
+    @Type(type = "string-array")
+    private String[] targetUserRole;
+
+    @ApiModelProperty(value = "指定用户")
+    @Column(name = "specify_user_id", columnDefinition = " string[]")
+    @Type(type = "string-array")
+    private String[] specifyUserId;
+
     public CcrUserAuthority() {
     }
 
@@ -161,10 +171,26 @@ public class CcrUserAuthority implements Serializable, GrantedAuthority {
         this.filePath = filePath;
     }
 
+    public String[] getTargetUserRole() {
+        return targetUserRole;
+    }
+
+    public void setTargetUserRole(String[] targetUserRole) {
+        this.targetUserRole = targetUserRole;
+    }
+
+    public String[] getSpecifyUserId() {
+        return specifyUserId;
+    }
+
+    public void setSpecifyUserId(String[] specifyUserId) {
+        this.specifyUserId = specifyUserId;
+    }
+
     @Override
     public boolean equals(Object o) {
-        if (this==o) return true;
-        if (o==null || getClass()!=o.getClass()) return false;
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
         CcrUserAuthority that = (CcrUserAuthority) o;
         return Objects.equals(authorityId, that.authorityId) &&
                 Objects.equals(name, that.name) &&
@@ -172,16 +198,20 @@ public class CcrUserAuthority implements Serializable, GrantedAuthority {
                 Objects.equals(route, that.route) &&
                 Objects.equals(icon, that.icon) &&
                 Objects.equals(parentId, that.parentId) &&
-                type==that.type &&
+                type == that.type &&
                 Objects.equals(enabled, that.enabled) &&
                 Arrays.equals(httpMethod, that.httpMethod) &&
-                Objects.equals(filePath, that.filePath);
+                Objects.equals(filePath, that.filePath) &&
+                Arrays.equals(targetUserRole, that.targetUserRole) &&
+                Arrays.equals(specifyUserId, that.specifyUserId);
     }
 
     @Override
     public int hashCode() {
         int result = Objects.hash(authorityId, name, content, route, icon, parentId, type, enabled, filePath);
         result = 31 * result + Arrays.hashCode(httpMethod);
+        result = 31 * result + Arrays.hashCode(targetUserRole);
+        result = 31 * result + Arrays.hashCode(specifyUserId);
         return result;
     }
 
@@ -191,6 +221,6 @@ public class CcrUserAuthority implements Serializable, GrantedAuthority {
     }
 
     public enum UserAuthorityType {
-        menu, home_menu, ips_menu, gis_menu, normal, dbe_menu, m3820_menu,m2654_menu
+        menu, home_menu, ips_menu, gis_menu, normal, dbe_menu, m3820_menu, m2654_menu
     }
 }

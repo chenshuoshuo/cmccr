@@ -41,7 +41,7 @@ public class CcrUserRuleService {
     @Autowired
     CcrSystemLogService systemLogService;
 
-    public CcrUserRule add(String name, String enName, Long[] authorities) {
+    public CcrUserRule add(String name, String enName, Long[] authorities,String userCode) {
         systemLogService.addLog("用户角色服务", "add",
                 "增加用户角色");
 
@@ -62,7 +62,7 @@ public class CcrUserRuleService {
 
         rule = userRuleRepository.save(rule);
 
-        appendUserToNowUser(rule);
+        appendUserToNowUser(rule,userCode);
 
         return rule;
     }
@@ -70,10 +70,9 @@ public class CcrUserRuleService {
     /**
      * 增加角色到当前用户
      */
-    private void appendUserToNowUser(CcrUserRule rule) {
-        String username = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+    private void appendUserToNowUser(CcrUserRule rule,String userCode) {
 
-        CcrUser ccrUser = userRepository.findByUserName(username);
+        CcrUser ccrUser = userRepository.findByUserName(userCode);
 
         ccrUser.getRules().add(rule);
 
@@ -120,15 +119,13 @@ public class CcrUserRuleService {
         return userRuleRepository.findById(id).get();
     }
 
-    public Page<CcrUserRule> page(String keyword, Integer page, Integer pageSize) {
+    public Page<CcrUserRule> page(String userName,String keyword, Integer page, Integer pageSize) {
         systemLogService.addLog("用户角色服务", "add",
                 "分页查询用户角色");
 
         String k = keyword==null ? "" : keyword;
 
-        String username = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-
-        return userRuleRepository.findSupportRules(username, "%" + k + "%",
+        return userRuleRepository.findSupportRules(userName, "%" + k + "%",
                 PageRequest.of(page, pageSize));
     }
 }

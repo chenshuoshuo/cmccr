@@ -1,29 +1,38 @@
 package com.lqkj.web.cmccr2.config;
 
 import com.lqkj.web.cmccr2.APIVersion;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
+import org.springframework.core.convert.converter.Converter;
+import org.springframework.core.env.Environment;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.HttpMethod;
+import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.token.TokenService;
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableResourceServer;
 import org.springframework.security.oauth2.config.annotation.web.configuration.ResourceServerConfigurer;
+import org.springframework.security.oauth2.config.annotation.web.configuration.ResourceServerConfigurerAdapter;
 import org.springframework.security.oauth2.config.annotation.web.configurers.ResourceServerSecurityConfigurer;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.oauth2.provider.token.DefaultTokenServices;
 import org.springframework.security.oauth2.provider.token.ResourceServerTokenServices;
 import org.springframework.security.oauth2.provider.token.TokenEnhancerChain;
 import org.springframework.security.oauth2.provider.token.TokenStore;
 import org.springframework.security.oauth2.provider.token.store.JwtAccessTokenConverter;
 import org.springframework.security.oauth2.provider.token.store.JwtTokenStore;
-import org.springframework.security.oauth2.provider.token.store.KeyStoreKeyFactory;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
+import org.springframework.security.oauth2.server.resource.authentication.ReactiveJwtAuthenticationConverterAdapter;
+import org.springframework.security.rsa.crypto.KeyStoreKeyFactory;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
+import java.security.interfaces.RSAPublicKey;
 import java.util.Arrays;
 import java.util.concurrent.TimeUnit;
 
@@ -44,13 +53,17 @@ import java.util.concurrent.TimeUnit;
  */
 @Configuration
 @EnableResourceServer
-public class OauthResourceConfig implements ResourceServerConfigurer {
+public class OauthResourceConfig extends ResourceServerConfigurerAdapter implements ResourceServerConfigurer   {
 
     @Autowired
     TokenStore tokenStore;
 
     @Autowired
     ResourceServerTokenServices tokenService;
+
+    @Autowired
+    Environment environment;
+
 
     @Override
     public void configure(ResourceServerSecurityConfigurer resources) throws Exception {
@@ -62,11 +75,17 @@ public class OauthResourceConfig implements ResourceServerConfigurer {
 
     @Override
     public void configure(HttpSecurity http) throws Exception {
-        http.cors().and()
+        http.cors().and().csrf()
+                .disable()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .authorizeRequests()
                 .antMatchers("/center/user/register")
+                .permitAll()
+                .antMatchers(
+                        "/jwk/v1/keys") // CMGIS推送更新变更的接口
+                .permitAll()
+                .antMatchers(HttpMethod.OPTIONS) // 允许OPTIONS跨域验证请求通过
                 .permitAll()
                 .antMatchers(HttpMethod.GET, "/center/menu/*/page",
                         "/center/record/*/add",
@@ -85,10 +104,36 @@ public class OauthResourceConfig implements ResourceServerConfigurer {
                         "/center/user/**",
                         "/center/sys/log/**",
                         "/center/appRecord/**", // 应用访问记录
-                        "/center/asr/**" // 百度语音API
+                        "/center/asr/**", // 百度语音API
+                        "/center/notification/**"
                 )
                 .authenticated()
-        //.access("#oauth2.hasScope('js')")
+                .and()
+                .oauth2ResourceServer()
+                .jwt()
+                .jwkSetUri(getLocalJwkUrl())
+                .jwtAuthenticationConverter(grantedAuthoritiesExtractor())
+                .and()
+                .and()
+                //关闭iframe跨域
+                .headers().frameOptions().disable()
         ;
     }
+
+    private Converter<Jwt, AbstractAuthenticationToken> grantedAuthoritiesExtractor() {
+           return new GrantedAuthoritiesExtractor();
+    }
+
+    private String getLocalJwkUrl() {
+        String jwkUrl = environment.getProperty("oauth2.jwk-url");
+
+        if (StringUtils.isNotEmpty(jwkUrl)) return jwkUrl;
+
+        return new StringBuilder().append("http://")
+                .append(environment.getProperty("server.address")).append(":")
+                .append(environment.getProperty("server.port"))
+                .append(environment.getProperty("server.servlet.context-path"))
+                .append("/jwk/").append(APIVersion.V1).append("/keys").toString();
+    }
+
 }
