@@ -25,7 +25,7 @@ server:
     min-spare-threads: 10
     max-http-post-size: 1000MB
     max-swallow-size: 1000MB
-  address: 192.168.4.121
+  address: 192.168.4.102
 logging:
   register-shutdown-hook: true
   file: ./log/ccr.log
@@ -75,7 +75,7 @@ spring:
     hikari:
       driver-class-name: org.postgresql.Driver
       username: postgres
-      password: postgres
+      password: lqkj007
       auto-commit: true
       pool-name: ccr
       minimum-idle: 4
