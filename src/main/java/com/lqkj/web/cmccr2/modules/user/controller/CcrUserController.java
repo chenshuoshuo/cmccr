@@ -76,8 +76,16 @@ public class CcrUserController {
                                       @PathVariable Long id,
                                       @ApiParam(value = "头像文件") MultipartFile headFile)throws Exception{
 
-        String headPath = ccrUserService.saveUploadFile(headFile,"png", "jpg");
-        return MessageBean.ok(ccrUserService.update(id,password,oldPassword,admin,headPath));
+        String headPath = null;
+        if(headFile != null){
+            headPath  = ccrUserService.saveUploadFile(headFile,"png", "jpg");
+        }
+        CcrUser user = ccrUserService.update(id,password,oldPassword,admin,headPath);
+        if(user != null){
+            return MessageBean.ok(user);
+        }else {
+            return MessageBean.error("密码修改失败");
+        }
     }
 
     @ApiOperation("根据用户id删除用户")
