@@ -23,6 +23,7 @@ import org.springframework.web.filter.CorsFilter;
 import org.springframework.web.servlet.config.annotation.*;
 import org.springframework.web.servlet.mvc.WebContentInterceptor;
 
+import javax.servlet.FilterRegistration;
 import java.util.TimeZone;
 import java.util.concurrent.TimeUnit;
 
