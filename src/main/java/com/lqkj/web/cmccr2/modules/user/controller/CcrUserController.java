@@ -16,6 +16,7 @@ import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.async.WebAsyncTask;
@@ -58,7 +59,9 @@ public class CcrUserController {
     @ApiOperation("根据用户名查询用户信息")
     @GetMapping("/center/user/name/{username}")
     public MessageBean<CcrUser> info(@PathVariable String username) throws Exception {
-        String name = new String(decryptBASE64(new String(decryptBASE64(username))));
+
+        String name = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
         return MessageBean.ok((CcrUser) ccrUserService.loadUserByUsername(name));
     }
 
@@ -68,7 +71,13 @@ public class CcrUserController {
                                       @RequestParam(required = false) Boolean admin,
                                       @RequestParam(required = false) String oldPassword,
                                       @PathVariable Long id) {
-        return MessageBean.ok(ccrUserService.update(id, password,oldPassword, admin));
+        String update = ccrUserService.update(id, password, oldPassword, admin);
+        if(update != null){
+            return MessageBean.ok(update);
+        }else {
+            return MessageBean.error("密码修改失败");
+        }
+
     }
 
     @ApiOperation("根据用户id删除用户")
