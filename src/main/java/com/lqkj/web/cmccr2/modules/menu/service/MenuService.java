@@ -142,7 +142,7 @@ public class MenuService {
                 sql += " and (target_user_role && ARRAY[" + roles + ",'public'] \\:\\:varchar[] or specify_user_id && ARRAY['" + userCode + "'] \\:\\:varchar[]) ";
             }
         }
-
+        sql += "order by sort";
 
         Pageable pageable = PageRequest.of(page,pageSize,Sort.by("sort"));
 
@@ -154,7 +154,7 @@ public class MenuService {
      * 排序
      */
     private CcrMenu setOrder(CcrMenu menu){
-        List<CcrMenu> list = menuDao.findAllByType(menu.getType());
+        List<CcrMenu> list = menuDao.findAll();
         if(list.size() > 0){
             if(menu.getSort() == null || menu.getSort() > list.size() || menu.getSort() == 0 ){
                 for(int i = 0; i < list.size();i++){
