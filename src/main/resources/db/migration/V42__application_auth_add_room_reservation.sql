@@ -1,5 +1,5 @@
 
-INSERT INTO public.ccr_user_authority VALUES (97, 'CM-S2654', '房间预约', '/cm-s2654', NULL, 'menu', NULL, true, NULL);
+INSERT INTO public.ccr_user_authority VALUES (97, 'CM-S2654', '房间预约', '/cm-s2654', NULL, 'home_menu', NULL, true, NULL);
 INSERT INTO public.ccr_user_authority (authority_id, content, name, route, parent_id, type, icon, enabled, http_method) VALUES (98, 'roomManger', '预约审核记录', 'room-reservation/roomManger', 97, 'm2654_menu', null, true, null);
 INSERT INTO public.ccr_user_authority (authority_id, content, name, route, parent_id, type, icon, enabled, http_method) VALUES (99, 'locked', '房间锁定记录', 'room-locked/locked', 97, 'm2654_menu', null, true, null);
 INSERT INTO public.ccr_user_authority (authority_id, content, name, route, parent_id, type, icon, enabled, http_method) VALUES (100, 'notice', '通知公告管理', 'notification-notice/notice', 97, 'm2654_menu', null, true, null);
