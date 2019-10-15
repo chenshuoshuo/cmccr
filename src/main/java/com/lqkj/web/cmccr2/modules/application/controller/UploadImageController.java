@@ -46,6 +46,10 @@ public class UploadImageController {
 //            String basePath = url
 //                    .delete(url.length() - request.getRequestURI().length(),
 //                            url.length()).append("/").toString();
+            String fileExtension = file.getOriginalFilename().substring(file.getOriginalFilename().lastIndexOf("."));
+            if(!fileExtension.toLowerCase().contains("jpg") && !fileExtension.toLowerCase().contains("png")){
+                return MessageBean.error("文件格式错误");
+            }
             System.out.println(file.getOriginalFilename());
             //获取根目录
             File path = new File(ResourceUtils.getURL("classpath:").getPath());
@@ -54,7 +58,6 @@ public class UploadImageController {
             }
             System.out.println("path:"+path.getAbsolutePath());
 
-            String fileExtension = file.getOriginalFilename().substring(file.getOriginalFilename().lastIndexOf("."));
             System.out.println(fileExtension);
             String newFileName = UUID.randomUUID() + fileExtension;
             File uploadFolder = new File(path.getAbsolutePath(), "resources/upload/" + folder + "/");
@@ -87,6 +90,10 @@ public class UploadImageController {
         try {
             List<String> imgList = new ArrayList<String>();
             for(MultipartFile file :files){
+                String fileExtension = file.getOriginalFilename().substring(file.getOriginalFilename().lastIndexOf("."));
+                if(!fileExtension.toLowerCase().contains("jpg") && !fileExtension.toLowerCase().contains("png")){
+                    return MessageBean.error("文件格式错误");
+                }
                 System.out.println(file.getOriginalFilename());
                 //获取根目录
                 File path = new File(ResourceUtils.getURL("classpath:").getPath());
@@ -95,7 +102,6 @@ public class UploadImageController {
                 }
                 System.out.println("path:"+path.getAbsolutePath());
 
-                String fileExtension = file.getOriginalFilename().substring(file.getOriginalFilename().lastIndexOf("."));
                 System.out.println(fileExtension);
                 String newFileName = UUID.randomUUID() + fileExtension;
                 File uploadFolder = new File(path.getAbsolutePath(), "resources/upload/" + folder + "/");
