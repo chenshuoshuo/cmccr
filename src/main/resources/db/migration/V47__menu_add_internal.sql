@@ -11,3 +11,8 @@ insert into public.ccr_menu (icon,name,sort,status,type,update_time,url,target_u
 insert into public.ccr_user_authority (authority_id,content,name,route,parent_id,type,enabled) values (108,'outliers','异常数据分析',null,24,'menu',true);
 
 INSERT INTO public.ccr_rule_to_authority VALUES (1,108);
+
+
+INSERT INTO public.ccr_rule_to_authority VALUES (1,108);
+
+alter sequence ccr_user_authority_authority_id_seq restart with 10000
