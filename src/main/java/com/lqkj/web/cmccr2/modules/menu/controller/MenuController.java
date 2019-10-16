@@ -3,6 +3,7 @@ package com.lqkj.web.cmccr2.modules.menu.controller;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.lqkj.web.cmccr2.message.MessageBean;
+import com.lqkj.web.cmccr2.message.MessageListBean;
 import com.lqkj.web.cmccr2.modules.menu.domain.CcrMenu;
 import com.lqkj.web.cmccr2.modules.menu.service.MenuService;
 import com.lqkj.web.cmccr2.modules.user.domain.CcrUserRule;
@@ -77,32 +78,12 @@ public class MenuController {
      */
     @ApiOperation("根据权限查询菜单")
     @GetMapping("/center/menu/" + VERSION + "/auth/all")
-    public WebAsyncTask<MessageBean<List<CcrMenu>>> authAllMenu(@ApiIgnore Authentication authentication){
+    public WebAsyncTask<MessageBean<com.alibaba.fastjson.JSONArray>> authAllMenu(@ApiIgnore Authentication authentication){
         List<String> userRole = getRolesAndCode(authentication);
-        List<CcrMenu> ccrMenus = menuService.authAllMenu(userRole.get(0), userRole.get(1));
-        //处理成树形结构
-        List<CcrMenu> menuTree = new ArrayList<>();
-        if(ccrMenus!=null && ccrMenus.size()>0){
-            for (CcrMenu ccrMenu:ccrMenus) {
-                if(ccrMenu.getParentId()==null){
-                    menuTree.add(ccrMenu);
-                    findChMenu(ccrMenus,ccrMenu);
-                }
-            }
-        }
-        return new WebAsyncTask<>(() ->MessageBean.ok(menuTree));
+        return new WebAsyncTask<>(() -> MessageBean.ok(JSON.parseArray(menuService.authAllMenu(userRole.get(0), userRole.get(1)))));
     }
 
-    private void findChMenu(List<CcrMenu> ccrMenus,CcrMenu menu){
-        Set<CcrMenu> chMenu = new HashSet<CcrMenu>();
-        for (CcrMenu ccrMenu:ccrMenus) {
-            if(ccrMenu.getParentId()!=null && ccrMenu.getParentId().equals(menu.getMenuId())){
-                chMenu.add(ccrMenu);
-                findChMenu(ccrMenus,ccrMenu);
-            }
-        }
-        menu.setChCcrMenu(chMenu);
-    }
+
 
     @ApiOperation("查询菜单项信息")
     @ApiImplicitParam(name = "id", value = "菜单id")

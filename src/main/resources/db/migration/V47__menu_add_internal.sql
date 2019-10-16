@@ -15,6 +15,4 @@ insert into public.ccr_user_authority (authority_id,content,name,route,parent_id
 INSERT INTO public.ccr_rule_to_authority VALUES (1,108);
 
 
-INSERT INTO public.ccr_rule_to_authority VALUES (1,108);
-
 alter sequence ccr_user_authority_authority_id_seq restart with 10000

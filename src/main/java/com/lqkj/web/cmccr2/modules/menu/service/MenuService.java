@@ -1,10 +1,12 @@
 package com.lqkj.web.cmccr2.modules.menu.service;
 
+import com.alibaba.fastjson.JSON;
 import com.lqkj.web.cmccr2.modules.log.service.CcrSystemLogService;
 import com.lqkj.web.cmccr2.modules.menu.dao.CcrMenuSQLDao;
 import com.lqkj.web.cmccr2.modules.menu.domain.CcrMenu;
 import com.lqkj.web.cmccr2.modules.application.dao.CcrVersionApplicationRepository;
 import com.lqkj.web.cmccr2.modules.menu.dao.CcrMenuRepository;
+import net.minidev.json.JSONArray;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
@@ -12,10 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 /**
  * 菜单管理服务
@@ -283,7 +282,7 @@ public class MenuService {
         System.out.println(i);
     }
 
-    public List<CcrMenu> authAllMenu(String roles, String userCode) {
+    public String authAllMenu(String roles, String userCode) {
         String sql = "select * from ccr_menu where status=true ";
 
         if (userCode != null && roles != null) {
@@ -294,6 +293,28 @@ public class MenuService {
             }
         }
         sql += "order by sort";
-        return menuSQLDao.executeSql(sql,CcrMenu.class);
+        List<CcrMenu> ccrMenus = menuSQLDao.executeSql(sql, CcrMenu.class);
+        List<CcrMenu> menuTree = new ArrayList<>();
+        if(ccrMenus!=null && ccrMenus.size()>0){
+            for (CcrMenu ccrMenu:ccrMenus) {
+                if(ccrMenu.getParentId()==null){
+                    menuTree.add(ccrMenu);
+                    findChMenu(ccrMenus,ccrMenu);
+                }
+            }
+        }
+
+        return JSON.toJSONString(menuTree);
+    }
+
+    private void findChMenu(List<CcrMenu> ccrMenus,CcrMenu menu){
+        Set<CcrMenu> chMenu = new HashSet<CcrMenu>();
+        menu.setChCcrMenu(chMenu);
+        for (CcrMenu ccrMenu:ccrMenus) {
+            if(ccrMenu.getParentId()!=null && ccrMenu.getParentId().equals(menu.getMenuId())){
+                chMenu.add(ccrMenu);
+                findChMenu(ccrMenus,ccrMenu);
+            }
+        }
     }
 }
