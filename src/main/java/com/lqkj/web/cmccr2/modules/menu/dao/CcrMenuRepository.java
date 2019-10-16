@@ -25,5 +25,8 @@ public interface CcrMenuRepository extends JpaRepository<CcrMenu, Long> {
     @Query(nativeQuery = true, value = "select m.* from ccr_menu as m where m.name=:name")
     List<CcrMenu> nameByMenu(@Param("name") String menuName);
 
+    @Query(nativeQuery = true, value = "select m.* from ccr_menu as m where m.parent_id=:parentId")
+    List<CcrMenu> childMenus(@Param("parentId") Long parentId);
+
     List<CcrMenu> findAllByType(CcrMenu.IpsMenuType type );
 }

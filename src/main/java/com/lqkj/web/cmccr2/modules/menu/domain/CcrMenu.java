@@ -9,6 +9,7 @@ import java.io.Serializable;
 import java.sql.Timestamp;
 import java.util.Arrays;
 import java.util.Objects;
+import java.util.Set;
 
 /**
  * 菜单
@@ -55,6 +56,31 @@ public class CcrMenu implements Serializable {
     @Column(name = "specify_user_id", columnDefinition = " string[]")
     @Type(type = "string-array")
     private String[] specifyUserId;
+
+    @ApiModelProperty(value = "父节点")
+    @Column(name = "parent_id")
+    private Long parentId;
+
+    @ApiModelProperty(value = "英文名")
+    @Column(name = "ename")
+    private String ename;
+
+    @ApiModelProperty(value = "菜单模式:right;left;right,left")
+    @Column(name = "menu_mode")
+    private String menuMode;
+
+    @ApiModelProperty(value = "应用类别:pc,h5")
+    @Column(name = "app_type")
+    @Enumerated(EnumType.STRING)
+    private AppType appType;
+
+    @ApiModelProperty(value = "是否是二维码")
+    @Column(name = "has_qr_code")
+    private Boolean hasQrCode;
+
+    @Transient
+    private Set<CcrMenu> chCcrMenu;
+
 
     public Long getMenuId() {
         return menuId;
@@ -136,6 +162,46 @@ public class CcrMenu implements Serializable {
         this.specifyUserId = specifyUserId;
     }
 
+    public Long getParentId() {
+        return parentId;
+    }
+
+    public void setParentId(Long parentId) {
+        this.parentId = parentId;
+    }
+
+    public String getEname() {
+        return ename;
+    }
+
+    public void setEname(String ename) {
+        this.ename = ename;
+    }
+
+    public String getMenuMode() {
+        return menuMode;
+    }
+
+    public void setMenuMode(String menuMode) {
+        this.menuMode = menuMode;
+    }
+
+    public AppType getAppType() {
+        return appType;
+    }
+
+    public void setAppType(AppType appType) {
+        this.appType = appType;
+    }
+
+    public Boolean getHasQrCode() {
+        return hasQrCode;
+    }
+
+    public void setHasQrCode(Boolean hasQrCode) {
+        this.hasQrCode = hasQrCode;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -150,18 +216,35 @@ public class CcrMenu implements Serializable {
                 Objects.equals(url, ccrMenu.url) &&
                 Objects.equals(updateTime, ccrMenu.updateTime) &&
                 Arrays.equals(targetUserRole, ccrMenu.targetUserRole) &&
-                Arrays.equals(specifyUserId, ccrMenu.specifyUserId);
+                Arrays.equals(specifyUserId, ccrMenu.specifyUserId) &&
+                Objects.equals(parentId, ccrMenu.parentId) &&
+                Objects.equals(ename, ccrMenu.ename) &&
+                Objects.equals(menuMode, ccrMenu.menuMode) &&
+                appType == ccrMenu.appType &&
+                Objects.equals(hasQrCode, ccrMenu.hasQrCode);
     }
 
     @Override
     public int hashCode() {
-        int result = Objects.hash(menuId, name, icon, type, sort, status, url, updateTime);
+        int result = Objects.hash(menuId, name, icon, type, sort, status, url, updateTime, parentId, ename, menuMode, appType, hasQrCode);
         result = 31 * result + Arrays.hashCode(targetUserRole);
         result = 31 * result + Arrays.hashCode(specifyUserId);
         return result;
     }
 
+    public Set<CcrMenu> getChCcrMenu() {
+        return chCcrMenu;
+    }
+
+    public void setChCcrMenu(Set<CcrMenu> chCcrMenu) {
+        this.chCcrMenu = chCcrMenu;
+    }
+
     public enum IpsMenuType {
-        embed, url, extend, application, internal
+        sysMenu,builtInMenu,builtInApp,extMenu,urlApp,mobApp
+    }
+
+    public enum AppType {
+        pc,h5
     }
 }

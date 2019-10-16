@@ -1,5 +1,6 @@
 package com.lqkj.web.cmccr2.modules.menu.controller;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.lqkj.web.cmccr2.message.MessageBean;
 import com.lqkj.web.cmccr2.modules.menu.domain.CcrMenu;
@@ -14,8 +15,10 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.async.WebAsyncTask;
+import springfox.documentation.annotations.ApiIgnore;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -67,6 +70,40 @@ public class MenuController {
         return new WebAsyncTask<>(() ->MessageBean.ok(menuService.page(keyword,userRole.get(0),userRole.get(1), page, pageSize)));
     }
 
+    /**
+     * 根据权限查询菜单
+     * @param authentication
+     * @return
+     */
+    @ApiOperation("根据权限查询菜单")
+    @GetMapping("/center/menu/" + VERSION + "/auth/all")
+    public WebAsyncTask<MessageBean<List<CcrMenu>>> authAllMenu(@ApiIgnore Authentication authentication){
+        List<String> userRole = getRolesAndCode(authentication);
+        List<CcrMenu> ccrMenus = menuService.authAllMenu(userRole.get(0), userRole.get(1));
+        //处理成树形结构
+        List<CcrMenu> menuTree = new ArrayList<>();
+        if(ccrMenus!=null && ccrMenus.size()>0){
+            for (CcrMenu ccrMenu:ccrMenus) {
+                if(ccrMenu.getParentId()==null){
+                    menuTree.add(ccrMenu);
+                    findChMenu(ccrMenus,ccrMenu);
+                }
+            }
+        }
+        return new WebAsyncTask<>(() ->MessageBean.ok(menuTree));
+    }
+
+    private void findChMenu(List<CcrMenu> ccrMenus,CcrMenu menu){
+        Set<CcrMenu> chMenu = new HashSet<CcrMenu>();
+        for (CcrMenu ccrMenu:ccrMenus) {
+            if(ccrMenu.getParentId()!=null && ccrMenu.getParentId().equals(menu.getMenuId())){
+                chMenu.add(ccrMenu);
+                findChMenu(ccrMenus,ccrMenu);
+            }
+        }
+        menu.setChCcrMenu(chMenu);
+    }
+
     @ApiOperation("查询菜单项信息")
     @ApiImplicitParam(name = "id", value = "菜单id")
     @GetMapping("/center/menu/" + VERSION + "/info/{id}")
@@ -81,7 +118,7 @@ public class MenuController {
                                                              @RequestParam Integer pageSize,
                                                              @RequestParam(required = false) String keyword,
                                                              @PathVariable(required = false) CcrMenu.IpsMenuType type,
-                                                             @ApiParam(hidden = true) Authentication authentication) {
+                                                             @ApiIgnore Authentication authentication) {
         List<String> userRole = getRolesAndCode(authentication);
         return new WebAsyncTask<>(() -> MessageBean.ok(menuService.typePage(type, keyword,userRole.get(0),userRole.get(1), page, pageSize)));
     }
