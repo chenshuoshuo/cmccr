@@ -15,6 +15,6 @@ INSERT INTO public.ccr_user_authority (authority_id, content, name, route, paren
 
 
 INSERT INTO public.ccr_rule_to_authority
-select 1, generate_series(97,105);
+select 1, generate_series(97,107);
 
 INSERT INTO public.ccr_rule_to_authority (rule_id,authority_id) VALUES (1, 109);
