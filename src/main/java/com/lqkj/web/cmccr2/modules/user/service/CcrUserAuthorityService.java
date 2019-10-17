@@ -93,7 +93,7 @@ public class CcrUserAuthorityService {
             }
         }
 
-        if (savedAuthority.getParentId() != null) {
+        if (savedAuthority.getParentId() != null && savedAuthority.getEnabled()) {
             ccrUserAuthorities.clear();
 
             queryParentAuth(ccrUserAuthorities, savedAuthority.getParentId());

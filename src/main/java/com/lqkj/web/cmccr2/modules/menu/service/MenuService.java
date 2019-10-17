@@ -117,7 +117,9 @@ public class MenuService {
                 }
                 ccrMenu.setSpecifyUserId(parentSpecifyUserIdList.toArray(new String[parentSpecifyUserIdList.size()]));
                 ccrMenu.setTargetUserRole(parentTargetUserRoleList.toArray(new String[parentTargetUserRoleList.size()]));
-                ccrMenu.setStatus(menu.getStatus());
+                if(menu.getStatus()){
+                    ccrMenu.setStatus(menu.getStatus());
+                }
                 menuDao.save(ccrMenu);
             }
         }
