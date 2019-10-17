@@ -5,6 +5,7 @@ import org.springframework.data.domain.Example;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.jpa.repository.QueryHints;
 import org.springframework.data.repository.query.Param;
@@ -29,4 +30,12 @@ public interface CcrMenuRepository extends JpaRepository<CcrMenu, Long> {
     List<CcrMenu> childMenus(@Param("parentId") Long parentId);
 
     List<CcrMenu> findAllByType(CcrMenu.IpsMenuType type );
+
+    @Query("select m from CcrMenu m where m.ename=:ename")
+    CcrMenu queryEname(@Param("ename")String ename);
+
+    @Modifying
+    @Query("update CcrMenu a set a.status=:status where a.menuId=:menuId")
+    void updateChildState(@Param("menuId") Long menuId,
+                          @Param("status") Boolean status);
 }

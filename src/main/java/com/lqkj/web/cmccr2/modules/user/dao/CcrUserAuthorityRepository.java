@@ -23,8 +23,8 @@ public interface CcrUserAuthorityRepository extends JpaRepository<CcrUserAuthori
     String findNameByContent(@Param("content") String content);
 
     @Modifying
-    @Query("update CcrUserAuthority a set a.enabled=:enabled where a.parentId=:id")
-    void updateChildState(@Param("id") Long id,
+    @Query("update CcrUserAuthority a set a.enabled=:enabled where a.authorityId=:authorityId")
+    void updateChildState(@Param("authorityId") Long authorityId,
                           @Param("enabled") Boolean enabled);
 
     @Query(nativeQuery = true, value = "select a.* from ccr_user_authority a" +
@@ -36,6 +36,8 @@ public interface CcrUserAuthorityRepository extends JpaRepository<CcrUserAuthori
     Page<CcrUserAuthority> findSupportAuthority(@Param("userName") String userName,
                                                 @Param("keyword") String keyword,
                                                 Pageable pageable);
+    @Query("select a from CcrUserAuthority a where a.parentId=:id")
+    List<CcrUserAuthority> queryChildAuth(Long id);
 
 //    @Query(value = "select * from ccr_user_authority where target_user_role && ARRAY[?2,'public'] \\:\\:varchar[] or specify_user_id && ARRAY[?1] \\:\\:varchar[] group by authority_id",nativeQuery = true)
 //   // @Query("select ua from CcrUserAuthority ua where ua.targetUserRole in ?2 or ua.specifyUserId in ?1 group by ua.authorityId")

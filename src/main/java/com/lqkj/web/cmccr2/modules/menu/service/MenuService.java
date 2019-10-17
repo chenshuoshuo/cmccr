@@ -94,36 +94,37 @@ public class MenuService {
         //添加父级菜单权限
         if (parentCcrMenus != null && parentCcrMenus.size() > 0) {
             for (CcrMenu ccrMenu : parentCcrMenus) {
-                
+
                 String[] parentSpecifyUserId = ccrMenu.getSpecifyUserId();
                 String[] parentTargetUserRole = ccrMenu.getTargetUserRole();
-                
+
                 List<String> parentSpecifyUserIdList = Arrays.asList(parentSpecifyUserId);
                 List<String> parentTargetUserRoleList = Arrays.asList(parentTargetUserRole);
 
                 if (parentSpecifyUserIdList.indexOf("public") < 0) {
                     for (String userId : specifyUserId) {
-                        if(parentSpecifyUserIdList.indexOf(userId) < 0){
+                        if (parentSpecifyUserIdList.indexOf(userId) < 0) {
                             parentSpecifyUserIdList.add(userId);
                         }
                     }
                 }
                 if (parentTargetUserRoleList.indexOf("public") < 0) {
                     for (String role : targetUserRole) {
-                        if(parentTargetUserRoleList.indexOf(role) < 0){
+                        if (parentTargetUserRoleList.indexOf(role) < 0) {
                             parentTargetUserRoleList.add(role);
                         }
                     }
                 }
                 ccrMenu.setSpecifyUserId(parentSpecifyUserIdList.toArray(new String[parentSpecifyUserIdList.size()]));
                 ccrMenu.setTargetUserRole(parentTargetUserRoleList.toArray(new String[parentTargetUserRoleList.size()]));
+                ccrMenu.setStatus(menu.getStatus());
                 menuDao.save(ccrMenu);
             }
         }
         //添加子级菜单权限
         ArrayList<CcrMenu> chCcrMenus = new ArrayList<>();
-        querychildMenus(menu,chCcrMenus);
-        if(chCcrMenus!=null && chCcrMenus.size()>0){
+        querychildMenus(menu, chCcrMenus);
+        if (chCcrMenus != null && chCcrMenus.size() > 0) {
             for (CcrMenu ccrMenu : chCcrMenus) {
 
                 String[] chSpecifyUserId = ccrMenu.getSpecifyUserId();
@@ -134,23 +135,26 @@ public class MenuService {
 
                 if (chSpecifyUserIdList.indexOf("public") < 0) {
                     for (String userId : specifyUserId) {
-                        if(chSpecifyUserIdList.indexOf(userId) < 0){
+                        if (chSpecifyUserIdList.indexOf(userId) < 0) {
                             chSpecifyUserIdList.add(userId);
                         }
                     }
                 }
                 if (chTargetUserRoleList.indexOf("public") < 0) {
                     for (String role : targetUserRole) {
-                        if(chTargetUserRoleList.indexOf(role) < 0){
+                        if (chTargetUserRoleList.indexOf(role) < 0) {
                             chTargetUserRoleList.add(role);
                         }
                     }
                 }
                 ccrMenu.setSpecifyUserId(chSpecifyUserIdList.toArray(new String[chSpecifyUserIdList.size()]));
                 ccrMenu.setTargetUserRole(chTargetUserRoleList.toArray(new String[chTargetUserRoleList.size()]));
+                ccrMenu.setStatus(menu.getStatus());
                 menuDao.save(ccrMenu);
             }
         }
+
+
         return menuDao.save(cm);
     }
 
@@ -252,34 +256,29 @@ public class MenuService {
      */
     public void queryParentMenu(CcrMenu menu, List<CcrMenu> parentMenus) {
         Long parentId = menu.getParentId();
-        CcrMenu parentMenu = menuDao.getOne(parentId);
-        if (parentMenu != null) {
-            parentMenus.add(parentMenu);
-            if (parentMenu.getParentId() != null) {
-                queryParentMenu(parentMenu, parentMenus);
+        if(parentId!=null){
+            CcrMenu parentMenu = menuDao.getOne(parentId);
+            if (parentMenu != null) {
+                parentMenus.add(parentMenu);
+                if (parentMenu.getParentId() != null) {
+                    queryParentMenu(parentMenu, parentMenus);
+                }
             }
         }
     }
+
     /***
      * 查询所有子级菜单
      */
     public void querychildMenus(CcrMenu menu, List<CcrMenu> childMenus) {
         Long menuId = menu.getMenuId();
         List<CcrMenu> childMs = menuDao.childMenus(menuId);
-        if (childMs != null && childMenus.size()>0) {
+        if (childMs != null && childMenus.size() > 0) {
             childMenus.addAll(childMs);
-            for (CcrMenu ccrMenu:childMs) {
-                querychildMenus(ccrMenu,childMenus);
+            for (CcrMenu ccrMenu : childMs) {
+                querychildMenus(ccrMenu, childMenus);
             }
         }
-    }
-
-    public static void main(String[] args) {
-        String[] arr2 = {"2", "4", "6", "8", "10"};
-        String[] arr1 = {"2", "4", "1", "2", "10"};
-        List<String> asList = Arrays.asList(arr2);
-        int i = asList.indexOf("2");
-        System.out.println(i);
     }
 
     public String authAllMenu(String roles, String userCode) {
@@ -295,11 +294,11 @@ public class MenuService {
         sql += "order by sort";
         List<CcrMenu> ccrMenus = menuSQLDao.executeSql(sql, CcrMenu.class);
         List<CcrMenu> menuTree = new ArrayList<>();
-        if(ccrMenus!=null && ccrMenus.size()>0){
-            for (CcrMenu ccrMenu:ccrMenus) {
-                if(ccrMenu.getParentId()==null){
+        if (ccrMenus != null && ccrMenus.size() > 0) {
+            for (CcrMenu ccrMenu : ccrMenus) {
+                if (ccrMenu.getParentId() == null) {
                     menuTree.add(ccrMenu);
-                    findChMenu(ccrMenus,ccrMenu);
+                    findChMenu(ccrMenus, ccrMenu);
                 }
             }
         }
@@ -307,13 +306,26 @@ public class MenuService {
         return JSON.toJSONString(menuTree);
     }
 
-    private void findChMenu(List<CcrMenu> ccrMenus,CcrMenu menu){
+    public void updateMenuStatus(String ename,Boolean status) {
+        CcrMenu ccrMenu = menuDao.queryEname(ename);
+        if (ccrMenu != null) {
+            List<CcrMenu> ccrMenus = new ArrayList<CcrMenu>();
+            findChMenu(ccrMenus, ccrMenu);
+            if (ccrMenus != null && ccrMenus.size() > 0){
+                for (CcrMenu menu:ccrMenus) {
+                    menuDao.updateChildState(menu.getMenuId(),status);
+                }
+            }
+        }
+    }
+
+    private void findChMenu(List<CcrMenu> ccrMenus, CcrMenu menu) {
         Set<CcrMenu> chMenu = new HashSet<CcrMenu>();
         menu.setChCcrMenu(chMenu);
-        for (CcrMenu ccrMenu:ccrMenus) {
-            if(ccrMenu.getParentId()!=null && ccrMenu.getParentId().equals(menu.getMenuId())){
+        for (CcrMenu ccrMenu : ccrMenus) {
+            if (ccrMenu.getParentId() != null && ccrMenu.getParentId().equals(menu.getMenuId())) {
                 chMenu.add(ccrMenu);
-                findChMenu(ccrMenus,ccrMenu);
+                findChMenu(ccrMenus, ccrMenu);
             }
         }
     }
