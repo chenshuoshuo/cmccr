@@ -78,9 +78,9 @@ public class MenuController {
      */
     @ApiOperation("根据权限查询菜单")
     @GetMapping("/center/menu/" + VERSION + "/auth/all")
-    public WebAsyncTask<MessageBean<com.alibaba.fastjson.JSONArray>> authAllMenu(@ApiIgnore Authentication authentication){
+    public WebAsyncTask<MessageBean<com.alibaba.fastjson.JSONArray>> authAllMenu(@ApiIgnore Authentication authentication, @RequestParam(required = false) CcrMenu.AppType type){
         List<String> userRole = getRolesAndCode(authentication);
-        return new WebAsyncTask<>(() -> MessageBean.ok(JSON.parseArray(menuService.authAllMenu(userRole.get(0), userRole.get(1)))));
+        return new WebAsyncTask<>(() -> MessageBean.ok(JSON.parseArray(menuService.authAllMenu(userRole.get(0), userRole.get(1),type))));
     }
 
 
@@ -100,7 +100,7 @@ public class MenuController {
                                                              @RequestParam(required = false) String keyword,
                                                              @PathVariable(required = false) CcrMenu.IpsMenuType type,
                                                              @ApiIgnore Authentication authentication) {
-        List<String> userRole = getRolesAndCode(authentication);
+        List<String> userRole = getRolesAndCode(null);
         return new WebAsyncTask<>(() -> MessageBean.ok(menuService.typePage(type, keyword,userRole.get(0),userRole.get(1), page, pageSize)));
     }
 

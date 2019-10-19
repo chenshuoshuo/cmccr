@@ -78,6 +78,10 @@ public class CcrMenu implements Serializable {
     @Column(name = "has_qr_code")
     private Boolean hasQrCode;
 
+    @ApiModelProperty(value = "移动端排序")
+    @Column(name = "mobile_sort")
+    private Long mobileSort;
+
     @Transient
     private Set<CcrMenu> chCcrMenu;
 
@@ -202,6 +206,14 @@ public class CcrMenu implements Serializable {
         this.hasQrCode = hasQrCode;
     }
 
+    public Long getMobileSort() {
+        return mobileSort;
+    }
+
+    public void setMobileSort(Long mobileSort) {
+        this.mobileSort = mobileSort;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -221,12 +233,14 @@ public class CcrMenu implements Serializable {
                 Objects.equals(ename, ccrMenu.ename) &&
                 Objects.equals(menuMode, ccrMenu.menuMode) &&
                 appType == ccrMenu.appType &&
-                Objects.equals(hasQrCode, ccrMenu.hasQrCode);
+                Objects.equals(hasQrCode, ccrMenu.hasQrCode) &&
+                Objects.equals(mobileSort, ccrMenu.mobileSort) &&
+                Objects.equals(chCcrMenu, ccrMenu.chCcrMenu);
     }
 
     @Override
     public int hashCode() {
-        int result = Objects.hash(menuId, name, icon, type, sort, status, url, updateTime, parentId, ename, menuMode, appType, hasQrCode);
+        int result = Objects.hash(menuId, name, icon, type, sort, status, url, updateTime, parentId, ename, menuMode, appType, hasQrCode, mobileSort, chCcrMenu);
         result = 31 * result + Arrays.hashCode(targetUserRole);
         result = 31 * result + Arrays.hashCode(specifyUserId);
         return result;

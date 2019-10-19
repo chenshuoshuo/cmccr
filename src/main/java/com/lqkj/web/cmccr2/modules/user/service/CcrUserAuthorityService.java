@@ -93,7 +93,7 @@ public class CcrUserAuthorityService {
             }
         }
 
-        if (savedAuthority.getParentId() != null) {
+        if (savedAuthority.getParentId() != null && savedAuthority.getEnabled()) {
             ccrUserAuthorities.clear();
 
             queryParentAuth(ccrUserAuthorities, savedAuthority.getParentId());
@@ -126,10 +126,12 @@ public class CcrUserAuthorityService {
     }
 
     public void queryParentAuth(HashSet<CcrUserAuthority> ccrUserAuths, Long parentId) {
-        CcrUserAuthority parentAuth = userAuthorityRepository.getOne(parentId);
-        if (parentAuth != null) {
-            ccrUserAuths.add(parentAuth);
-            queryParentAuth(ccrUserAuths, parentAuth.getParentId());
+        if(parentId!=null){
+            CcrUserAuthority parentAuth = userAuthorityRepository.getOne(parentId);
+            if (parentAuth != null) {
+                ccrUserAuths.add(parentAuth);
+                queryParentAuth(ccrUserAuths, parentAuth.getParentId());
+            }
         }
     }
 
