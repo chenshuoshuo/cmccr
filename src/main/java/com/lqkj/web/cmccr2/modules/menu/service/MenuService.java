@@ -102,7 +102,11 @@ public class MenuService {
                     List<String> parentSpecifyUserIdList = new ArrayList<>();
                     List<String> parentTargetUserRoleList = new ArrayList<>();
                     if (parentSpecifyUserId != null && specifyUserId != null) {
-                        parentSpecifyUserIdList = Arrays.asList(parentSpecifyUserId);
+                        if(parentTargetUserRole.length==0){
+                            parentSpecifyUserIdList = new ArrayList<>();
+                        }else{
+                            parentSpecifyUserIdList = Arrays.asList(parentSpecifyUserId);
+                        }
                         if (parentSpecifyUserIdList.indexOf("public") < 0) {
                             for (String userId : specifyUserId) {
                                 if (parentSpecifyUserIdList.indexOf(userId) < 0) {
@@ -114,7 +118,11 @@ public class MenuService {
                         parentSpecifyUserIdList.addAll(Arrays.asList(specifyUserId));
                     }
                     if (parentTargetUserRole != null && targetUserRole != null) {
-                        parentTargetUserRoleList = Arrays.asList(parentTargetUserRole);
+                        if(parentTargetUserRole.length==0){
+                            parentTargetUserRoleList = new ArrayList<>();
+                        }else {
+                            parentTargetUserRoleList = Arrays.asList(parentTargetUserRole);
+                        }
                         if (parentTargetUserRoleList.indexOf("public") < 0) {
                             for (String role : targetUserRole) {
                                 if (parentTargetUserRoleList.indexOf(role) < 0) {
@@ -145,7 +153,11 @@ public class MenuService {
                     List<String> chSpecifyUserIdList = new ArrayList<>();
                     List<String> chTargetUserRoleList = new ArrayList<>();
                     if (chSpecifyUserId != null && specifyUserId != null) {
-                        chSpecifyUserIdList = Arrays.asList(chSpecifyUserId);
+                        if(chSpecifyUserId.length==0){
+                            chSpecifyUserIdList = new ArrayList<>();
+                        }else {
+                            chSpecifyUserIdList = Arrays.asList(chSpecifyUserId);
+                        }
                         if (chSpecifyUserIdList.indexOf("public") < 0) {
                             for (String userId : specifyUserId) {
                                 if (chSpecifyUserIdList.indexOf(userId) < 0) {
@@ -158,7 +170,11 @@ public class MenuService {
                     }
 
                     if (chTargetUserRole != null && targetUserRole != null) {
-                        chTargetUserRoleList = Arrays.asList(chTargetUserRole);
+                        if(chTargetUserRole.length == 0){
+                            chTargetUserRoleList = new ArrayList<>();
+                        }else {
+                            chTargetUserRoleList = Arrays.asList(chTargetUserRole);
+                        }
                         if (chTargetUserRoleList.indexOf("public") < 0) {
                             for (String role : targetUserRole) {
                                 if (chTargetUserRoleList.indexOf(role) < 0) {
