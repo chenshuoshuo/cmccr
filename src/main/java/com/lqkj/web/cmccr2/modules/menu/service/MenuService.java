@@ -51,9 +51,9 @@ public class MenuService {
         if (!exits) {
             return null;
         } else {
-            cm = setOrder(menu);
+            //cm = setOrder(menu);
         }
-        return menuDao.save(cm).getMenuId();
+        return menuDao.save(menu).getMenuId();
     }
 
 
@@ -87,7 +87,7 @@ public class MenuService {
         systemLogService.addLog("菜单管理服务", "update"
                 , "更新菜单信息");
         menu.setUpdateTime(new Timestamp(new Date().getTime()));
-        CcrMenu cm = setOrder(menu);
+        //CcrMenu cm = setOrder(menu);
         String[] specifyUserId = menu.getSpecifyUserId();
         String[] targetUserRole = menu.getTargetUserRole();
         ArrayList<CcrMenu> parentCcrMenus = new ArrayList<>();
@@ -176,7 +176,7 @@ public class MenuService {
                 }
             }
         }
-        return menuDao.save(cm);
+        return menuDao.save(menu);
     }
 
     /**
