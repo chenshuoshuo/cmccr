@@ -2,6 +2,7 @@ package com.lqkj.web.cmccr2.modules.user.controller;
 
 import com.alibaba.fastjson.JSONObject;
 import com.lqkj.web.cmccr2.message.MessageBean;
+import com.lqkj.web.cmccr2.message.MessageListBean;
 import com.lqkj.web.cmccr2.modules.user.domain.CcrUserRule;
 import com.lqkj.web.cmccr2.modules.user.service.CcrUserRuleService;
 import io.swagger.annotations.Api;
@@ -84,4 +85,12 @@ public class CcrUserRuleController {
         }
         return MessageBean.ok(ruleService.page(userCode,keyword, page, pageSize));
     }
+
+    @ApiOperation("获取角色所有信息")
+    @GetMapping("/center/user/ruleAll")
+    public MessageListBean<CcrUserRule> ruleAll() {
+        return MessageListBean.ok(ruleService.ruleAll());
+    }
+
+
 }

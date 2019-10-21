@@ -18,6 +18,7 @@ import javax.annotation.Resource;
 import java.sql.Timestamp;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.List;
 
 /**
  * 用户角色服务
@@ -128,4 +129,9 @@ public class CcrUserRuleService {
         return userRuleRepository.findSupportRules(userName, "%" + k + "%",
                 PageRequest.of(page, pageSize));
     }
+
+    public List<CcrUserRule> ruleAll() {
+        return userRuleRepository.findAll();
+    }
+
 }
