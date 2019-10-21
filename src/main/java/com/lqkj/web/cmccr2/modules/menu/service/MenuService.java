@@ -306,7 +306,7 @@ public class MenuService {
         String sql = "select * from ccr_menu where status=true ";
 
         if (type != null) {
-            sql += " and app_type = '" + type + "' ";
+            sql += " and app_type like '%" + type + "%' ";
         }
         if (StringUtils.isNotBlank(userCode) && StringUtils.isNotBlank(roles)) {
             if ("".equals(roles)) {
@@ -326,7 +326,7 @@ public class MenuService {
                     menuTree.add(ccrMenu);
                     findChMenu(ccrMenus, ccrMenu);
                 } else {
-                    if (!isMaxParent) {
+                    if (!isMaxParent && isParentMenu(ccrMenu.getParentId(),ccrMenus)) {
                         menuTree.add(ccrMenu);
                         findChMenu(ccrMenus, ccrMenu);
                     }
@@ -359,5 +359,14 @@ public class MenuService {
                 findChMenu(ccrMenus, ccrMenu);
             }
         }
+    }
+
+    private Boolean isParentMenu(Long parendId,List<CcrMenu> ccrMenus){
+        for (CcrMenu menu:ccrMenus) {
+           if(parendId.equals(menu.getMenuId())){
+               return  false;
+           }
+        }
+        return true;
     }
 }
