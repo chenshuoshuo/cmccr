@@ -100,6 +100,8 @@ public class OauthResourceConfig extends ResourceServerConfigurerAdapter impleme
                         "/center/menu/**",
                         "/center/request/**",
                         "/center/sensitivity/**",
+                        "/center/click/**",
+                        "/center/accessLog/**",
                         "/center/store/**",
                         "/center/user/**",
                         "/center/sys/log/**",
