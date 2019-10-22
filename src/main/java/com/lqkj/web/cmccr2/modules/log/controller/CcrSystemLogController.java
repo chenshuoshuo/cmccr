@@ -49,9 +49,4 @@ public class CcrSystemLogController {
                 .header("Content-Disposition", "attachment;filename=logs.xlsx")
                 .body(body);
     }
-
-    public static void main(String[] args) {
-        Date date=new Date();
-        System.out.println(date.getTime());
-    }
 }

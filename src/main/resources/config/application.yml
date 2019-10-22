@@ -25,7 +25,7 @@ server:
     min-spare-threads: 10
     max-http-post-size: 1000MB
     max-swallow-size: 1000MB
-  address: 192.168.3.219
+  address: 192.168.4.121
 logging:
   register-shutdown-hook: true
   file: ./log/ccr.log
@@ -109,7 +109,7 @@ spring:
   cloud:
     consul:
       enabled: true
-#      host: 192.168.4.241
+      host: 192.168.4.241
       port: 8500
       discovery:
         enabled: true
