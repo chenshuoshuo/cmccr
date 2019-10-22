@@ -27,9 +27,7 @@ import org.springframework.web.context.request.async.WebAsyncTask;
 
 import javax.servlet.http.HttpServletRequest;
 import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 @Api(tags = "网关统计记录")
 @RestController
@@ -132,8 +130,19 @@ public class AccessLogRecordController {
 
             //用户组使用统计
             List<KeyValueVO> useGroupCount = keyValueVOService.userGroupCount();
+            List<Map<String,Object>> useGroupList = new ArrayList<>();
+            Map<String,Object> map = new HashMap<>();
+            Integer loadUser = null;
+            for(KeyValueVO keyValueVO:useGroupCount){
+                if(keyValueVO.getKeyString().equals("guest")) {
+                    map.put("访问用户",Integer.parseInt(keyValueVO.getValueString()));
+                    loadUser = countAll - Integer.parseInt(keyValueVO.getValueString());
+                }
+            }
+            map.put("登陆用户",loadUser);
+            useGroupList.add(map);
             //useGroupCount.add(useAllCount);
-            ccrAccessLogVO.setUserGroupCountList(useGroupCount);
+            ccrAccessLogVO.setUserGroupCountList(useGroupList);
             return MessageBean.ok(ccrAccessLogVO);
         } catch (Exception e) {
             e.printStackTrace();

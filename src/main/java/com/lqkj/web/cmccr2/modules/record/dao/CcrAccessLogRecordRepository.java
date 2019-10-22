@@ -17,7 +17,7 @@ public interface CcrAccessLogRecordRepository extends JpaRepository<CcrAccessLog
     @Query("SELECT COUNT(ar.logId) FROM CcrAccessLogRecord ar")
     int useCountAll();
 
-    @Query(value = "SELECT count(ip.*) from (SELECT ip_address FROM ccr_access_log GROUP BY ip_address) ip",nativeQuery = true)
+    @Query(value = "SELECT count(*) from (SELECT COUNT(DISTINCT ip_address) FROM ccr_access_log GROUP BY ip_address) ip",nativeQuery = true)
     Integer countByIpAddress();
 
     @Modifying
