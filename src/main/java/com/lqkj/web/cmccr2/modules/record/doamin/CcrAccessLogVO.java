@@ -1,6 +1,7 @@
 package com.lqkj.web.cmccr2.modules.record.doamin;
 
 import java.util.List;
+import java.util.Map;
 
 
 /**
@@ -34,7 +35,7 @@ public class CcrAccessLogVO {
     /**
      * 用户组比例
      */
-    private List<KeyValueVO> UserGroupCountList;
+    private List<Map<String,Object>> UserGroupCountList;
 
     public Integer getWeekUseCount() {
         return weekUseCount;
@@ -76,11 +77,11 @@ public class CcrAccessLogVO {
         this.pvCount = pvCount;
     }
 
-    public List<KeyValueVO> getUserGroupCountList() {
+    public List<Map<String,Object>> getUserGroupCountList() {
         return UserGroupCountList;
     }
 
-    public void setUserGroupCountList(List<KeyValueVO> userGroupCountList) {
+    public void setUserGroupCountList(List<Map<String,Object>> userGroupCountList) {
         UserGroupCountList = userGroupCountList;
     }
 }

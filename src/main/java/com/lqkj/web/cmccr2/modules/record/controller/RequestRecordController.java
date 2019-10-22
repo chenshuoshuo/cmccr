@@ -19,6 +19,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -62,14 +63,21 @@ public class RequestRecordController {
             if(authentication == null){
                 requestRecord.setUserGroup("guest");
             } else {
-                String userCode = authentication.getPrincipal().toString();
-                requestRecord.setUserCode(userCode);
-                CcrUser ccrUser = ccrUserService.findByUserCode(userCode);
-                if(ccrUser != null){
-                    if(ccrUser.getUserGroup() == null){
+                Jwt jwt = (Jwt)authentication.getPrincipal();
+                if(jwt.getClaims().get("user_name")==null){
+                    requestRecord.setUserGroup("guest");
+                }else {
+                    String userCode = (String)jwt.getClaims().get("user_name");
+                    requestRecord.setUserCode(userCode);
+                    CcrUser ccrUser = ccrUserService.findByUserCode(userCode);
+                    if(ccrUser != null){
+                        if(ccrUser.getUserGroup() == null){
+                            requestRecord.setUserGroup("manager");
+                        } else {
+                            requestRecord.setUserGroup(ccrUser.getUserGroup().toString());
+                        }
+                    }else {
                         requestRecord.setUserGroup("manager");
-                    } else {
-                        requestRecord.setUserGroup(ccrUser.getUserGroup().toString());
                     }
                 }
             }
