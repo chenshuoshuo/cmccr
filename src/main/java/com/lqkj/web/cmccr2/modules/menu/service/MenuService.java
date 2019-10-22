@@ -356,13 +356,8 @@ public class MenuService {
     public void updateMenuStatus(String ename, Boolean status) {
         CcrMenu ccrMenu = menuDao.queryEname(ename);
         if (ccrMenu != null) {
-            List<CcrMenu> ccrMenus = new ArrayList<CcrMenu>();
-            querychildMenus(ccrMenu, ccrMenus);
-            if (ccrMenus != null && ccrMenus.size() > 0) {
-                for (CcrMenu menu : ccrMenus) {
-                    menuDao.updateChildState(menu.getMenuId(), status);
-                }
-            }
+            ccrMenu.setStatus(status);
+            this.update(ccrMenu.getMenuId(),ccrMenu);
         }
     }
 
