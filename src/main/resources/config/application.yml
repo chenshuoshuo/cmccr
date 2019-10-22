@@ -25,7 +25,7 @@ server:
     min-spare-threads: 10
     max-http-post-size: 1000MB
     max-swallow-size: 1000MB
-  address: 192.168.4.102
+  address: 192.168.3.219
 logging:
   register-shutdown-hook: true
   file: ./log/ccr.log
@@ -75,7 +75,7 @@ spring:
     hikari:
       driver-class-name: org.postgresql.Driver
       username: postgres
-      password: lqkj007
+      password: 6992005Ych
       auto-commit: true
       pool-name: ccr
       minimum-idle: 4
@@ -84,7 +84,7 @@ spring:
       max-lifetime: 1800000
       connection-timeout: 30000
       read-only: false
-    url: jdbc:postgresql://192.168.4.241:5432/cmccr
+    url: jdbc:postgresql://211.149.141.72:5432/test_cmccr2
   mvc:
     favicon:
       enabled: true
@@ -109,7 +109,7 @@ spring:
   cloud:
     consul:
       enabled: true
-      host: 192.168.4.241
+#      host: 192.168.4.241
       port: 8500
       discovery:
         enabled: true

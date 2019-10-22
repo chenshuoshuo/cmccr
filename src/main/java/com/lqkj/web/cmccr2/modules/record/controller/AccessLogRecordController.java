@@ -56,14 +56,21 @@ public class AccessLogRecordController {
             accessLogRecord.setUserGroup("guest");
         } else {
             Jwt jwt =(Jwt)authentication.getPrincipal();
-            String userCode = (String)jwt.getClaims().get("user_name");
-            accessLogRecord.setUserId(userCode);
-            CcrUser ccrUser = userService.findByUserCode(userCode);
-            if(ccrUser != null){
-                if(ccrUser.getUserGroup() == null){
+            if(jwt.getClaims().get("user_name")==null){
+                accessLogRecord.setUserId("guest");
+                accessLogRecord.setUserGroup("guest");
+            }else {
+                String userCode = (String)jwt.getClaims().get("user_name");
+                accessLogRecord.setUserId(userCode);
+                CcrUser ccrUser = userService.findByUserCode(userCode);
+                if(ccrUser != null){
+                    if(ccrUser.getUserGroup() == null){
+                        accessLogRecord.setUserGroup("manager");
+                    } else {
+                        accessLogRecord.setUserGroup(ccrUser.getUserGroup().toString());
+                    }
+                }else {
                     accessLogRecord.setUserGroup("manager");
-                } else {
-                    accessLogRecord.setUserGroup(ccrUser.getUserGroup().toString());
                 }
             }
         }
