@@ -15,7 +15,7 @@ import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.async.WebAsyncTask;
 
-@Api(tags = "网关统计")
+@Api(tags = "地图点击记录")
 @RestController
 public class MapClickRecordController {
 
