@@ -36,13 +36,19 @@ public class MapClickRecordController {
             clickRecord.setUserGroup("guest");
         } else {
             Jwt jwt =(Jwt)authentication.getPrincipal();
-            String userCode = (String)jwt.getClaims().get("user_name");
-            CcrUser ccrUser = userService.findByUserCode(userCode);
-            if(ccrUser != null){
-                if(ccrUser.getUserGroup() == null){
+            if(jwt.getClaims().get("user_name") == null){
+                clickRecord.setUserGroup("guest");
+            }else {
+                String userCode = (String)jwt.getClaims().get("user_name");
+                CcrUser ccrUser = userService.findByUserCode(userCode);
+                if(ccrUser != null){
+                    if(ccrUser.getUserGroup() == null){
+                        clickRecord.setUserGroup("manager");
+                    } else {
+                        clickRecord.setUserGroup(ccrUser.getUserGroup().toString());
+                    }
+                }else {
                     clickRecord.setUserGroup("manager");
-                } else {
-                    clickRecord.setUserGroup(ccrUser.getUserGroup().toString());
                 }
             }
         }
