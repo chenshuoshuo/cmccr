@@ -108,7 +108,7 @@ public class MenuController {
         List<String> userRole = new ArrayList<>();
         String roles = "";
         String userCode = "";
-        if(authentication != null) {
+        if(authentication != null && authentication.getAuthorities().size()!=0) {
 
             Jwt jwt = (Jwt) authentication.getPrincipal();
 
