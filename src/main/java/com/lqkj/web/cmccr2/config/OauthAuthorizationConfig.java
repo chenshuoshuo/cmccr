@@ -112,7 +112,6 @@ public class OauthAuthorizationConfig extends WebSecurityConfigurerAdapter  impl
                 .allowedTokenEndpointRequestMethods(HttpMethod.GET, HttpMethod.POST, HttpMethod.OPTIONS)
                 .tokenStore(tokenStore())
                 .accessTokenConverter(accessTokenConverter())
-                .tokenServices(tokenServices())
                 .userDetailsService(userService)
                 .authenticationManager(authenticationManager);
     }
