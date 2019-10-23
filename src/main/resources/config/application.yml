@@ -95,7 +95,7 @@ spring:
   boot:
     admin:
       client:
-        url: "http://192.168.4.241:7070/admin"
+        url: "http://192.168.3.219:7070/admin"
         instance:
           name: cmccr2
   resources:
