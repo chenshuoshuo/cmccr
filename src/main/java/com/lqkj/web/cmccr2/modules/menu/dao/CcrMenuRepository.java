@@ -31,8 +31,8 @@ public interface CcrMenuRepository extends JpaRepository<CcrMenu, Long> {
 
     List<CcrMenu> findAllByType(CcrMenu.IpsMenuType type );
 
-    @Query("select m from CcrMenu m where m.ename=:ename")
-    CcrMenu queryEname(@Param("ename")String ename);
+    @Query("select m from CcrMenu m where m.ename like:ename")
+    List<CcrMenu> queryEname(@Param("ename")String ename);
 
     @Modifying
     @Query("update CcrMenu a set a.status=:status where a.menuId=:menuId")
