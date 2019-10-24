@@ -6,6 +6,7 @@ ALTER TABLE public.ccr_menu ADD menu_mode VARCHAR(64) null;
 ALTER TABLE public.ccr_menu ADD app_type VARCHAR(64) null;
 ALTER TABLE public.ccr_menu ADD has_qr_code BOOL null;
 ALTER TABLE public.ccr_menu ADD mobile_sort INT8 null;
+ALTER TABLE public.ccr_menu ADD open BOOL null;
 
 comment on column ccr_menu.target_user_role is
 '面向用户角色：target_user_role';
@@ -25,5 +26,5 @@ comment on column ccr_menu.has_qr_code is
 '二维码应用：has_qr_code:是,否';
 comment on column ccr_menu.mobile_sort is
 '移动端排序';
-
-
+comment on column ccr_menu.open is
+'是否开启';

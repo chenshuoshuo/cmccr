@@ -37,5 +37,9 @@ public interface CcrMenuRepository extends JpaRepository<CcrMenu, Long> {
     @Modifying
     @Query("update CcrMenu a set a.status=:status where a.menuId=:menuId")
     void updateChildState(@Param("menuId") Long menuId,
+
                           @Param("status") Boolean status);
+    @Modifying
+    @Query("update CcrMenu a set a.open=:status,a.status=:status where a.menuId=:menuId")
+    void updateChildOpen(Long menuId, Boolean status);
 }

@@ -92,7 +92,7 @@ public class MenuService {
         String[] targetUserRole = menu.getTargetUserRole();
         ArrayList<CcrMenu> parentCcrMenus = new ArrayList<>();
         queryParentMenu(menu, parentCcrMenus);
-        if(menu.getParentId()!=null){
+        if (menu.getParentId() != null) {
             //添加父级菜单权限
             if (parentCcrMenus != null && parentCcrMenus.size() > 0) {
                 for (CcrMenu ccrMenu : parentCcrMenus) {
@@ -102,9 +102,9 @@ public class MenuService {
                     List<String> parentSpecifyUserIdList = new ArrayList<>();
                     List<String> parentTargetUserRoleList = new ArrayList<>();
                     if (parentSpecifyUserId != null && specifyUserId != null) {
-                        if(parentTargetUserRole.length==0){
+                        if (parentTargetUserRole.length == 0) {
                             parentSpecifyUserIdList = new ArrayList<>();
-                        }else{
+                        } else {
                             parentSpecifyUserIdList = Arrays.asList(parentSpecifyUserId);
                         }
                         if (parentSpecifyUserIdList.indexOf("public") < 0) {
@@ -118,9 +118,9 @@ public class MenuService {
                         parentSpecifyUserIdList.addAll(Arrays.asList(specifyUserId));
                     }
                     if (parentTargetUserRole != null && targetUserRole != null) {
-                        if(parentTargetUserRole.length==0){
+                        if (parentTargetUserRole.length == 0) {
                             parentTargetUserRoleList = new ArrayList<>();
-                        }else {
+                        } else {
                             parentTargetUserRoleList = Arrays.asList(parentTargetUserRole);
                         }
                         if (parentTargetUserRoleList.indexOf("public") < 0) {
@@ -153,9 +153,9 @@ public class MenuService {
                     List<String> chSpecifyUserIdList = new ArrayList<>();
                     List<String> chTargetUserRoleList = new ArrayList<>();
                     if (chSpecifyUserId != null && specifyUserId != null) {
-                        if(chSpecifyUserId.length==0){
+                        if (chSpecifyUserId.length == 0) {
                             chSpecifyUserIdList = new ArrayList<>();
-                        }else {
+                        } else {
                             chSpecifyUserIdList = Arrays.asList(chSpecifyUserId);
                         }
                         if (chSpecifyUserIdList.indexOf("public") < 0) {
@@ -170,9 +170,9 @@ public class MenuService {
                     }
 
                     if (chTargetUserRole != null && targetUserRole != null) {
-                        if(chTargetUserRole.length == 0){
+                        if (chTargetUserRole.length == 0) {
                             chTargetUserRoleList = new ArrayList<>();
-                        }else {
+                        } else {
                             chTargetUserRoleList = Arrays.asList(chTargetUserRole);
                         }
                         if (chTargetUserRoleList.indexOf("public") < 0) {
@@ -201,7 +201,7 @@ public class MenuService {
     public Page<CcrMenu> page(String keyword, String roles, String userCode, Integer page, Integer pageSize) {
         systemLogService.addLog("菜单管理服务", "page"
                 , "分页查询菜单信息");
-        String sql = "select * from ccr_menu where 1=1 ";
+        String sql = "select * from ccr_menu where open = true ";
 
         if (keyword != null) {
             sql += "and name like '%" + keyword + "%' ";
@@ -228,7 +228,7 @@ public class MenuService {
         systemLogService.addLog("菜单管理服务", "typePage"
                 , "按照类型分页查询菜单信息");
 
-        String sql = "select * from ccr_menu where 1=1 ";
+        String sql = "select * from ccr_menu where open = true ";
 
         if (StringUtils.isNotBlank(keyword)) {
             sql += "and name like '%" + keyword + "%' ";
@@ -319,7 +319,7 @@ public class MenuService {
     }
 
     public String authAllMenu(String roles, String userCode, CcrMenu.AppType type) {
-        String sql = "select * from ccr_menu where status=true ";
+        String sql = "select * from ccr_menu where status=true and open=true ";
 
         if (type != null) {
             sql += " and app_type like '%" + type + "%' ";
@@ -342,7 +342,7 @@ public class MenuService {
                     menuTree.add(ccrMenu);
                     findChMenu(ccrMenus, ccrMenu);
                 } else {
-                    if (!isMaxParent && isParentMenu(ccrMenu.getParentId(),ccrMenus)) {
+                    if (!isMaxParent && isParentMenu(ccrMenu.getParentId(), ccrMenus)) {
                         menuTree.add(ccrMenu);
                         findChMenu(ccrMenus, ccrMenu);
                     }
@@ -356,8 +356,14 @@ public class MenuService {
     public void updateMenuStatus(String ename, Boolean status) {
         CcrMenu ccrMenu = menuDao.queryEname(ename);
         if (ccrMenu != null) {
-            ccrMenu.setStatus(status);
-            this.update(ccrMenu.getMenuId(),ccrMenu);
+            menuDao.updateChildOpen(ccrMenu.getMenuId(), status);
+            ArrayList<CcrMenu> ccrMenus = new ArrayList<>();
+            this.querychildMenus(ccrMenu, ccrMenus);
+            if (ccrMenus != null && ccrMenus.size() > 0) {
+                for (int i = 0; i < ccrMenus.size(); i++){
+                    menuDao.updateChildOpen(ccrMenus.get(i).getMenuId(),status);
+                }
+            }
         }
     }
 
@@ -372,11 +378,11 @@ public class MenuService {
         }
     }
 
-    private Boolean isParentMenu(Long parendId,List<CcrMenu> ccrMenus){
-        for (CcrMenu menu:ccrMenus) {
-           if(parendId.equals(menu.getMenuId())){
-               return  false;
-           }
+    private Boolean isParentMenu(Long parendId, List<CcrMenu> ccrMenus) {
+        for (CcrMenu menu : ccrMenus) {
+            if (parendId.equals(menu.getMenuId())) {
+                return false;
+            }
         }
         return true;
     }
