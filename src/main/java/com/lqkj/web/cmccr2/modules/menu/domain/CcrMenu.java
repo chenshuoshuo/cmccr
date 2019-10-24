@@ -272,6 +272,6 @@ public class CcrMenu implements Serializable {
     }
 
     public enum AppType {
-        pc,h5
+        pc,h5,pch5
     }
 }
