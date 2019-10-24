@@ -331,7 +331,11 @@ public class MenuService {
                 sql += " and (target_user_role && ARRAY[" + roles + ",'public'] \\:\\: varchar[] or specify_user_id && ARRAY['" + userCode + "'] \\:\\: varchar[]) ";
             }
         }
-        sql += "order by sort";
+        if(type != null && type.toString().equals("h5")){
+            sql += "order by mobile_sort";
+        }else {
+            sql += "order by sort";
+        }
         List<CcrMenu> ccrMenus = menuSQLDao.executeSql(sql, CcrMenu.class);
         List<CcrMenu> menuTree = new ArrayList<>();
         if (ccrMenus != null && ccrMenus.size() > 0) {
