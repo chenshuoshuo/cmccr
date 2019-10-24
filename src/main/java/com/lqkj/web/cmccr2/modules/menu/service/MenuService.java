@@ -354,16 +354,19 @@ public class MenuService {
     }
 
     public void updateMenuStatus(String ename, Boolean status) {
-        CcrMenu ccrMenu = menuDao.queryEname(ename);
-        if (ccrMenu != null) {
-            menuDao.updateChildOpen(ccrMenu.getMenuId(), status);
-            ArrayList<CcrMenu> ccrMenus = new ArrayList<>();
-            this.querychildMenus(ccrMenu, ccrMenus);
-            if (ccrMenus != null && ccrMenus.size() > 0) {
-                for (int i = 0; i < ccrMenus.size(); i++){
-                    menuDao.updateChildOpen(ccrMenus.get(i).getMenuId(),status);
+        List<CcrMenu> menus = menuDao.queryEname(ename);
+        if (menus != null && menus.size()>0) {
+            for (int j = 0; j < menus.size(); j++){
+                menuDao.updateChildOpen(menus.get(j).getMenuId(), status);
+                ArrayList<CcrMenu> ccrMenus = new ArrayList<>();
+                this.querychildMenus(menus.get(j), ccrMenus);
+                if (ccrMenus != null && ccrMenus.size() > 0) {
+                    for (int i = 0; i < ccrMenus.size(); i++){
+                        menuDao.updateChildOpen(ccrMenus.get(i).getMenuId(),status);
+                    }
                 }
             }
+
         }
     }
 
