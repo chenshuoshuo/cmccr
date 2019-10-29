@@ -32,5 +32,6 @@ INSERT INTO public.ccr_user_authority VALUES (111, 'CM-M7722', '可视化公房'
 INSERT INTO public.ccr_user_authority (authority_id, content, name, route, parent_id, type, icon, enabled, http_method) VALUES (112, 'typeMannage', '分类管理', '/typeMannage', 111, 'm7722_menu', null, false, null);
 INSERT INTO public.ccr_user_authority (authority_id, content, name, route, parent_id, type, icon, enabled, http_method) VALUES (113, 'houseType', '公房分类管理', '/typeMannage/houseType', 112, 'm7722_menu', null, false, null);
 INSERT INTO public.ccr_user_authority (authority_id, content, name, route, parent_id, type, icon, enabled, http_method) VALUES (114, 'houseState', '公房状态管理', '/typeMannage/houseState', 112, 'm7722_menu', null, false, null);
-INSERT INTO public.ccr_user_authority (authority_id, content, name, route, parent_id, type, icon, enabled, http_method) VALUES (115, 'mapSetting', '地图显示设置', '/systemSetting/mapSetting', 111, 'm7722_menu', null, false, null);
-INSERT INTO public.ccr_rule_to_authority select 1, generate_series(111,115);
+INSERT INTO public.ccr_user_authority (authority_id, content, name, route, parent_id, type, icon, enabled, http_method) VALUES (115, 'systemSetting', '系统配置', '/systemSetting', 111, 'm7722_menu', null, false, null);
+INSERT INTO public.ccr_user_authority (authority_id, content, name, route, parent_id, type, icon, enabled, http_method) VALUES (116, 'mapSetting', '地图显示设置', '/systemSetting/mapSetting', 115, 'm7722_menu', null, false, null);
+INSERT INTO public.ccr_rule_to_authority select 1, generate_series(111,116);
