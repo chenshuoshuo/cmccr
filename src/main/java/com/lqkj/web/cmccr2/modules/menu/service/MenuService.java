@@ -373,7 +373,7 @@ public class MenuService {
     }
 
     private void findChMenu(List<CcrMenu> ccrMenus, CcrMenu menu) {
-        Set<CcrMenu> chMenu = new HashSet<CcrMenu>();
+        List<CcrMenu> chMenu = new ArrayList<>();
         menu.setChCcrMenu(chMenu);
         for (CcrMenu ccrMenu : ccrMenus) {
             if (ccrMenu.getParentId() != null && ccrMenu.getParentId().equals(menu.getMenuId())) {
