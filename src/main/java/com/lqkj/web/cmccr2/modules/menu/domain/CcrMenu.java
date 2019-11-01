@@ -8,6 +8,7 @@ import javax.persistence.*;
 import java.io.Serializable;
 import java.sql.Timestamp;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
@@ -87,7 +88,7 @@ public class CcrMenu implements Serializable {
     private Boolean open;
 
     @Transient
-    private Set<CcrMenu> chCcrMenu;
+    private List<CcrMenu> chCcrMenu;
 
 
     public Long getMenuId() {
@@ -259,11 +260,11 @@ public class CcrMenu implements Serializable {
         return result;
     }
 
-    public Set<CcrMenu> getChCcrMenu() {
+    public List<CcrMenu> getChCcrMenu() {
         return chCcrMenu;
     }
 
-    public void setChCcrMenu(Set<CcrMenu> chCcrMenu) {
+    public void setChCcrMenu(List<CcrMenu> chCcrMenu) {
         this.chCcrMenu = chCcrMenu;
     }
 
