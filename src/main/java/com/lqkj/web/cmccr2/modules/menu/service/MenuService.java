@@ -325,11 +325,9 @@ public class MenuService {
             sql += " and app_type like '%" + type + "%' ";
         }
         if (StringUtils.isNotBlank(userCode) && StringUtils.isNotBlank(roles)) {
-            if ("".equals(roles)) {
-                sql += " and (target_user_role && ARRAY['','public'] \\:\\: varchar[] or specify_user_id && ARRAY['" + userCode + "'] \\:\\:varchar[]) ";
-            } else {
-                sql += " and (target_user_role && ARRAY[" + roles + ",'public'] \\:\\: varchar[] or specify_user_id && ARRAY['" + userCode + "'] \\:\\: varchar[]) ";
-            }
+            sql += " and (target_user_role && ARRAY[" + roles + ",'public'] \\:\\: varchar[] or specify_user_id && ARRAY['" + userCode + "'] \\:\\: varchar[]) ";
+        }else{
+            sql += " and target_user_role && ARRAY['','public'] \\:\\: varchar[] ";
         }
         if(type != null && type.toString().equals("h5")){
             sql += "order by mobile_sort";
