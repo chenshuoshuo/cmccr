@@ -329,7 +329,7 @@ public class MenuService {
         }else{
             sql += " and target_user_role && ARRAY['','public'] \\:\\: varchar[] ";
         }
-        if(type != null && type.toString().equals("h5")){
+        if(type != null && type.name().equals("h5")){
             sql += "order by mobile_sort";
         }else {
             sql += "order by sort";
