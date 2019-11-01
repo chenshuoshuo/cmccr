@@ -55,7 +55,7 @@ public class CasController {
                             String casUrl = userConfigMap.get("casLoginUrl").toString();
                             java.net.URL urls = new java.net.URL(casUrl);
                             java.net.URL loginUrl = new java.net.URL(casLoginUrl);
-                            if(urls.getHost().equals(loginUrl.getPath())){
+                            if(urls.getHost().equals(loginUrl.getHost())){
                                 Response response=HttpUtils.getInstance().getRequest(casLoginUrl);
                                 return response.body().string();
                             }
