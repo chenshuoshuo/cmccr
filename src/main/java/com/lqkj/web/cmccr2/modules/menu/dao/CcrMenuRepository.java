@@ -29,10 +29,10 @@ public interface CcrMenuRepository extends JpaRepository<CcrMenu, Long> {
     @Query(nativeQuery = true, value = "select m.* from ccr_menu as m where m.parent_id=:parentId")
     List<CcrMenu> childMenus(@Param("parentId") Long parentId);
 
-    List<CcrMenu> findAllByType(CcrMenu.IpsMenuType type );
+    List<CcrMenu> findAllByType(CcrMenu.IpsMenuType type);
 
     @Query("select m from CcrMenu m where m.ename LIKE CONCAT('%',:ename,'%')")
-    List<CcrMenu> queryEname(@Param("ename")String ename);
+    List<CcrMenu> queryEname(@Param("ename") String ename);
 
     @Modifying
     @Query("update CcrMenu a set a.status=:status where a.menuId=:menuId")
