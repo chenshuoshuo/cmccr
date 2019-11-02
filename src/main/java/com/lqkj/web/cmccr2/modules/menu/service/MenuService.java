@@ -105,7 +105,7 @@ public class MenuService {
                         if (parentTargetUserRole.length == 0) {
                             parentSpecifyUserIdList = new ArrayList<>();
                         } else {
-                            parentSpecifyUserIdList = Arrays.asList(parentSpecifyUserId);
+                            parentSpecifyUserIdList = new ArrayList<>(Arrays.asList(parentSpecifyUserId));
                         }
                         if (parentSpecifyUserIdList.indexOf("public") < 0) {
                             for (String userId : specifyUserId) {
@@ -121,7 +121,7 @@ public class MenuService {
                         if (parentTargetUserRole.length == 0) {
                             parentTargetUserRoleList = new ArrayList<>();
                         } else {
-                            parentTargetUserRoleList = Arrays.asList(parentTargetUserRole);
+                            parentTargetUserRoleList = new ArrayList<>(Arrays.asList(parentTargetUserRole));
                         }
                         if (parentTargetUserRoleList.indexOf("public") < 0) {
                             for (String role : targetUserRole) {
@@ -156,7 +156,7 @@ public class MenuService {
                         if (chSpecifyUserId.length == 0) {
                             chSpecifyUserIdList = new ArrayList<>();
                         } else {
-                            chSpecifyUserIdList = Arrays.asList(chSpecifyUserId);
+                            chSpecifyUserIdList = new ArrayList<>(Arrays.asList(chSpecifyUserId));
                         }
                         if (chSpecifyUserIdList.indexOf("public") < 0) {
                             for (String userId : specifyUserId) {
@@ -173,7 +173,7 @@ public class MenuService {
                         if (chTargetUserRole.length == 0) {
                             chTargetUserRoleList = new ArrayList<>();
                         } else {
-                            chTargetUserRoleList = Arrays.asList(chTargetUserRole);
+                            chTargetUserRoleList = new ArrayList<>(Arrays.asList(chTargetUserRole));
                         }
                         if (chTargetUserRoleList.indexOf("public") < 0) {
                             for (String role : targetUserRole) {
