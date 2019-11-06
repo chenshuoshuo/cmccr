@@ -2,10 +2,16 @@ package com.lqkj.web.cmccr2.modules.record.dao;
 
 import com.lqkj.web.cmccr2.modules.record.doamin.CcrAccessLogRecord;
 import com.lqkj.web.cmccr2.modules.record.doamin.CcrAppRequestRecord;
+import com.lqkj.web.cmccr2.modules.record.doamin.CcrRequestRecord;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
+import java.sql.Timestamp;
 import java.util.List;
 import java.util.UUID;
 
@@ -27,5 +33,8 @@ public interface CcrAccessLogRecordRepository extends JpaRepository<CcrAccessLog
     @Query(value = "select * from ccr_access_log ar where ar.log_time >= to_timestamp(?1,'yyyy-mm-dd hh24:mi:ss') and log_time <= to_timestamp(?2,'yyyy-mm-dd hh24:mi:ss')",nativeQuery = true)
     List<CcrAccessLogRecord> listQuery(String startDate,String endDate);
 
+    @Query(value = "select ip_address,count(a) from ccr_access_log a where a.log_time>:startTime and a.log_time<:endTime group by ip_address")
+    List<Object[]> locationRecord(@Param("startTime") Timestamp startTime,
+                                  @Param("endTime") Timestamp endTime);
 
 }

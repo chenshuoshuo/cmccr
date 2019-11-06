@@ -7,6 +7,7 @@ import com.lqkj.web.cmccr2.message.MessageListBean;
 import com.lqkj.web.cmccr2.modules.record.doamin.CcrLocationRecord;
 import com.lqkj.web.cmccr2.modules.record.doamin.CcrRequestRecord;
 import com.lqkj.web.cmccr2.modules.record.doamin.CcrStatisticsFrequency;
+import com.lqkj.web.cmccr2.modules.record.serivce.AccessLogRecordService;
 import com.lqkj.web.cmccr2.modules.record.serivce.MapSearchServiceApi;
 import com.lqkj.web.cmccr2.modules.record.serivce.RequestRecordService;
 import com.lqkj.web.cmccr2.modules.user.domain.CcrUser;
@@ -37,10 +38,13 @@ import java.util.Map;
 @Api(tags = "网关统计")
 @RestController
 public class RequestRecordController {
-
+    @Autowired
     private RequestRecordService requestRecordService;
-
+    @Autowired
     private MapSearchServiceApi searchServiceApi;
+
+    @Autowired
+    private AccessLogRecordService accessLogRecordService;
 
     @Autowired
     CcrUserService ccrUserService;
@@ -120,7 +124,7 @@ public class RequestRecordController {
     @GetMapping("/center/record/" + APIVersion.V1 + "/location")
     public MessageListBean<CcrLocationRecord> locationRecord(@RequestParam Timestamp startTime,
                                                              @RequestParam Timestamp endTime) {
-        return MessageListBean.ok(requestRecordService.locationStatistics(startTime, endTime));
+        return MessageListBean.ok(accessLogRecordService.locationStatistics(startTime, endTime));
     }
 
     @GetMapping("/center/sys/log/" + APIVersion.V1 + "/location/export")
@@ -128,7 +132,7 @@ public class RequestRecordController {
     public ResponseEntity<StreamingResponseBody> export(@RequestParam Timestamp startTime,
                                                         @RequestParam Timestamp endTime) {
         StreamingResponseBody body = outputStream -> {
-            requestRecordService.exportLocationStatistics(startTime, endTime, outputStream);
+            accessLogRecordService.exportLocationStatistics(startTime, endTime, outputStream);
         };
 
         return ResponseEntity.ok()
