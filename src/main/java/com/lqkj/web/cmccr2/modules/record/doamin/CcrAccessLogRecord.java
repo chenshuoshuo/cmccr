@@ -1,7 +1,6 @@
 package com.lqkj.web.cmccr2.modules.record.doamin;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import javafx.scene.chart.ValueAxis;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.Type;
 
