@@ -39,7 +39,7 @@ INSERT INTO public.ccr_user_authority (authority_id, content, name, route, paren
 INSERT INTO public.ccr_rule_to_authority select 1, generate_series(111,116);
 
 --cmdbe增加公房菜单
-INSERT INTO public.ccr_user_authority (authority_id, content, name, route, parent_id, type, icon, enabled, http_method) VALUES (117, 'asst-bind', '公房绑定管理', 'asst-bind', 28, 'm7722_menu', null, false, null);
-INSERT INTO public.ccr_user_authority (authority_id, content, name, route, parent_id, type, icon, enabled, http_method) VALUES (118, 'bind-room', '公房房间绑定', 'bind-room', 117, 'm7722_menu', null, false, null);
+INSERT INTO public.ccr_user_authority (authority_id, content, name, route, parent_id, type, icon, enabled, http_method) VALUES (117, 'asst-bind', '公房绑定管理', 'asst-bind', 28, 'dbe_menu', null, false, null);
+INSERT INTO public.ccr_user_authority (authority_id, content, name, route, parent_id, type, icon, enabled, http_method) VALUES (118, 'bind-room', '公房房间绑定', 'bind-room', 117, 'dbe_menu', null, false, null);
 INSERT INTO public.ccr_rule_to_authority select 1, generate_series(117,118);
 

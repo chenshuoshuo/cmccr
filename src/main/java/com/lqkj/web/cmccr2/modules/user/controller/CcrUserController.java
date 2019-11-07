@@ -42,7 +42,7 @@ public class CcrUserController {
     @ApiOperation("注册用户")
     @PutMapping("/center/user/register")
     public MessageBean<CcrUser> register(@RequestBody CcrUser user, @RequestParam Integer adminCode) throws Exception {
-        if(ccrUserService.registerAdmin(adminCode, user)!=null) {
+        if (ccrUserService.registerAdmin(adminCode, user) != null) {
             return MessageBean.ok(ccrUserService.registerAdmin(adminCode, user));
         }
         return MessageBean.error("用户已存在");
@@ -56,13 +56,13 @@ public class CcrUserController {
 
     @ApiOperation("根据用户名查询用户信息")
     @GetMapping("/center/user/name/{username}")
-    public MessageBean<CcrUser> info(@PathVariable String username,@ApiIgnore Authentication authentication) throws Exception {
+    public MessageBean<CcrUser> info(@PathVariable String username, @ApiIgnore Authentication authentication) throws Exception {
 
         //String name = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         String name = "";
-        if(authentication != null){
-            Jwt jwt =(Jwt)authentication.getPrincipal();
-            name = (String)jwt.getClaims().get("user_name");
+        if (authentication != null) {
+            Jwt jwt = (Jwt) authentication.getPrincipal();
+            name = (String) jwt.getClaims().get("user_name");
         }
 
         return MessageBean.ok((CcrUser) ccrUserService.loadUserByUsername(name));
@@ -71,29 +71,40 @@ public class CcrUserController {
     @ApiOperation("更新用户密码")
     @PostMapping("/center/user/{id}")
     public MessageBean<CcrUser> update(@RequestParam(required = false) String password,
-                                      @RequestParam(required = false) Boolean admin,
-                                      @RequestParam(required = false) String oldPassword,
-                                      @PathVariable Long id,
-                                      @ApiParam(value = "头像文件") MultipartFile headFile)throws Exception{
+                                       @RequestParam(required = false) Boolean admin,
+                                       @RequestParam(required = false) String oldPassword,
+                                       @PathVariable Long id,
+                                       @ApiParam(value = "头像文件") MultipartFile headFile) throws Exception {
 
         String headPath = null;
-        if(headFile != null){
-            headPath  = ccrUserService.saveUploadFile(headFile,"png", "jpg");
+        if (headFile != null) {
+            headPath = ccrUserService.saveUploadFile(headFile, "png", "jpg");
         }
-        CcrUser user = ccrUserService.update(id,password,oldPassword,admin,headPath);
-        if(user != null){
+        CcrUser user = ccrUserService.update(id, password, oldPassword, admin, headPath);
+        if (user != null) {
             return MessageBean.ok(user);
-        }else {
+        } else {
             return MessageBean.error("密码修改失败");
         }
     }
 
-    @ApiOperation("根据用户id删除用户")
-    @DeleteMapping("/center/user/{id}")
-    public MessageBean<Long> delete(@PathVariable Long id) {
-        ccrUserService.delete(id);
+//    @ApiOperation("根据用户id删除用户")
+//    @DeleteMapping("/center/user/{id}")
+//    public MessageBean<Long> delete(@PathVariable String id) {
+//        ccrUserService.delete(Long.valueOf(id));
+//        return MessageBean.ok();
+//    }
+
+    @ApiOperation("批量删除用户ID")
+    @DeleteMapping("/center/user/{ids}")
+    public MessageBean<Long> delete(@PathVariable String ids) {
+        String[] idsArr = ids.split(",");
+        for (int i = 0; i < idsArr.length; i++){
+            ccrUserService.delete(Long.parseLong(idsArr[i]));
+        }
         return MessageBean.ok();
     }
+
 
     @ApiOperation("分页查询用户信息")
     @GetMapping("/center/user/")
@@ -113,9 +124,9 @@ public class CcrUserController {
 
         //String userCode = SecurityContextHolder.getContext().getAuthentication().getName();
         String userCode = "";
-        if(authentication != null){
-            Jwt jwt =(Jwt)authentication.getPrincipal();
-            userCode = (String)jwt.getClaims().get("user_name");
+        if (authentication != null) {
+            Jwt jwt = (Jwt) authentication.getPrincipal();
+            userCode = (String) jwt.getClaims().get("user_name");
         }
 
         return MessageBean.ok((CcrUser) ccrUserService.loadUserByUsername(userCode));
