@@ -62,6 +62,12 @@ public class AccessLogRecordService {
             try {
                 String ip = String.valueOf(r[0]).split(",")[0];
                 DataBlock block = dbSearcher.memorySearch(ip);
+                String region = block.getRegion();
+                int city = region.lastIndexOf("|");
+                if("0".equals(region.substring(city-1,city))){
+                    //把城市为0改为未知
+                    region = region.replaceAll("(0)(.*?)(\\1)(.*?)", "$1$2未知$4");
+                }
                 locationRecords.add(new CcrLocationRecord(block.getRegion(), block.getCityId(),
                         ((BigInteger) r[1]).intValue()));
             } catch (Exception e) {
