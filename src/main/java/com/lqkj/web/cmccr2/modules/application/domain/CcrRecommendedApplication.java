@@ -58,6 +58,14 @@ public class CcrRecommendedApplication implements Serializable {
     @Column(name = "memo")
     private String memo;
 
+    @ApiModelProperty(value = "设备类型", required = false)
+    @Column(name = "equipment_type")
+    private String equipmentType;
+
+    @ApiModelProperty(value = "支持跳转", required = false)
+    @Column(name = "support_jump")
+    private Character supportJump;
+
     public String getAppId() {
         return appId;
     }
@@ -120,6 +128,22 @@ public class CcrRecommendedApplication implements Serializable {
 
     public void setMemo(String memo) {
         this.memo = memo;
+    }
+
+    public String getEquipmentType() {
+        return equipmentType;
+    }
+
+    public void setEquipmentType(String equipmentType) {
+        this.equipmentType = equipmentType;
+    }
+
+    public Character getSupportJump() {
+        return supportJump;
+    }
+
+    public void setSupportJump(Character supportJump) {
+        this.supportJump = supportJump;
     }
 
     @Override

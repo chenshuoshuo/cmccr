@@ -20,10 +20,6 @@ import java.util.List;
 @Api(tags = "推荐应用管理")
 @RestController
 public class RecommendedApplicationController {
-
-    @Autowired
-    public RecommendedApplicationService applicationService;
-
     @ApiImplicitParams({
             @ApiImplicitParam(name = "appName",  value = "应用名称"),
             @ApiImplicitParam(name = "appUrl",  value = "应用路径"),
@@ -31,7 +27,9 @@ public class RecommendedApplicationController {
             @ApiImplicitParam(name = "startTime",  value = "推荐起始时间"),
             @ApiImplicitParam(name = "endTime",  value = "推荐结束时间"),
             @ApiImplicitParam(name = "orderId",  value = "排序"),
-            @ApiImplicitParam(name = "memo",  value = "备注")
+            @ApiImplicitParam(name = "memo",  value = "备注"),
+            @ApiImplicitParam(name = "equipmentType",  value = "设备类型"),
+            @ApiImplicitParam(name = "supportJump",  value = "是否支持跳转")
     })
     @ApiOperation("创建推荐应用")
     @PostMapping("/center/application/recommend/" + APIVersion.V1 + "/create/")
@@ -41,7 +39,9 @@ public class RecommendedApplicationController {
                                                           String startTime,
                                                           String endTime,
                                                           Integer orderId,
-                                                          String memo) throws Exception {
+                                                          String memo,
+                                                          String equipmentType,
+                                                          Character supportJump) throws Exception {
         String appId = UUIDUtils.getUUID();
         Timestamp start = new Timestamp(new SimpleDateFormat("yyyy-MM-dd HH").parse(startTime).getTime());
         Timestamp end = new Timestamp(new SimpleDateFormat("yyyy-MM-dd HH").parse(endTime).getTime());
@@ -88,8 +88,14 @@ public class RecommendedApplicationController {
         application.setEndTime(end);
         application.setAppId(appId);
         application.setAppUrl(appUrl);
+        application.setEquipmentType(equipmentType);
+        application.setSupportJump(supportJump);
         return MessageBean.ok(applicationService.createRecommendedApplication(application));
     }
+
+
+    @Autowired
+    public RecommendedApplicationService applicationService;
 
     @ApiOperation("批量创建推荐应用")
     @PostMapping("/center/application/recommend/" + APIVersion.V1 + "/createBatch/")
@@ -105,7 +111,9 @@ public class RecommendedApplicationController {
             @ApiImplicitParam(name = "startTime",  value = "推荐起始时间"),
             @ApiImplicitParam(name = "endTime",  value = "推荐结束时间"),
             @ApiImplicitParam(name = "orderId",  value = "排序"),
-            @ApiImplicitParam(name = "memo",  value = "备注")
+            @ApiImplicitParam(name = "memo",  value = "备注"),
+            @ApiImplicitParam(name = "equipmentType",  value = "设备类型"),
+            @ApiImplicitParam(name = "supportJump",  value = "是否支持跳转")
     })
     @ApiOperation("更新推荐应用")
     @PostMapping("/center/application/recommend/" + APIVersion.V1 + "/update/{id}")
@@ -116,12 +124,14 @@ public class RecommendedApplicationController {
                                        String startTime,
                                        String endTime,
                                        Integer orderId,
-                                       String memo) throws Exception {
+                                       String memo,
+                                       String equipmentType,
+                                       Character supportJump) throws Exception {
 
         Timestamp start = new Timestamp(new SimpleDateFormat("yyyy-MM-dd HH").parse(startTime).getTime());
         Timestamp end = new Timestamp(new SimpleDateFormat("yyyy-MM-dd HH").parse(endTime).getTime());
         return MessageBean.ok(applicationService.updateRecommendedApplication(id, appName, appUrl,
-                appLogo, start, end,orderId,memo));
+                appLogo, start, end,orderId,memo, supportJump));
     }
 
     @ApiOperation("删除推荐应用")
