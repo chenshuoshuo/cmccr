@@ -83,6 +83,10 @@ public class CcrUserAuthority implements Serializable, GrantedAuthority {
     @Type(type = "string-array")
     private String[] specifyUserId;
 
+    @ApiModelProperty(value = "是否有后台管理系统")
+    @Column(name = "manage")
+    private Boolean manage;
+
     public CcrUserAuthority() {
     }
 
@@ -187,6 +191,14 @@ public class CcrUserAuthority implements Serializable, GrantedAuthority {
         this.specifyUserId = specifyUserId;
     }
 
+    public Boolean getManage() {
+        return manage;
+    }
+
+    public void setManage(Boolean manage) {
+        this.manage = manage;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -221,6 +233,6 @@ public class CcrUserAuthority implements Serializable, GrantedAuthority {
     }
 
     public enum UserAuthorityType {
-        menu, home_menu, ips_menu, gis_menu, normal, dbe_menu, m3820_menu, m2654_menu, m7722_menu
+        menu, home_menu, ips_menu, gis_menu, normal, dbe_menu, m3820_menu, m2654_menu, m7722_menu,s2653_menu
     }
 }

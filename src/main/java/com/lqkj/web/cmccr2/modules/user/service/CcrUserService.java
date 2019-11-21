@@ -126,16 +126,23 @@ public class CcrUserService implements UserDetailsService {
 
         CcrUser user = userRepository.findById(id).get();
         //密码验证
+        Boolean isUpdate = false;
         if (password!=null && passwordEncoder.matches(oldPassword,user.getPassWord())) {
             user.setPassWord(passwordEncoder.encode(password));
-
-            if (admin!=null) user.setAdmin(admin);
-            if(headPath!=null)user.setHeadPath(headPath);
-
-            userRepository.save(user);
-            return this.setIconURL(user);
+            isUpdate = true;
         }
-       return  null;
+        if (admin!=null){
+            user.setAdmin(admin);
+            isUpdate = true;
+        }
+        if(StringUtils.isNotBlank(headPath)){
+            user.setHeadPath(headPath);
+            isUpdate = true;
+        }
+        if(isUpdate){
+            userRepository.save(user);
+        }
+        return this.setIconURL(user);
     }
 
     /**

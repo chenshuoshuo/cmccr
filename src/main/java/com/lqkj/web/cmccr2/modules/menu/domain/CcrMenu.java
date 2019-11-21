@@ -87,6 +87,12 @@ public class CcrMenu implements Serializable {
     @Column(name = "open")
     private Boolean open;
 
+
+    @ApiModelProperty(value = "url打开方式")
+    @Column(name = "url_open_type")
+    @Enumerated(EnumType.STRING)
+    private UrlOpenType urlOpenType;
+
     @Transient
     private List<CcrMenu> chCcrMenu;
 
@@ -227,6 +233,14 @@ public class CcrMenu implements Serializable {
         this.open = open;
     }
 
+    public UrlOpenType getUrlOpenType() {
+        return urlOpenType;
+    }
+
+    public void setUrlOpenType(UrlOpenType urlOpenType) {
+        this.urlOpenType = urlOpenType;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -274,5 +288,9 @@ public class CcrMenu implements Serializable {
 
     public enum AppType {
         pc,h5,pc_h5
+    }
+
+    public enum UrlOpenType {
+        jump,iframe
     }
 }

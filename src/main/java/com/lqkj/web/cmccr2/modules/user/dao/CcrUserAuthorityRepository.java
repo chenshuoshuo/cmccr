@@ -16,7 +16,7 @@ import java.util.Map;
 @Repository
 public interface CcrUserAuthorityRepository extends JpaRepository<CcrUserAuthority, Long> {
 
-    @Query("select a from CcrUserAuthority a where a.type=:t and a.enabled=true")
+    @Query("select a from CcrUserAuthority a where a.type=:t and a.enabled=true and manage = true")
     List<CcrUserAuthority> findByType(@Param("t") CcrUserAuthority.UserAuthorityType type);
 
     @Query("select a.name from CcrUserAuthority a where upper(a.content)=upper(:content) ")
