@@ -68,6 +68,8 @@ public class RecommendedApplicationService {
             application.setAppLogo(applicationVO.getAppLogo());
             application.setAppName(applicationVO.getAppName());
             application.setMemo(applicationVO.getMemo());
+            application.setApplicationType(applicationVO.getApplicationType());
+            application.setSupportJump(applicationVO.getSupportJump());
             if(list.size() > 0){
                 if(applicationVO.getOrderId() == null){
                     for(int i = 0; i < list.size();i++){
@@ -116,7 +118,7 @@ public class RecommendedApplicationService {
      *
      * @param id 推荐应用ID
      */
-    public CcrRecommendedApplication updateRecommendedApplication(String id, String appName, String appUrl,String appLogo, Timestamp startTime,Timestamp endTime,Integer orderId,String memo, Character supportJump) throws Exception {
+    public CcrRecommendedApplication updateRecommendedApplication(String id, String appName, String appUrl,String appLogo, Timestamp startTime,Timestamp endTime,Integer orderId,String memo, String applicationType, String supportJump) throws Exception {
         CcrRecommendedApplication application = recommendedApplicationDao.getOne(id);
         if(appLogo != null){ application.setAppLogo(appLogo);}
         application.setAppName(appName);
@@ -124,6 +126,8 @@ public class RecommendedApplicationService {
         application.setStartTime(startTime);
         application.setEndTime(endTime);
         application.setOrderId(orderId);
+        application.setApplicationType(applicationType);
+        application.setSupportJump(supportJump);
         if(memo != null){application.setMemo(memo);}
         if(supportJump != null){application.setSupportJump(supportJump);}
         systemLogService.addLog("推荐应用管理", "updateRecommendedApplication",

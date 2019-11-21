@@ -40,8 +40,8 @@ public class RecommendedApplicationController {
                                                           String endTime,
                                                           Integer orderId,
                                                           String memo,
-                                                          String equipmentType,
-                                                          Character supportJump) throws Exception {
+                                                          String applicationType,
+                                                          String supportJump) throws Exception {
         String appId = UUIDUtils.getUUID();
         Timestamp start = new Timestamp(new SimpleDateFormat("yyyy-MM-dd HH").parse(startTime).getTime());
         Timestamp end = new Timestamp(new SimpleDateFormat("yyyy-MM-dd HH").parse(endTime).getTime());
@@ -88,7 +88,7 @@ public class RecommendedApplicationController {
         application.setEndTime(end);
         application.setAppId(appId);
         application.setAppUrl(appUrl);
-        application.setEquipmentType(equipmentType);
+        application.setApplicationType(applicationType);
         application.setSupportJump(supportJump);
         return MessageBean.ok(applicationService.createRecommendedApplication(application));
     }
@@ -112,7 +112,7 @@ public class RecommendedApplicationController {
             @ApiImplicitParam(name = "endTime",  value = "推荐结束时间"),
             @ApiImplicitParam(name = "orderId",  value = "排序"),
             @ApiImplicitParam(name = "memo",  value = "备注"),
-            @ApiImplicitParam(name = "equipmentType",  value = "设备类型"),
+            @ApiImplicitParam(name = "applicationType",  value = "应用类型"),
             @ApiImplicitParam(name = "supportJump",  value = "是否支持跳转")
     })
     @ApiOperation("更新推荐应用")
@@ -125,13 +125,13 @@ public class RecommendedApplicationController {
                                        String endTime,
                                        Integer orderId,
                                        String memo,
-                                       String equipmentType,
-                                       Character supportJump) throws Exception {
+                                       String applicationType,
+                                       String supportJump) throws Exception {
 
         Timestamp start = new Timestamp(new SimpleDateFormat("yyyy-MM-dd HH").parse(startTime).getTime());
         Timestamp end = new Timestamp(new SimpleDateFormat("yyyy-MM-dd HH").parse(endTime).getTime());
         return MessageBean.ok(applicationService.updateRecommendedApplication(id, appName, appUrl,
-                appLogo, start, end,orderId,memo, supportJump));
+                appLogo, start, end,orderId,memo,applicationType, supportJump));
     }
 
     @ApiOperation("删除推荐应用")

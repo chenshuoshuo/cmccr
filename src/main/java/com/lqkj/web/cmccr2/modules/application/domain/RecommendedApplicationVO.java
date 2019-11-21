@@ -28,11 +28,13 @@ public class RecommendedApplicationVO{
     private String appLogo;
     private Integer orderId;
     private String memo;
+    private String applicationType;
+    private String supportJump;
 
     public RecommendedApplicationVO() {
     }
 
-    public RecommendedApplicationVO(String appId, String appName, String appUrl, String startTime, String endTime, String appLogo, Integer orderId, String memo) {
+    public RecommendedApplicationVO(String appId, String appName, String appUrl, String startTime, String endTime, String appLogo, Integer orderId, String memo, String applicationType, String supportJump) {
         this.appId = appId;
         this.appName = appName;
         this.appUrl = appUrl;
@@ -41,6 +43,8 @@ public class RecommendedApplicationVO{
         this.appLogo = appLogo;
         this.orderId = orderId;
         this.memo = memo;
+        this.applicationType = applicationType;
+        this.supportJump = supportJump;
     }
 
     public String getAppName() {
@@ -105,5 +109,21 @@ public class RecommendedApplicationVO{
 
     public void setAppId(String appId) {
         this.appId = appId;
+    }
+
+    public String getApplicationType() {
+        return applicationType;
+    }
+
+    public void setApplicationType(String applicationType) {
+        this.applicationType = applicationType;
+    }
+
+    public String getSupportJump() {
+        return supportJump;
+    }
+
+    public void setSupportJump(String supportJump) {
+        this.supportJump = supportJump;
     }
 }
