@@ -184,8 +184,7 @@ public class CcrUserController {
     @ApiOperation("从CMDBE更新用户信息")
     @PostMapping("/center/user/updateFromCmdbe")
     public MessageBean updateFromCmdbe() {
-        ccrUserService.updateUserFromCmdbe();
-        return MessageBean.ok();
+        return MessageBean.ok(ccrUserService.updateUserFromCmdbe());
 //        return new WebAsyncTask<>(() -> {
 //            this.ccrUserService.updateUserFromCmdbe();
 //            return null;

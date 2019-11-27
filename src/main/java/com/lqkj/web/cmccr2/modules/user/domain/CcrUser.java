@@ -30,7 +30,7 @@ public class CcrUser implements Serializable, UserDetails {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long userId;
 
-    @NotBlank(message = "账户民不能为空")
+    @NotBlank(message = "账户名不能为空")
     @ApiModelProperty(value = "账号名")
     @Column(name = "user_code")
     private String userCode;
