@@ -236,15 +236,15 @@ public class CcrUserService implements UserDetailsService {
     /**
      * 从CMDBE更新用户
      */
-    @Transactional
-    public void updateUserFromCmdbe() {
+    public String updateUserFromCmdbe() {
+        StringBuilder errerUserCode = new StringBuilder();
         Boolean hasNext = true;
         int page = 0;
         // 教职工
         while (hasNext){
-            StringBuffer userString = new StringBuffer();
-            StringBuffer userGroupString = new StringBuffer();
-            StringBuffer userRuleString = new StringBuffer();
+            //StringBuffer userString = new StringBuffer();
+            //StringBuffer userGroupString = new StringBuffer();
+            //StringBuffer userRuleString = new StringBuffer();
             String password = passwordEncoder.encode("123456");
 
             ObjectNode result = cmdbeApi.pageQueryTeachingStaff(null, null, page, 2000);
@@ -254,14 +254,24 @@ public class CcrUserService implements UserDetailsService {
             Iterator<JsonNode> iterator = result.get("content").iterator();
             while (iterator.hasNext()){
                 JsonNode jsonNode = iterator.next();
-                userString.append(jsonNode.get("staffNumber").textValue() + ",");
-                userGroupString.append("teacher_staff,");
-                userRuleString.append("2,");
+                try {
+                    String userCode = jsonNode.get("staffNumber").textValue();
+                    CcrUser ccrUser = userRepository.findByUserName(userCode);
+                    if(ccrUser==null){
+                        ccrUser = new CcrUser();
+                        ccrUser.setUserCode(userCode);
+                        ccrUser.setAdmin(false);
+                        ccrUser.setUserGroup(CcrUser.CcrUserGroupType.teacher_staff);
+                        ccrUser.setPassWord(password);
+                        ccrUser.setRules(Sets.newHashSet(ruleRepository.getOne(2L)));
+                        userRepository.save(ccrUser);
+                    }
+                }catch (Exception e){
+                    errerUserCode.append(jsonNode.get("staffNumber").textValue()+",");
+                    logger.error(e.getMessage(),e);
+                    continue;
+                }
             }
-            if(StringUtils.isNotBlank(userString.toString())){
-                executeSql(userString, userGroupString,userRuleString,password);
-            }
-
             //
         }
 
@@ -280,18 +290,30 @@ public class CcrUserService implements UserDetailsService {
             Iterator<JsonNode> iterator = result.get("content").iterator();
             while (iterator.hasNext()){
                 JsonNode jsonNode = iterator.next();
-                userString.append(jsonNode.get("studentNo").textValue() + ",");
-                userGroupString.append("student,");
-                userRuleString.append("3,");
-            }
-            if(StringUtils.isNotBlank(userString.toString())){
-                executeSql(userString, userGroupString,userRuleString,password);
+                try {
+                    String userCode = jsonNode.get("studentNo").textValue();
+                    CcrUser ccrUser = userRepository.findByUserName(userCode);
+                    if(ccrUser==null){
+                        ccrUser = new CcrUser();
+                        ccrUser.setUserCode(userCode);
+                        ccrUser.setAdmin(false);
+                        ccrUser.setUserGroup(CcrUser.CcrUserGroupType.student);
+                        ccrUser.setPassWord(password);
+                        ccrUser.setRules(Sets.newHashSet(ruleRepository.getOne(3L)));
+                        userRepository.save(ccrUser);
+                    }
+                }catch (Exception e){
+                    errerUserCode.append(jsonNode.get("studentNo").textValue()+",");
+                    logger.error(e.getMessage(),e);
+                    continue;
+                }
+
             }
         }
-
+        return errerUserCode.toString();
     }
 
-    private void executeSql(StringBuffer userCodeString, StringBuffer userGroupString,StringBuffer userRuleString,String password){
+    /*private void executeSql(StringBuffer userCodeString, StringBuffer userGroupString,StringBuffer userRuleString,String password){
         if(userCodeString.length() > 0){
             userCodeString = userCodeString.deleteCharAt(userCodeString.length() - 1);
             userGroupString = userGroupString.deleteCharAt(userGroupString.length() - 1);
@@ -309,7 +331,7 @@ public class CcrUserService implements UserDetailsService {
                 .append("');");
         logger.info(sqlString.toString());
         ccrUserBatchRepository.bulkMergeUser(sqlString.toString());
-    }
+    }*/
 
     /**
      * 保存上传的文件

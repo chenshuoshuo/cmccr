@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
 @FeignClient(name = "cmdbe")
+//@FeignClient(name = "cmdbe", url = "http://192.168.4.121:13579")
 public interface CmdbeApi {
 
     /**
