@@ -1,0 +1,1 @@
+INSERT INTO public.ccr_rule_to_authority 1, 119;
