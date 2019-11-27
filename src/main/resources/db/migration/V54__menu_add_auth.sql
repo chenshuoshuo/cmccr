@@ -1,1 +1,1 @@
-INSERT INTO public.ccr_rule_to_authority 1, 119;
+INSERT INTO public.ccr_rule_to_authority VALUES (1,119);
