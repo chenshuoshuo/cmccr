@@ -8,3 +8,6 @@ INSERT INTO public.ccr_user_authority (authority_id, content, name, route, paren
 INSERT INTO public.ccr_user_authority (authority_id, content, name, route, parent_id, type, icon, enabled, http_method) VALUES (126, 'operateSeting', '运行配置', '/saSetting/operateSeting', 125, 's1719_menu', null, false, null);
 INSERT INTO public.ccr_user_authority (authority_id, content, name, route, parent_id, type, icon, enabled, http_method) VALUES (127, 'actSeting', '活动分类配置：', '/saSetting/actSeting', 125, 's1719_menu', null, false, null);
 INSERT INTO public.ccr_rule_to_authority select 1, generate_series(120,127);
+
+--增加校庆菜单
+INSERT INTO public.ccr_menu (menu_id,name, sort, status, type, update_time, url, target_user_role, specify_user_id, parent_id, ename, menu_mode, app_type, has_qr_code, mobile_sort, open, icon) VALUES (10027,'可视化校庆', 111, 'f', 'builtInMenu', '2019-11-21 10:57:06.439894', NULL, NULL, NULL, 10003, 'CM-S1719', 'right', 'pc', 'f', NULL, 'f', NULL);
