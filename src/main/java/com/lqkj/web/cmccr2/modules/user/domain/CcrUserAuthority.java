@@ -233,6 +233,6 @@ public class CcrUserAuthority implements Serializable, GrantedAuthority {
     }
 
     public enum UserAuthorityType {
-        menu, home_menu, ips_menu, gis_menu, normal, dbe_menu, m3820_menu, m2654_menu, m7722_menu,s2653_menu
+        menu, home_menu, ips_menu, gis_menu, normal, dbe_menu, m3820_menu, m2654_menu, m7722_menu,s2653_menu,s1719_menu
     }
 }
