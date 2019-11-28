@@ -120,7 +120,7 @@ public class CcrUserService implements UserDetailsService {
     /**
      * 更新用户密码和头像
      */
-    public CcrUser update(Long id, String password,String oldPassword ,Boolean admin,String headPath) {
+    public CcrUser update(Long id, String password,String oldPassword ,Boolean admin,String headPath,String userName) {
         systemLogService.addLog("用户管理服务", "update",
                 "更新用户密码和头像");
 
@@ -137,6 +137,10 @@ public class CcrUserService implements UserDetailsService {
         }
         if(StringUtils.isNotBlank(headPath)){
             user.setHeadPath(headPath);
+            isUpdate = true;
+        }
+        if(StringUtils.isNotBlank(userName)){
+            user.setHeadPath(userName);
             isUpdate = true;
         }
         if(isUpdate){
@@ -263,6 +267,7 @@ public class CcrUserService implements UserDetailsService {
                         ccrUser.setAdmin(false);
                         ccrUser.setUserGroup(CcrUser.CcrUserGroupType.teacher_staff);
                         ccrUser.setPassWord(password);
+                        ccrUser.setUserName(jsonNode.get("realName").textValue());
                         ccrUser.setRules(Sets.newHashSet(ruleRepository.getOne(2L)));
                         userRepository.save(ccrUser);
                     }
@@ -298,6 +303,7 @@ public class CcrUserService implements UserDetailsService {
                         ccrUser.setUserCode(userCode);
                         ccrUser.setAdmin(false);
                         ccrUser.setUserGroup(CcrUser.CcrUserGroupType.student);
+                        ccrUser.setUserName(jsonNode.get("realName").textValue());
                         ccrUser.setPassWord(password);
                         ccrUser.setRules(Sets.newHashSet(ruleRepository.getOne(3L)));
                         userRepository.save(ccrUser);

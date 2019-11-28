@@ -72,6 +72,7 @@ public class CcrUserController {
     @PostMapping("/center/user/{id}")
     public MessageBean<CcrUser> update(@RequestParam(required = false) String password,
                                        @RequestParam(required = false) Boolean admin,
+                                       @RequestParam(required = false) String userName,
                                        @RequestParam(required = false) String oldPassword,
                                        @PathVariable Long id,
                                        @ApiParam(value = "头像文件") MultipartFile headFile) throws Exception {
@@ -80,7 +81,7 @@ public class CcrUserController {
         if (headFile != null) {
             headPath = ccrUserService.saveUploadFile(headFile, "png", "jpg");
         }
-        CcrUser user = ccrUserService.update(id, password, oldPassword, admin, headPath);
+        CcrUser user = ccrUserService.update(id, password, oldPassword, admin, headPath,userName);
         if (user != null) {
             return MessageBean.ok(user);
         } else {

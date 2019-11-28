@@ -30,10 +30,14 @@ public class CcrUser implements Serializable, UserDetails {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long userId;
 
-    @NotBlank(message = "账户名不能为空")
-    @ApiModelProperty(value = "账号名")
+    @NotBlank(message = "用户Code不能为空")
+    @ApiModelProperty(value = "用户Code")
     @Column(name = "user_code")
     private String userCode;
+
+    @ApiModelProperty(value = "账号名")
+    @Column(name = "user_name")
+    private String userName;
 
     @ApiModelProperty(value = "密码")
     @Column(name = "pass_word")
@@ -164,27 +168,36 @@ public class CcrUser implements Serializable, UserDetails {
         this.headUrl = headUrl;
     }
 
+    public String getUserName() {
+        return userName;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        CcrUser user = (CcrUser) o;
-        return Objects.equals(userId, user.userId) &&
-                Objects.equals(userCode, user.userCode) &&
-                Objects.equals(passWord, user.passWord) &&
-                Objects.equals(openId, user.openId) &&
-                Objects.equals(casTicket, user.casTicket) &&
-                Objects.equals(rules, user.rules) &&
-                userGroup == user.userGroup &&
-                Objects.equals(updateTime, user.updateTime) &&
-                Objects.equals(isAdmin, user.isAdmin) &&
-                Objects.equals(headPath, user.headPath) &&
-                Objects.equals(headUrl, user.headUrl);
+        CcrUser ccrUser = (CcrUser) o;
+        return Objects.equals(userId, ccrUser.userId) &&
+                Objects.equals(userCode, ccrUser.userCode) &&
+                Objects.equals(userName, ccrUser.userName) &&
+                Objects.equals(passWord, ccrUser.passWord) &&
+                Objects.equals(openId, ccrUser.openId) &&
+                Objects.equals(casTicket, ccrUser.casTicket) &&
+                Objects.equals(rules, ccrUser.rules) &&
+                userGroup == ccrUser.userGroup &&
+                Objects.equals(updateTime, ccrUser.updateTime) &&
+                Objects.equals(isAdmin, ccrUser.isAdmin) &&
+                Objects.equals(headPath, ccrUser.headPath) &&
+                Objects.equals(headUrl, ccrUser.headUrl);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(userId, userCode, passWord, openId, casTicket, rules, userGroup, updateTime, isAdmin, headPath, headUrl);
+        return Objects.hash(userId, userCode, userName, passWord, openId, casTicket, rules, userGroup, updateTime, isAdmin, headPath, headUrl);
     }
 
     @Override
