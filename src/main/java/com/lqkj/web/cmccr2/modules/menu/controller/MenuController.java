@@ -10,6 +10,8 @@ import com.lqkj.web.cmccr2.modules.user.domain.CcrUserRule;
 import com.lqkj.web.cmccr2.modules.user.service.CcrUserService;
 import io.swagger.annotations.*;
 import net.minidev.json.JSONArray;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.security.core.Authentication;
@@ -35,14 +37,22 @@ public class MenuController {
     @Autowired
     CcrUserService userService;
 
+    private final Logger logger = LoggerFactory.getLogger(this.getClass());
+
     @ApiOperation("创建菜单")
     @PutMapping("/center/menu/" + VERSION + "/create")
     public MessageBean<Long> create(@RequestBody CcrMenu ccrMenu) {
         //先判断菜单名称是否重复
-        if(menuService.createMenu(ccrMenu)!=null){
+        /*if(menuService.createMenu(ccrMenu)!=null){
             return MessageBean.ok(menuService.createMenu(ccrMenu));
         }
-        return MessageBean.error("存在相同的菜单名称");
+        return MessageBean.error("存在相同的菜单名称");*/
+        try {
+            return MessageBean.ok(menuService.createMenu(ccrMenu));
+        }catch (Exception e){
+            logger.error("菜单创建失败",e);
+            return MessageBean.error("菜单创建失败");
+        }
     }
 
     @ApiOperation("删除菜单")
