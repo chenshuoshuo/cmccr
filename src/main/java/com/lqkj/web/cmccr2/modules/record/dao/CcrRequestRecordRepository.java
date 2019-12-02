@@ -15,6 +15,7 @@ import java.util.UUID;
 @Repository
 public interface CcrRequestRecordRepository extends JpaRepository<CcrRequestRecord, UUID> {
 
+/*
     @Query(nativeQuery = true, value = "select case when 'create_month' = :frequency then create_month" +
             " when 'create_date' = :frequency then create_date else create_hour end as t,count(r) from ccr_request_record r " +
             "where r.create_time>:startTime and r.create_time<:endTime and r.successed=:successed " +
@@ -23,6 +24,7 @@ public interface CcrRequestRecordRepository extends JpaRepository<CcrRequestReco
                               @Param("endTime") Timestamp endTime,
                               @Param("frequency") String frequency,
                               @Param("successed") Boolean successed);
+*/
 
     @Query(nativeQuery = true, value = "select (string_to_array(r.url,'/'))[4] ar,count(r) " +
             "from ccr_request_record r where r.create_time>:startTime and r.create_time<:endTime group by ar",

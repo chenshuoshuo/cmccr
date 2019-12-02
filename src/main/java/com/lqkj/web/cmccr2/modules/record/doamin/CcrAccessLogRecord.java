@@ -44,6 +44,16 @@ public class CcrAccessLogRecord {
     @Column(name = "log_time")
     private Timestamp logTime;
 
+    @Column(name = "create_month")
+    private String createMonth;
+
+    @Column(name = "create_date")
+    private String createDate;
+
+    @Column(name = "create_hour")
+    private String createHour;
+
+
 
     public Integer getLogId() {
         return logId;
@@ -85,6 +95,30 @@ public class CcrAccessLogRecord {
         return logTime;
     }
 
+    public String getCreateMonth() {
+        return createMonth;
+    }
+
+    public void setCreateMonth(String createMonth) {
+        this.createMonth = createMonth;
+    }
+
+    public String getCreateDate() {
+        return createDate;
+    }
+
+    public void setCreateDate(String createDate) {
+        this.createDate = createDate;
+    }
+
+    public String getCreateHour() {
+        return createHour;
+    }
+
+    public void setCreateHour(String createHour) {
+        this.createHour = createHour;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -94,11 +128,15 @@ public class CcrAccessLogRecord {
                 Objects.equals(logId, that.logId) &&
                 Objects.equals(userId, that.userId) &&
                 Objects.equals(ipAddress, that.ipAddress) &&
-                Objects.equals(logTime, that.logTime);
+                Objects.equals(logTime, that.logTime) &&
+                Objects.equals(createDate, that.createDate) &&
+                Objects.equals(createMonth, that.createMonth) &&
+                Objects.equals(createHour, that.createHour)
+                ;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(logId, userId, userGroup, ipAddress, logTime);
+        return Objects.hash(logId, userId, userGroup, ipAddress, logTime,createDate,createMonth,createHour);
     }
 }

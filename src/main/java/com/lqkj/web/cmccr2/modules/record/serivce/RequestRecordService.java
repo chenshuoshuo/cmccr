@@ -5,7 +5,9 @@ import com.ecwid.consul.v1.QueryParams;
 import com.ecwid.consul.v1.Response;
 import com.ecwid.consul.v1.health.model.Check;
 import com.lqkj.web.cmccr2.modules.application.dao.CcrVersionApplicationRepository;
+import com.lqkj.web.cmccr2.modules.record.dao.CcrAccessLogRecordRepository;
 import com.lqkj.web.cmccr2.modules.record.dao.CcrRequestRecordRepository;
+import com.lqkj.web.cmccr2.modules.record.doamin.CcrAccessLogRecord;
 import com.lqkj.web.cmccr2.modules.record.doamin.CcrLocationRecord;
 import com.lqkj.web.cmccr2.modules.record.doamin.CcrRequestRecord;
 import com.lqkj.web.cmccr2.modules.record.doamin.CcrStatisticsFrequency;
@@ -44,6 +46,9 @@ public class RequestRecordService {
     CcrRequestRecordRepository requestRecordRepository;
 
     @Autowired
+    CcrAccessLogRecordRepository accessLogRecordRepository;
+
+    @Autowired
     CcrUserAuthorityRepository authorityRepository;
 
     @Autowired(required = false)
@@ -68,8 +73,8 @@ public class RequestRecordService {
                                          Boolean successed) {
         String frequency = enumToFrequency(frequencyEnum);
 
-        List<Object[]> result = requestRecordRepository.dataRecord(startTime,
-                endTime, frequency, successed);
+        List<Object[]> result = accessLogRecordRepository.dataRecord(startTime,
+                endTime, frequency);
 
         logger.info("数据统计结果:{}", result);
 
@@ -219,7 +224,9 @@ public class RequestRecordService {
             return "create_date";
         } else if (frequencyEnum.equals(CcrStatisticsFrequency.one_hour)) {
             return "create_hour";
-        } else {
+        } else if (frequencyEnum.equals(CcrStatisticsFrequency.one_month)){
+            return "create_month";
+        }else {
             return "create_hour";
         }
     }

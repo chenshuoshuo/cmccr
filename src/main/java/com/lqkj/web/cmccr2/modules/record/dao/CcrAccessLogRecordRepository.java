@@ -34,7 +34,15 @@ public interface CcrAccessLogRecordRepository extends JpaRepository<CcrAccessLog
     List<CcrAccessLogRecord> listQuery(String startDate,String endDate);
 
     @Query(value = "select ip_address,count(a) from ccr_access_log a where a.log_time>:startTime and a.log_time<:endTime group by ip_address",nativeQuery = true)
-    List<Object[]> locationRecord(@Param("startTime") Timestamp startTime,
-                                  @Param("endTime") Timestamp endTime);
+    List<Object[]> locationRecord( Timestamp startTime,
+                                   Timestamp endTime);
 
+
+    @Query(nativeQuery = true, value = "select case when 'create_month' = :frequency then create_month" +
+            " when 'create_date' = :frequency then create_date else create_hour end as t,count(r) from ccr_access_log r " +
+            " where r.log_time>:startTime and r.log_time<:endTime" +
+            " group by t order by t")
+    List<Object[]> dataRecord(@Param("startTime") Timestamp startTime,
+                              @Param("endTime") Timestamp endTime,
+                              @Param("frequency") String frequency);
 }

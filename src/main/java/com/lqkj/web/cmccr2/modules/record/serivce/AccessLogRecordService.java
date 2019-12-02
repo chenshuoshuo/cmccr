@@ -1,6 +1,7 @@
 package com.lqkj.web.cmccr2.modules.record.serivce;
 
 import com.lqkj.web.cmccr2.modules.log.service.CcrSystemLogService;
+import com.lqkj.web.cmccr2.modules.notification.dao.CcrAccessLogRecordSQLDao;
 import com.lqkj.web.cmccr2.modules.record.dao.CcrAccessLogRecordRepository;
 import com.lqkj.web.cmccr2.modules.record.dao.CcrMenuRecordRepository;
 import com.lqkj.web.cmccr2.modules.record.doamin.*;
@@ -15,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -32,6 +34,9 @@ public class AccessLogRecordService {
 
     @Autowired
     DbSearcher dbSearcher;
+
+    @Autowired
+    CcrAccessLogRecordSQLDao ccrAccessLogRecordSQLDao;
 
     public CcrAccessLogRecord add(CcrAccessLogRecord accessLog) {
         return accessLogRecordRepository.save(accessLog);
@@ -54,7 +59,15 @@ public class AccessLogRecordService {
      */
     //@Cacheable(cacheNames = "locationStatistics", key = "#startTime+'_'+#endTime")
     public List<CcrLocationRecord> locationStatistics(Timestamp startTime, Timestamp endTime) {
-        List<Object[]> results = accessLogRecordRepository.locationRecord(startTime, endTime);
+
+        List<Object[]> results;
+        if (startTime == null || endTime == null) {
+            String sql = "select ip_address,count(a) from ccr_access_log a group by ip_address";
+            System.out.println(ccrAccessLogRecordSQLDao);
+            results =  ccrAccessLogRecordSQLDao.execSql(sql,null);
+        }else {
+            results = accessLogRecordRepository.locationRecord(startTime, endTime);
+        }
 
         List<CcrLocationRecord> locationRecords = new ArrayList<>(results.size() + 1);
 

@@ -27,6 +27,8 @@ import org.springframework.web.context.request.async.WebAsyncTask;
 
 import javax.servlet.http.HttpServletRequest;
 import java.sql.Timestamp;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 @Api(tags = "网关统计记录")
@@ -46,9 +48,16 @@ public class AccessLogRecordController {
     public MessageBean<CcrAccessLogRecord> addRecord(HttpServletRequest request,
                                                       Authentication authentication) {
         CcrAccessLogRecord accessLogRecord = new CcrAccessLogRecord();
-        Timestamp logTime = new Timestamp(new Date().getTime());
+        Date date = new Date();
+        DateFormat monthFormat = new SimpleDateFormat("yyyy-MM");
+        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        DateFormat hourFormat = new SimpleDateFormat("yyyy-MM-dd HH");
+        Timestamp logTime = new Timestamp(date.getTime());
         accessLogRecord.setIpAddress(ServletUtils.getIpAddress(request));
         accessLogRecord.setLogTime(logTime);
+        accessLogRecord.setCreateDate(dateFormat.format(date));
+        accessLogRecord.setCreateMonth(monthFormat.format(date));
+        accessLogRecord.setCreateHour(hourFormat.format(date));
         if(authentication == null){
             accessLogRecord.setUserId("guest");
             accessLogRecord.setUserGroup("guest");

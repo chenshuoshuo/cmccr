@@ -21,10 +21,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.jwt.Jwt;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.async.WebAsyncTask;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 
@@ -96,6 +93,7 @@ public class RequestRecordController {
         return MessageBean.ok(requestRecordService.appRecord());
     }
 
+
     @ApiOperation("查询数据统计结果")
     @GetMapping("/center/record/" + APIVersion.V1 + "/data")
     public MessageBean<List<Object[]>> dataRecord(@RequestParam Timestamp startTime,
@@ -122,8 +120,8 @@ public class RequestRecordController {
 
     @ApiOperation("查询地理统计结果")
     @GetMapping("/center/record/" + APIVersion.V1 + "/location")
-    public MessageListBean<CcrLocationRecord> locationRecord(@RequestParam Timestamp startTime,
-                                                             @RequestParam Timestamp endTime) {
+    public MessageListBean<CcrLocationRecord> locationRecord(@RequestParam(required = false) Timestamp startTime,
+                                                             @RequestParam(required = false) Timestamp endTime) {
         return MessageListBean.ok(accessLogRecordService.locationStatistics(startTime, endTime));
     }
 
