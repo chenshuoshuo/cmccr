@@ -26,3 +26,4 @@
 
 #cmccr
 /log/
+/config/*.yml
