@@ -12,9 +12,9 @@ import java.util.List;
 @Repository
 public interface CcrRecommendedApplicationRepository extends JpaRepository<CcrRecommendedApplication, String> {
 
-    @Query("SELECT ra from CcrRecommendedApplication ra where ra.startTime <=?1 and ra.endTime >=?1 and ra.applicationType='h5' order by ra.orderId")
+    @Query("SELECT ra from CcrRecommendedApplication ra where ra.startTime <=?1 and ra.endTime >=?1 and ra.applicationType='H5' order by ra.orderId")
     List<CcrRecommendedApplication> findAllByTime(Timestamp systemTime);
 
-    @Query("SELECT ra from CcrRecommendedApplication ra where ra.startTime <=?1 and ra.endTime >=?1 and ra.applicationType='pc' order by ra.orderId")
+    @Query("SELECT ra from CcrRecommendedApplication ra where ra.startTime <=?1 and ra.endTime >=?1 and ra.applicationType='PC' order by ra.orderId")
     List<CcrRecommendedApplication> findAllByTimePc(Timestamp systemTime);
 }
