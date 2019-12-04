@@ -160,7 +160,10 @@ public class RecommendedApplicationController {
     @ApiOperation("PC推荐应用列表")
     @GetMapping("/center/application/recommend/" + APIVersion.V1 + "/listQuery")
     public MessageListBean<CcrRecommendedApplication> listQuery() throws Exception{
-        List<CcrRecommendedApplication> list = applicationService.queryAllList();
+        SimpleDateFormat sdf  = new SimpleDateFormat("yyyy-MM-dd HH");
+        String time = sdf.format(new Date());
+        Timestamp systemTime = new Timestamp(sdf.parse(time).getTime());
+        List<CcrRecommendedApplication> list = applicationService.queryAllListPc(systemTime);
         return MessageListBean.ok(list);
     }
 

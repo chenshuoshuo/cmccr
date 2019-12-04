@@ -175,7 +175,17 @@ public class RecommendedApplicationService {
        return recommendedApplicationDao.findAllByTime(systemTime);
     }
     /**
-     * 查询所有应用列表
+     * 查询所有Pc应用列表
+     */
+    public List<CcrRecommendedApplication> queryAllListPc(Timestamp systemTime) {
+        systemLogService.addLog("推荐应用管理", "queryList",
+                "推荐应用管理列表查询");
+
+        return recommendedApplicationDao.findAllByTimePc(systemTime);
+    }
+
+    /**
+     * 查询所有Pc应用列表
      */
     public List<CcrRecommendedApplication> queryAllList() {
         systemLogService.addLog("推荐应用管理", "queryList",
