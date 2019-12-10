@@ -132,11 +132,13 @@ public class SensitivityWordService {
         result.setContent(checkWords);
         result.setSensitivity(!checkWords.isEmpty());
 
-        CcrSensitivityRecord record = new CcrSensitivityRecord("未知", word, StringUtils.join(checkWords, ","),
-                CcrSensitivityWord.HandleType.prevent);
-        record.setUserName(SecurityContextHolder.getContext().getAuthentication()
-                .getName());
-        sensitivityRecordRepository.save(record);
+        if(result.getSensitivity()){
+            CcrSensitivityRecord record = new CcrSensitivityRecord("未知", word, StringUtils.join(checkWords, ","),
+                    CcrSensitivityWord.HandleType.prevent);
+            record.setUserName(SecurityContextHolder.getContext().getAuthentication()
+                    .getName());
+            sensitivityRecordRepository.save(record);
+        }
 
         return result;
     }
