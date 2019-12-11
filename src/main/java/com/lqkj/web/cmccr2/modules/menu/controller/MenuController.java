@@ -114,6 +114,16 @@ public class MenuController {
         return new WebAsyncTask<>(() -> MessageBean.ok(menuService.typePage(type, keyword,userRole.get(0),userRole.get(1), page, pageSize)));
     }
 
+    @ApiOperation("修改菜单权限用户接口")
+    @PutMapping("/center/menu/" + VERSION + "/updateSpecifyUser")
+    public WebAsyncTask<MessageBean<CcrMenu>> info(
+            @ApiParam(name = "ename",value = "菜单英文名称",required = true)@RequestParam(required = true) String ename,
+            @ApiParam(name = "operateType",value = "操作方式：delete,add",required = true)@RequestParam(required = true) String operateType,
+            @ApiParam(name = "userCodes",value = "用户Code",required = true)@RequestParam(required = true) String[] userCodes) {
+        return new WebAsyncTask<>(() -> MessageBean.ok(menuService.updateSpecifyUser(ename,operateType,userCodes)));
+    }
+
+
     private List<String> getRolesAndCode(Authentication authentication){
         List<String> userRole = new ArrayList<>();
         String roles = "";
