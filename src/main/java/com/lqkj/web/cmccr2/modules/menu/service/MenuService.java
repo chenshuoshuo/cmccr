@@ -83,6 +83,7 @@ public class MenuService {
     /**
      * 更新节点
      */
+    @Transactional
     public CcrMenu update(Long id, CcrMenu menu) {
         systemLogService.addLog("菜单管理服务", "update"
                 , "更新菜单信息");
@@ -114,8 +115,10 @@ public class MenuService {
                                 }
                             }
                         }
+                        ccrMenu.setSpecifyUserId(parentSpecifyUserIdList.toArray(new String[parentSpecifyUserIdList.size()]));
                     } else if (specifyUserId != null) {
                         parentSpecifyUserIdList.addAll(Arrays.asList(specifyUserId));
+                        ccrMenu.setSpecifyUserId(parentSpecifyUserIdList.toArray(new String[parentSpecifyUserIdList.size()]));
                     }
                     if (parentTargetUserRole != null && targetUserRole != null) {
                         if (parentTargetUserRole.length == 0) {
@@ -130,11 +133,11 @@ public class MenuService {
                                 }
                             }
                         }
+                        ccrMenu.setTargetUserRole(parentTargetUserRoleList.toArray(new String[parentTargetUserRoleList.size()]));
                     } else if (targetUserRole != null) {
                         parentTargetUserRoleList.addAll(Arrays.asList(targetUserRole));
+                        ccrMenu.setTargetUserRole(parentTargetUserRoleList.toArray(new String[parentTargetUserRoleList.size()]));
                     }
-                    ccrMenu.setSpecifyUserId(parentSpecifyUserIdList.toArray(new String[parentSpecifyUserIdList.size()]));
-                    ccrMenu.setTargetUserRole(parentTargetUserRoleList.toArray(new String[parentTargetUserRoleList.size()]));
                     if (menu.getStatus()) {
                         ccrMenu.setStatus(menu.getStatus());
                     }
@@ -165,8 +168,10 @@ public class MenuService {
                                 }
                             }
                         }
+                        ccrMenu.setSpecifyUserId(chSpecifyUserIdList.toArray(new String[chSpecifyUserIdList.size()]));
                     } else if (specifyUserId != null) {
                         chSpecifyUserIdList.addAll(Arrays.asList(specifyUserId));
+                        ccrMenu.setSpecifyUserId(chSpecifyUserIdList.toArray(new String[chSpecifyUserIdList.size()]));
                     }
 
                     if (chTargetUserRole != null && targetUserRole != null) {
@@ -182,11 +187,11 @@ public class MenuService {
                                 }
                             }
                         }
+                        ccrMenu.setTargetUserRole(chTargetUserRoleList.toArray(new String[chTargetUserRoleList.size()]));
                     } else if (targetUserRole != null) {
                         chTargetUserRoleList.addAll(Arrays.asList(targetUserRole));
+                        ccrMenu.setTargetUserRole(chTargetUserRoleList.toArray(new String[chTargetUserRoleList.size()]));
                     }
-                    ccrMenu.setSpecifyUserId(chSpecifyUserIdList.toArray(new String[chSpecifyUserIdList.size()]));
-                    ccrMenu.setTargetUserRole(chTargetUserRoleList.toArray(new String[chTargetUserRoleList.size()]));
                     ccrMenu.setStatus(menu.getStatus());
                     menuDao.save(ccrMenu);
                 }
@@ -326,12 +331,12 @@ public class MenuService {
         }
         if (StringUtils.isNotBlank(userCode) && StringUtils.isNotBlank(roles)) {
             sql += " and (target_user_role && ARRAY[" + roles + ",'public'] \\:\\: varchar[] or specify_user_id && ARRAY['" + userCode + "'] \\:\\: varchar[]) ";
-        }else{
+        } else {
             sql += " and target_user_role && ARRAY['','public'] \\:\\: varchar[] ";
         }
-        if(type != null && type.name().equals("h5")){
+        if (type != null && type.name().equals("h5")) {
             sql += "order by mobile_sort";
-        }else {
+        } else {
             sql += "order by sort";
         }
         List<CcrMenu> ccrMenus = menuSQLDao.executeSql(sql, CcrMenu.class);
@@ -357,14 +362,14 @@ public class MenuService {
 
     public void updateMenuStatus(String ename, Boolean status) {
         List<CcrMenu> menus = menuDao.queryEname(ename);
-        if (menus != null && menus.size()>0) {
-            for (int j = 0; j < menus.size(); j++){
+        if (menus != null && menus.size() > 0) {
+            for (int j = 0; j < menus.size(); j++) {
                 menuDao.updateChildOpen(menus.get(j).getMenuId(), status);
                 ArrayList<CcrMenu> ccrMenus = new ArrayList<>();
                 this.querychildMenus(menus.get(j), ccrMenus);
                 if (ccrMenus != null && ccrMenus.size() > 0) {
-                    for (int i = 0; i < ccrMenus.size(); i++){
-                        menuDao.updateChildOpen(ccrMenus.get(i).getMenuId(),status);
+                    for (int i = 0; i < ccrMenus.size(); i++) {
+                        menuDao.updateChildOpen(ccrMenus.get(i).getMenuId(), status);
                     }
                 }
             }
@@ -390,5 +395,56 @@ public class MenuService {
             }
         }
         return true;
+    }
+
+    @Transactional
+    public CcrMenu updateSpecifyUser(String ename, String operateType, String[] userCodes) {
+        Optional<CcrMenu> opCcrMenu = this.menuDao.findOne(new Example<CcrMenu>() {
+            @Override
+            public CcrMenu getProbe() {
+                CcrMenu ccrMenu = new CcrMenu();
+                ccrMenu.setEname(ename);
+                return ccrMenu;
+            }
+
+            @Override
+            public ExampleMatcher getMatcher() {
+                return ExampleMatcher.matching()
+                        .withMatcher("ename", ExampleMatcher.GenericPropertyMatchers.exact());
+            }
+        });
+        CcrMenu menu = opCcrMenu.isPresent() ? opCcrMenu.get() : null;
+        if (menu != null) {
+            String[] specifyUserId = menu.getSpecifyUserId();
+            List<String> specifyUserList = new ArrayList<String>();
+            if (specifyUserId != null) {
+                specifyUserList = new ArrayList(Arrays.asList(specifyUserId));
+            }
+            if (operateType.equals("delete") && userCodes != null && userCodes.length > 0) {
+                for (int i = 0; i < userCodes.length; i++) {
+                    boolean contains = specifyUserList.contains(userCodes[i]);
+                    if (contains) {
+                        specifyUserList.remove(specifyUserList.indexOf(userCodes[i]));
+                    }
+                }
+                menu.setSpecifyUserId(specifyUserList.toArray(new String[specifyUserList.size()]));
+                this.update(menu.getMenuId(),menu);
+                return menu;
+            }
+            if (operateType.equals("add") && userCodes != null && userCodes.length > 0) {
+                for (int i = 0; i < userCodes.length; i++) {
+                    boolean contains = specifyUserList.contains(userCodes[i]);
+                    if (!contains) {
+                        specifyUserList.add(userCodes[i]);
+                    }
+                }
+                menu.setSpecifyUserId(specifyUserList.toArray(new String[specifyUserList.size()]));
+                this.update(menu.getMenuId(),menu);
+                return menu;
+            }
+            return null;
+        } else {
+            return null;
+        }
     }
 }

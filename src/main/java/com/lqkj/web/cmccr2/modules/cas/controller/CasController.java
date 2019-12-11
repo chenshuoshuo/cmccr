@@ -50,16 +50,16 @@ public class CasController {
                 if(userConfig!=null){
                     if(runtimeConfig instanceof Map){
                         Map userConfigMap = (Map) userConfig;
-                        Boolean isSupportCas = Boolean.valueOf(userConfigMap.get("isSupportCas").toString());
-                        if(isSupportCas){
-                            String casUrl = userConfigMap.get("casLoginUrl").toString();
-                            java.net.URL urls = new java.net.URL(casUrl);
-                            java.net.URL loginUrl = new java.net.URL(casLoginUrl);
-                            if(urls.getHost().equals(loginUrl.getHost())){
-                                Response response=HttpUtils.getInstance().getRequest(casLoginUrl);
-                                return response.body().string();
-                            }
+                        //Boolean isSupportCas = Boolean.valueOf(userConfigMap.get("isSupportCas").toString());
+                        //if(isSupportCas){
+                        String casUrl = userConfigMap.get("casLoginUrl").toString();
+                        java.net.URL urls = new java.net.URL(casUrl);
+                        java.net.URL loginUrl = new java.net.URL(casLoginUrl);
+                        if(urls.getHost().equals(loginUrl.getHost())){
+                            Response response=HttpUtils.getInstance().getRequest(casLoginUrl);
+                            return response.body().string();
                         }
+                        //}
                     }
                 }
             }
